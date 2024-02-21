@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@screens/*": ["screens/*"],
+      "@components/*": ["components/*"],
+      "@util/*": ["@util/*"],
+      "@store/*": ["@store/*"],
+      "@fonts/*": ["fonts/*"]
+      // Add more aliases as needed
+    }
+  }
+}
