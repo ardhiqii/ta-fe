@@ -12,8 +12,9 @@ import UserContextProvider, { UserContext } from "store/user-contex";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "@screens/Home/HomeScreen";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import RegisterScreen from "@screens/RegisterScreen";
+import { virtualId } from "util/virtual_id";
 
 const Stack = createNativeStackNavigator();
 
@@ -25,7 +26,7 @@ const AuthNavigation = () => {
       }}
     >
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen}/>
+      <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );
 };
@@ -40,7 +41,7 @@ const AuthenticatedNavigation = () => {
 
 const Navigation = () => {
   const { user } = useContext(UserContext);
-  const isAuthenticated = user.login_status != undefined;
+  const isAuthenticated = user.token != undefined;
 
   return (
     <NavigationContainer>
@@ -56,6 +57,22 @@ export default function App() {
     LexendDeca_700Bold,
     LexendDeca_900Black,
   });
+
+  useEffect(() => {
+    const checkingVirtualId = async () => {
+      const id = await virtualId.getLocal();
+      if (id == null) {
+        const { data } = await virtualId.getVirtualId();
+        const newId = data.virtual_device_id;
+        await virtualId.storeLocal(newId);
+      } else {
+        console.log("APP");
+        console.log(id);
+      }
+    };
+    checkingVirtualId();
+  }, []);
+
   if (!fontsloaded) {
     return (
       <View>

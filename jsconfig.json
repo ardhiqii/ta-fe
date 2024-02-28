@@ -6,6 +6,7 @@
       "@components/*": ["components/*"],
       "@util/*": ["@util/*"],
       "@store/*": ["@store/*"],
+      "@assets/*":["@assets/*"],
       "@fonts/*": ["fonts/*"]
       // Add more aliases as needed
     }
