@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Token } from "util/token";
 import { virtualId } from "util/virtual_id";
 
 export const login = async (username, password, role) => {
@@ -12,6 +13,7 @@ export const login = async (username, password, role) => {
     });
     console.log("LOGIN FUNCTION");
     console.log(data);
+    Token.storeLocal(data.data.token);
     return data;
   } catch (e) {
     console.log("Error Message: ", e);
@@ -36,5 +38,24 @@ export const register = async (name, username, password, phone, role) => {
     return data;
   } catch (e) {
     console.log("Error Message: ", e);
+  }
+};
+
+export const relogin = async (token, role) => {
+  const url_relogin = process.env.BASE_URL + `/${role}/auth/relogin`;
+  try {
+    const { data } = await axios.get(url_relogin, {
+      headers: {
+        token: token,
+      },
+    });
+    if(data){
+      if(!data.relogin_status){
+        return null
+      }
+      return data
+    }
+  } catch (e) {
+    console.log(e);
   }
 };

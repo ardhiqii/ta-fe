@@ -6,6 +6,7 @@ import {
   Alert,
   Image,
   KeyboardAvoidingView,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -22,7 +23,7 @@ const LoginScreen = () => {
     enteredPassword: "",
     role: "player",
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const { updateUser, user } = useContext(UserContext);
   const nav = useNavigation();
   const updateInputValueHandler = (inputIdentifier, value) => {
@@ -51,7 +52,7 @@ const LoginScreen = () => {
       formValue.role
     );
     if (data) {
-      setLoading(false)
+      setLoading(false);
       if (!data.login_status) {
         Alert.alert("Something wrong", "Invalid username or password");
       } else {
@@ -60,10 +61,7 @@ const LoginScreen = () => {
     }
   };
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="height"
-    >
+    <KeyboardAvoidingView style={styles.container} behavior="height">
       <View style={styles.imageContainer}>
         <Image
           source={require("../assets/vector_login.png")}
@@ -114,7 +112,7 @@ const LoginScreen = () => {
           </Text>
         </View>
       </View>
-      {loading && <LoadingOverlay/>}
+      {loading && <LoadingOverlay />}
     </KeyboardAvoidingView>
   );
 };

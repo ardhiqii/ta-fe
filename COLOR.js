@@ -5,7 +5,10 @@ export const COLOR = {
   base600: "#96bec8",
   second900: "#264653",
   second800: "#3c5964",
+  second700: "#445a65",
   accent1: "#d76456",
-  acccent2: "#d1ac00",
+  accent2: "#d1ac00",
+  gold:'#fcdf47',
   border: "#93a3a9",
 };
+

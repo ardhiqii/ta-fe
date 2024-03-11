@@ -1,89 +1,102 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import {
   useFonts,
+  LexendDeca_300Light,
   LexendDeca_400Regular,
   LexendDeca_700Bold,
   LexendDeca_900Black,
+  LexendDeca_600SemiBold,
 } from "@expo-google-fonts/lexend-deca";
 import { LEXEND } from "@fonts/LEXEND";
-import LoginScreen from "@screens/LoginScreen";
 import UserContextProvider, { UserContext } from "store/user-contex";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "@screens/Home/HomeScreen";
-import { useContext, useEffect } from "react";
-import RegisterScreen from "@screens/RegisterScreen";
+import { useContext, useEffect, useState } from "react";
 import { virtualId } from "util/virtual_id";
+import { Token } from "util/token";
+import { relogin } from "util/auth/auth";
+import Navigation from "navigation/Navigation";
 
-const Stack = createNativeStackNavigator();
-
-const AuthNavigation = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Register" component={RegisterScreen} />
-    </Stack.Navigator>
-  );
-};
-
-const AuthenticatedNavigation = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-    </Stack.Navigator>
-  );
-};
-
-const Navigation = () => {
-  const { user } = useContext(UserContext);
-  const isAuthenticated = user.token != undefined;
-
-  return (
-    <NavigationContainer>
-      {!isAuthenticated && <AuthNavigation />}
-      {isAuthenticated && <AuthenticatedNavigation />}
-    </NavigationContainer>
-  );
-};
-
-export default function App() {
+const Root = () => {
   let [fontsloaded] = useFonts({
+    LexendDeca_300Light,
     LexendDeca_400Regular,
+    LexendDeca_600SemiBold,
     LexendDeca_700Bold,
     LexendDeca_900Black,
   });
+  const [appReady, setAppReady] = useState(false);
+  const { updateUser } = useContext(UserContext);
+
+  const checkingVirtualId = async () => {
+    console.log("============================");
+    let id = await virtualId.getLocal();
+    if (id == null) {
+      const { data } = await virtualId.getVirtualId();
+      const newId = data.virtual_device_id;
+      id = newId;
+      await virtualId.storeLocal(newId);
+    }
+    console.log("Checking Virtual ID is done");
+    console.log(id);
+    console.log("============================");
+    return id;
+  };
+
+  const checkingToken = async () => {
+    console.log("============================");
+    let token = await Token.getLocal();
+    console.log("Checking Token is done");
+    console.log(token);
+    console.log("============================");
+    return token;
+  };
+
+  const checkingUser = async (token, role) => {
+    console.log("============================");
+    try {
+      const { data } = await relogin(token, "player");
+      if (data) {
+        data["token"] = token;
+        updateUser(data);
+      }
+    } catch (e) {
+      console.log("Failed relogin using token");
+      Token.removeLocal();
+    }
+    console.log("Checking user is done");
+    console.log("============================");
+  };
 
   useEffect(() => {
-    const checkingVirtualId = async () => {
-      const id = await virtualId.getLocal();
-      if (id == null) {
-        const { data } = await virtualId.getVirtualId();
-        const newId = data.virtual_device_id;
-        await virtualId.storeLocal(newId);
-      } else {
-        console.log("APP");
-        console.log(id);
+    setAppReady(false);
+    const initializedApp = async () => {
+      const [id, token] = await Promise.all([
+        checkingVirtualId(),
+        checkingToken(),
+      ]);
+
+      await checkingUser(token, "player");
+      if (token !== null) {
       }
+      setAppReady(true);
     };
-    checkingVirtualId();
+    initializedApp();
   }, []);
 
-  if (!fontsloaded) {
+  if (!fontsloaded || !appReady) {
     return (
       <View>
-        <Text>WAITING FONT</Text>
+        <Text>LOADING APP</Text>
       </View>
     );
   }
 
+  return <Navigation />;
+};
+
+export default function App() {
   return (
     <UserContextProvider>
-      <Navigation />
+      <Root />
     </UserContextProvider>
   );
 }

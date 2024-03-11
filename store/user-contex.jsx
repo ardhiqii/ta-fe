@@ -1,4 +1,5 @@
 import { createContext, useState } from "react";
+import { Token } from "util/token";
 
 export const UserContext = createContext({
   user:{},
@@ -8,10 +9,9 @@ export const UserContext = createContext({
 const UserContextProvider = ({ children }) => {
   const [dataUser,setDataUser] = useState({})
   
-  const updateUser = (data)=>{
-    console.log("IN USERCONTEXT");
-    console.log(data);
+  const updateUser = async (data)=>{
     setDataUser(data);
+    await Token.storeLocal(data.token)
   }
 
   const value ={
