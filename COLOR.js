@@ -6,6 +6,7 @@ export const COLOR = {
   second900: "#264653",
   second800: "#3c5964",
   second700: "#445a65",
+  second300: "#90a4ae",
   accent1: "#d76456",
   accent2: "#d1ac00",
   gold:'#fcdf47',

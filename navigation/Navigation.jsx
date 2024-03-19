@@ -7,7 +7,10 @@ import { UserContext } from "store/user-contex";
 import HomeScreen from "@screens/Home/HomeScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
-import MainMenu from "@screens/MainMenu";
+import MainMenu from "@screens/MainMenuScreen";
+import { COLOR } from "COLOR";
+import { LEXEND } from "@fonts/LEXEND";
+import SportVenueNavigation from "./SportVenueNavigation";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -27,11 +30,35 @@ const AuthNavigation = () => {
 
 const AuthenticatedNavigation = () => {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="BottomTabNavigator" component={BottomTabNavigator} options={{
-        headerShown:false,
-      }} />
-      <Stack.Screen name="MainMenu" component={MainMenu} options={{presentation:"modal",animation:"slide_from_bottom"}}  />
+    <Stack.Navigator screenOptions={{headerBackTitleVisible:false}} >
+      <Stack.Screen
+        name="BottomTabNavigator"
+        component={BottomTabNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MainMenu"
+        component={MainMenu}
+        options={{
+          animation: "slide_from_bottom",
+          headerStyle: {
+            backgroundColor: COLOR.base900,
+          },
+          headerTitleStyle:{
+            fontFamily:LEXEND.SemiBold,
+            fontSize:28,
+            color:"white"
+          },
+          headerTintColor:'white',
+          headerShadowVisible:false,
+          contentStyle:{
+            backgroundColor:'white'
+          }
+        }}
+      />
+      <Stack.Screen name="SportVenueNavigation" component={SportVenueNavigation} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 };
@@ -39,9 +66,13 @@ const AuthenticatedNavigation = () => {
 const BottomTabNavigator = () => {
   return (
     <>
-    <BottomTab.Navigator sceneContainerStyle={{backgroundColor:"white"}}>
-      <BottomTab.Screen name="Home" component={HomeScreen} options={{headerShown:false}} />
-    </BottomTab.Navigator>
+      <BottomTab.Navigator sceneContainerStyle={{ backgroundColor: "white" }}>
+        <BottomTab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+      </BottomTab.Navigator>
     </>
   );
 };
@@ -54,7 +85,7 @@ const Navigation = () => {
     <NavigationContainer>
       {/* {!isAuthenticated && <AuthNavigation />}
       {isAuthenticated && <AuthenticatedNavigation />} */}
-      
+
       <AuthenticatedNavigation />
     </NavigationContainer>
   );
