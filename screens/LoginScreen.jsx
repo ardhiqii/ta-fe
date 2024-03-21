@@ -1,4 +1,4 @@
-import Input from "@components/Auth/Input";
+import Input from "@components/Input";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import React, { useContext, useState } from "react";

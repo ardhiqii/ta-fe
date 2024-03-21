@@ -1,4 +1,4 @@
-import Input from "@components/Auth/Input";
+import Input from "@components/Input";
 import { LEXEND } from "@fonts/LEXEND";
 import React, { useContext, useState } from "react";
 import {
@@ -59,7 +59,7 @@ const RegisterScreen = () => {
       if (data) {
         if (data.register_status) {
           nav.navigate("Login");
-        }else{
+        } else {
           Alert.alert("Something wrong", "Try again to register");
         }
       }

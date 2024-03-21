@@ -33,7 +33,7 @@ const colors = {
   },
 };
 
-const TagCategory = ({ category }) => {
+const TagCategory = ({ category,customText }) => {
   const name = category.charAt(0).toUpperCase() + category.slice(1);
   return (
     <View
@@ -42,7 +42,7 @@ const TagCategory = ({ category }) => {
         { backgroundColor: colors[category].primary100 },
       ]}
     >
-      <Text style={[styles.text, { color: colors[category].primary800 }]}>
+      <Text style={[styles.text, { color: colors[category].primary800 },customText]}>
         {name}
       </Text>
     </View>

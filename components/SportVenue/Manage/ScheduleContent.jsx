@@ -22,7 +22,7 @@ const BoxDate = ({ item, selected, onSelect }) => {
               style={[
                 BoxStyles.text,
                 { fontSize: 10, fontFamily: LEXEND.Light },
-                isSelected && { color: "#edf8f2" },
+                isSelected && { color: COLOR.base500 },
               ]}
             >
               {day} {month}
@@ -31,7 +31,7 @@ const BoxDate = ({ item, selected, onSelect }) => {
               style={[
                 BoxStyles.text,
                 { fontSize: 12, fontFamily: LEXEND.SemiBold },
-                isSelected && { color: "#edf8f2" },
+                isSelected && { color: COLOR.base500 },
               ]}
             >
               {dayOfWeek}

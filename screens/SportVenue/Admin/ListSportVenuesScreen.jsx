@@ -27,7 +27,6 @@ export default ListSportVenuesScreen
 
 const styles = StyleSheet.create({
   container:{
-    paddingHorizontal:25,
     marginTop:12,
     paddingBottom:10,
     rowGap:16,

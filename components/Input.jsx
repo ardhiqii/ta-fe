@@ -17,13 +17,14 @@ const Input = ({
   label,
   isPassword,
   keyboardType = "default",
+  placeholder
 }) => {
   const [secure, setSecure] = useState(true);
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="height">
       <View>
-        <Text style={styles.label}>{label}</Text>
+        {label && <Text style={styles.label}>{label}</Text>}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.textInput}
@@ -32,6 +33,7 @@ const Input = ({
             secureTextEntry={isPassword && secure}
             onChangeText={onUpdateValue}
             value={value}
+            placeholder={placeholder}
           />
           {isPassword && (
             <Pressable onPress={() => setSecure(!secure)}>

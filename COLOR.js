@@ -3,13 +3,13 @@ export const COLOR = {
   base800: "#469299",
   base700: "#5ca3a7",
   base600: "#96bec8",
+  base500: "#edf8f2",
   second900: "#264653",
   second800: "#3c5964",
   second700: "#445a65",
   second300: "#90a4ae",
   accent1: "#d76456",
   accent2: "#d1ac00",
-  gold:'#fcdf47',
+  gold: "#fcdf47",
   border: "#93a3a9",
 };
-

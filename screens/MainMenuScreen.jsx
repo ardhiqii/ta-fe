@@ -2,7 +2,6 @@ import ButtonItemMenu from "@components/MainMenuContent/ButtonItemMenu";
 import ItemsMenu from "@components/MainMenuContent/ItemsMenu";
 import React from "react";
 import { Text, View } from "react-native";
-
 const MainMenuScreen = () => {
   return (
     <View>
