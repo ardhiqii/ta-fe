@@ -1,8 +1,8 @@
 import CustomTopNavigation from "@components/CustomTopNavigation";
 import Category from "@components/HomeContent/Category";
-import GroupContentLayout from "@components/HomeContent/GroupContentLayout";
+
 import Recommend from "@components/HomeContent/Recommend";
-import ModifyCategoryVenue from "@components/SportVenue/Manage/ModifyCategoryVenue";
+
 
 import React, { useContext } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";

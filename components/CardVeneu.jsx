@@ -1,13 +1,23 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import TagCategory from "./TagCategory";
+import { useNavigation } from "@react-navigation/native";
 
 const CardVeneu = ({ idVenue, name, location }) => {
+  const nav = useNavigation();
+  const NavigateToVenue = ( ) =>{
+    nav.navigate("SportVenueNavigation", {
+      screen: "EditManageSportVenueAdmin",
+      params: {
+        idVenue: "2454c84f-51a1-437a-a396-018f0bd5c3e3",
+      },
+    });
+  }
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={NavigateToVenue}>
       <View style={styles.imageContainer}>
         <Entypo name="cross" size={60} color={COLOR.second800} />
       </View>
@@ -39,7 +49,7 @@ const CardVeneu = ({ idVenue, name, location }) => {
           <TagCategory category={"badminton"}/>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

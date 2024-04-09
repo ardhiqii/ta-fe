@@ -16,11 +16,15 @@ const ALL_CATEGORY = [
   "tennis",
 ];
 
-const ModifyCategoryVenue = () => {
-  const [cat, setCat] = useState(["basket", "swimming"]);
+const ModifyCategoryVenue = ({visible, closeModal,setCategory,category}) => {
+  const [cat, setCat] = useState(category);
 
+  const doneHandler = ()=>{
+    setCategory(cat);
+    closeModal();
+  }
   return (
-    <CustomModal style={styles.outerModal}>
+    <CustomModal style={styles.outerModal} visible={visible} closeModal={closeModal} >
       <View style={styles.modalContainer}>
         <View style={styles.navContainer}>
           <Text style={{ fontFamily: LEXEND.SemiBold, fontSize: 18 }}>
@@ -70,10 +74,10 @@ const ModifyCategoryVenue = () => {
             columnGap: 10,
           }}
         >
-          <Pressable style={[styles.button, { backgroundColor: "#8bf98e" }]}>
+          <Pressable onPress={doneHandler} style={[styles.button, { backgroundColor: COLOR.base700 }]}>
             <Text style={styles.buttonText}>DONE</Text>
           </Pressable>
-          <Pressable style={[styles.button, { backgroundColor: "#f98b8b" }]}>
+          <Pressable onPress={closeModal} style={[styles.button, { backgroundColor: "#f98b8b" }]}>
             <Text style={styles.buttonText}>CANCEL</Text>
           </Pressable>
         </View>

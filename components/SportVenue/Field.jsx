@@ -108,7 +108,7 @@ const Field = ({ id, name, category, price, onChangeSelected }) => {
       {timesData && (
         <SwipeableContent
           data={timesData}
-          renderItem={({ item}) => {
+          renderItem={({ item }) => {
             return (
               <TimeDisplay
                 value={item}

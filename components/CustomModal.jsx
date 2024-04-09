@@ -8,16 +8,28 @@ import {
   View,
 } from "react-native";
 
-const CustomModal = ({ children, animationType, visible, closeModal,style, debugOuter }) => {
+const CustomModal = ({
+  children,
+  animationType,
+  visible,
+  closeModal,
+  style,
+  debugOuter,
+}) => {
   return (
     <>
       <OuterModal visible={visible} />
       <Modal transparent={true} animationType={animationType} visible={visible}>
         <Pressable
           onPress={closeModal}
-          style={[styles.outerContainer,debugOuter && {backgroundColor:'red'}]}
-        />
-        <View style={[styles.container,style]}>{children}</View>
+          style={[
+            styles.outerContainer,
+            style,
+            debugOuter && { backgroundColor: "red" },
+          ]}
+        >
+          <Pressable style={[styles.container]}>{children}</Pressable>
+        </Pressable>
       </Modal>
     </>
   );
@@ -26,14 +38,10 @@ const CustomModal = ({ children, animationType, visible, closeModal,style, debug
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    zIndex: -1,
-    position: "relative",
+    zIndex: 1,
   },
   container: {
-    position: "absolute",
-    width:'100%',
-    height:'100%',
-    zIndex: 1,
+    zIndex: 2,
   },
 });
 

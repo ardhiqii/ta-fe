@@ -17,7 +17,8 @@ const Input = ({
   label,
   isPassword,
   keyboardType = "default",
-  placeholder
+  placeholder,
+  multiline
 }) => {
   const [secure, setSecure] = useState(true);
 
@@ -25,7 +26,7 @@ const Input = ({
     <KeyboardAvoidingView style={styles.container} behavior="height">
       <View>
         {label && <Text style={styles.label}>{label}</Text>}
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, !multiline && {height:40}]}>
           <TextInput
             style={styles.textInput}
             keyboardType={keyboardType}
@@ -34,6 +35,7 @@ const Input = ({
             onChangeText={onUpdateValue}
             value={value}
             placeholder={placeholder}
+            multiline={multiline}
           />
           {isPassword && (
             <Pressable onPress={() => setSecure(!secure)}>
@@ -70,7 +72,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     borderColor: COLOR.border,
-    height: 40,
   },
   textInput: {
     width: "90%",

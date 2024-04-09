@@ -11,6 +11,7 @@ import MainMenu from "@screens/MainMenuScreen";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import SportVenueNavigation from "./SportVenueNavigation";
+import MapScreen from "@screens/MapScreen";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -30,7 +31,7 @@ const AuthNavigation = () => {
 
 const AuthenticatedNavigation = () => {
   return (
-    <Stack.Navigator screenOptions={{headerBackTitleVisible:false}} >
+    <Stack.Navigator screenOptions={{ headerBackTitleVisible: false }}>
       <Stack.Screen
         name="BottomTabNavigator"
         component={BottomTabNavigator}
@@ -46,19 +47,43 @@ const AuthenticatedNavigation = () => {
           headerStyle: {
             backgroundColor: COLOR.base900,
           },
-          headerTitleStyle:{
-            fontFamily:LEXEND.SemiBold,
-            fontSize:28,
-            color:"white"
+          headerTitleStyle: {
+            fontFamily: LEXEND.SemiBold,
+            fontSize: 28,
+            color: "white",
           },
-          headerTintColor:'white',
-          headerShadowVisible:false,
-          contentStyle:{
-            backgroundColor:'white'
-          }
+          headerTintColor: "white",
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: "white",
+          },
         }}
       />
-      <Stack.Screen name="SportVenueNavigation" component={SportVenueNavigation} options={{headerShown:false}}/>
+      <Stack.Screen
+        name="SportVenueNavigation"
+        component={SportVenueNavigation}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: COLOR.base900,
+          },
+          headerTitleStyle: {
+            fontFamily: LEXEND.SemiBold,
+            fontSize: 28,
+            color: "white",
+          },
+          headerTintColor: "white",
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: "white",
+          },
+        }}
+      />
     </Stack.Navigator>
   );
 };

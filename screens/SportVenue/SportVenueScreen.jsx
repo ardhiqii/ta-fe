@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
-import { Entypo } from "@expo/vector-icons";
-import { COLOR } from "COLOR";
-import HeadContent from "@components/SportVenue/Manage/HeadContent";
-import HighlightContent from "@components/SportVenue/Manage/HighlightContent";
-import InformationContent from "@components/SportVenue/Manage/InformationContent";
-import ScheduleContent from "@components/SportVenue/Manage/ScheduleContent";
-import Field from "@components/SportVenue/Manage/Field";
-import ListFieldsContent from "@components/SportVenue/Manage/ListFieldsContent";
+import { Feather } from "@expo/vector-icons";
+import HeadContent from "@components/SportVenue/HeadContent";
+import HighlightContent from "@components/SportVenue/HighlightContent";
+import InformationContent from "@components/SportVenue/InformationContent";
+import ScheduleContent from "@components/SportVenue/ScheduleContent";
+import ListFieldsContent from "@components/SportVenue/ListFieldsContent";
+import { useNavigation } from "@react-navigation/native";
 
 const token =
   "6DPsC-4Y57Lx3i9,P99Np5DlxC91kwB*NT1HX1:/(R5J33VtzHbVSY9n3f:P,NIUM245RiYvlcS0Jnh5X:Tnlz)8nwv:;+p02AXky9Y415*0*IS.Z9uc2L6izx?6<KxB";
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const route = useRoute();
   const { idVenue } = route.params;
+  const nav = useNavigation()
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +37,13 @@ const SportVenueScreen = () => {
     };
     // fetchData();
   }, []);
+
+
+  const NavigateToEdit = () =>{
+    nav.navigate("EditManageSportVenueAdmin")
+  }
+
+
   if (loading)
     return (
       <View>
@@ -43,8 +59,11 @@ const SportVenueScreen = () => {
           }}
           style={styles.image}
         />
+        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
+          <Feather name="edit" size={24} color={"white"} />
+        </Pressable>
       </View>
-      <HeadContent />
+      <HeadContent edit={editMode}/>
       <BorderLine />
       <HighlightContent />
       <BorderLine />
@@ -82,6 +101,19 @@ const styles = StyleSheet.create({
     height: "100%",
     objectFit: "cover",
   },
+  editContainer: {
+    position: "absolute",
+    backgroundColor: "#c8c8c8b6",
+    top: 10,
+    right: 15,
+    width: 40,
+    height:40,
+    borderRadius:30,
+    borderWidth:1,
+    alignItems:'center',
+    justifyContent:'center',
+    
+  },
 });
 
 const BorderLine = ({ customStyle }) => {
@@ -97,3 +129,5 @@ const BorderLine = ({ customStyle }) => {
     />
   );
 };
+
+

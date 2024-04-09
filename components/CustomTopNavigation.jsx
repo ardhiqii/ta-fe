@@ -1,12 +1,67 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
+import { Location } from "util/location";
+import {
+  getCurrentPositionAsync,
+  PermissionStatus,
+  useForegroundPermissions,
+} from "expo-location";
 
 const CustomTopNavigation = () => {
+  const [address, setAddress] = useState("");
+  const [locationPermissionInfomation, requestPermission] =
+    useForegroundPermissions();
+
+  const verifyPermissions = async () => {
+    if (locationPermissionInfomation.status === PermissionStatus.UNDETERMINED) {
+      const permissionResponse = await requestPermission();
+      return permissionResponse.granted;
+    }
+
+    if (locationPermissionInfomation.status === PermissionStatus.DENIED) {
+      Alert.alert(
+        "Insufficinet Permissions!",
+        "You need to grant location permissions to use this app."
+      );
+      return false;
+    }
+
+    return true;
+  };
+  const getCurrentAddress = async () => {
+    try {
+      setAddress("Getting your address...");
+      const hasPermission = await verifyPermissions();
+      if (!hasPermission){
+        setAddress("Permission Error!")
+        return
+      }
+
+      const location = await getCurrentPositionAsync();
+      const lat = location.coords.latitude;
+      const lng = location.coords.longitude;
+      const address = await Location.getAddress(lat, lng);
+      setAddress(address);
+
+      // console.log(location);
+      // console.log(address);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  
   const nav = useNavigation();
+  useEffect(() => {
+    locationPermissionInfomation;
+    const initLocation = async () => {
+      await getCurrentAddress();
+    };
+    initLocation();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
@@ -21,17 +76,22 @@ const CustomTopNavigation = () => {
           </Pressable>
         </View>
       </View>
-      <View style={styles.locContainer}>
+      <Pressable onPress={getCurrentAddress} style={styles.locContainer}>
         <Ionicons name="location-outline" size={18} color={"white"} />
+
         <Text
           style={[styles.text, { color: "white", fontFamily: LEXEND.Bold }]}
         >
           Your Location:{" "}
-          <Text style={[styles.text, { color: "white" }]}>
-            Hunian Kost Sangkuriang, Jalan Cisitu...
-          </Text>
         </Text>
-      </View>
+        <Text
+          style={[styles.text, { color: "white" }]}
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {address}
+        </Text>
+      </Pressable>
     </View>
   );
 };
@@ -75,5 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     columnGap: 3,
+    overflow: "hidden",
   },
 });
