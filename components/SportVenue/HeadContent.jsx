@@ -4,15 +4,20 @@ import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Currency } from "util/currency";
 
-import EditHeadContent from "./EditMode/EditHeadContent";
-const HeadContent = () => {
+
+const HeadContent = ({name,category,price_per_hour}) => {
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.text}>Lapangan Futsal Merdeka</Text>
+        <Text style={styles.text}>{name}</Text>
         <View style={{ flexDirection: "row" }}>
-          <TagCategory category={"basket"} />
+          <TagCategory category={category} />
+        </View>
+        <View>
+          <Text style={{fontFamily:LEXEND.SemiBold,fontSize:12,color:COLOR.second700}}>
+            Rp.{Currency.format(price_per_hour)}/hour</Text>
         </View>
       </View>
     </>

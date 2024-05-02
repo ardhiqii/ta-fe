@@ -1,34 +1,78 @@
-import Card from '@components/SportVenue/Card'
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import Card from "@components/SportVenue/Card";
+import React, { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { COLOR } from "COLOR";
+import { useNavigation } from "@react-navigation/native";
+import { Admin } from "util/admin/admin";
+import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
+import { LEXEND } from "@fonts/LEXEND";
 
-
-const DATA = [
-  {id:"2454c84f-51a1-437a-a396-018f0bd5c3e3"}
-]
 
 const ListSportVenuesScreen = () => {
+  const [venuesData, setVenuesData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const nav = useNavigation();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data } = await Admin.SportVenue.getAllVenue(TOKEN_TEMPORARY);
+      if(data){
+        setVenuesData(data);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
+  const NavigateAddHandler = () => {
+    nav.navigate("EditManageSportVenueAdmin", { type: "AddNewVenue" });
+  };
+
+  if (loading)
+    return (
+      <View>
+        <Text>LOADING</Text>
+      </View>
+    );
   return (
-    <View style={styles.container}>
-      <Card/>
-      <View style={{height:2,backgroundColor:"#cfd8dc"}}/>
-      <Card/>
-      <View style={{height:2,backgroundColor:"#cfd8dc"}}/>
-      <Card/>
-      <View style={{height:2,backgroundColor:"#cfd8dc"}}/>
-      <Card/>
-      <View style={{height:2,backgroundColor:"#cfd8dc"}}/>
+    <>
+    {
+      venuesData.length === 0 && <View style={{top:40}}>
+        <Text style={{fontFamily:LEXEND.SemiBold,fontSize:14,textAlign:'center',color:COLOR.border}}>There is not any registered venue</Text>
+      </View>
+    }
+      <View style={styles.container}>
+        {venuesData.map((venue, i) => (
+          <View key={i} style={{rowGap:16,}}>
+            <Card {...venue} />
+            <View style={{ height: 2, backgroundColor: "#cfd8dc" }} />
+          </View>
+        ))}
+      </View>
+      <Pressable style={styles.addContainer} onPress={NavigateAddHandler}>
+        <Ionicons name="add" size={35} color={COLOR.gold} />
+      </Pressable>
+    </>
+  );
+};
 
-    </View>
-  )
-}
-
-export default ListSportVenuesScreen
+export default ListSportVenuesScreen;
 
 const styles = StyleSheet.create({
-  container:{
-    marginTop:12,
-    paddingBottom:10,
-    rowGap:16,
-  }
-})
+  container: {
+    marginTop: 12,
+    paddingBottom: 10,
+    rowGap: 16,
+  },
+  addContainer: {
+    position: "absolute",
+    bottom: 50,
+    right: 30,
+    borderRadius: 100,
+    backgroundColor: COLOR.base900,
+    padding: 5,
+  },
+});

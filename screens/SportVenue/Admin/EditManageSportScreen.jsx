@@ -3,16 +3,100 @@ import EditInformationContent from "@components/SportVenue/EditMode/EditInformat
 import InformationContent from "@components/SportVenue/InformationContent";
 import ListFieldsContent from "@components/SportVenue/ListFieldsContent";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import HighlightContent from "@components/SportVenue/HighlightContent";
 import ScheduleContent from "@components/SportVenue/ScheduleContent";
+import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import LoadingOverlay from "@components/LoadingOverlay";
+import { Admin } from "util/admin/admin";
+import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
+
+const TYPEMANAGE = {
+  Add: "AddNewVenue",
+  Edit: "EditVenue"
+};
 
 const EditManageSportScreen = () => {
-  const [newData, setNewData] = useState({});
-  useEffect(() => {
+  const route = useRoute();
+  const nav = useNavigation();
+  const idVenue = route?.params?.idVenue;
+  const dataVenue = route?.params?.dataVenue;
+  const type = route?.params?.type;
+  const [newData, setNewData] = useState({
+    id: idVenue ? idVenue : null,
+    Sport_Kind_id: null,
+    name: null,
+    geo_coordinate: null,
+    is_bike_parking: false,
+    is_car_parking: false,
+    is_public: false,
+    description: null,
+    rules: null,
+    time_open: null,
+    time_closed: null,
+    price_per_hour: null,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const headData = {
+    name: dataVenue?.name,
+    category: dataVenue?.Sport_Kind_Name?.toLowerCase(),
+    price_per_hour: dataVenue?.price_per_hour,
+  };
+
+  const infoData = {
+    description: dataVenue?.description,
+    geo_coordinate: dataVenue?.geo_coordinate,
+    is_bike_parking: dataVenue?.is_bike_parking,
+    is_car_parking: dataVenue?.is_car_parking,
+    is_public: dataVenue?.is_public,
+    rules: dataVenue?.rules,
+    price_per_hour: dataVenue?.price_per_hour,
+    time_open: dataVenue?.time_open,
+    time_closed: dataVenue?.time_closed
+  };
+
+
+  const alertConfirmation = () => {
+    const alertMessage = `Are you sure want to ${type == TYPEMANAGE.Add ? "add venue" : "save"}?`
+    Alert.alert("Confirmation", alertMessage, [
+      {
+        text: "Ok",
+        onPress: saveHandler,
+      },
+      {
+        text: "cancel",
+      },
+    ]);
+  };
+  const saveHandler = async () => {
+    setLoading(true);
     console.log(newData);
-  }, [newData]);
+ 
+    if (type === TYPEMANAGE.Add) {
+      console.log("ADDING");
+      console.log(newData);
+      const data = await Admin.SportVenue.addVenue(TOKEN_TEMPORARY, newData);
+      console.log(data);
+
+    } else {
+      const data = await Admin.SportVenue.editVenue(TOKEN_TEMPORARY, newData);
+      console.log(data);
+    }
+
+    setLoading(false);
+    nav.goBack();
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -23,15 +107,35 @@ const EditManageSportScreen = () => {
           }}
           style={styles.image}
         />
-        <Pressable style={styles.editContainer}>
-          <Feather name="edit" size={24} color={"white"} />
+      </View>
+      <View style={styles.editContainer}>
+        <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
+          <Feather name="save" size={24} color={"black"} />
+          <Text style={{ fontFamily: LEXEND.Regular }}>{type ? type : "Save"}</Text>
+        </Pressable>
+        <Pressable style={{ alignItems: "center" }}>
+          <Feather
+            name="x"
+            size={24}
+            color={"black"}
+            onPress={() => nav.goBack()}
+          />
+          <Text style={{ fontFamily: LEXEND.Regular }}>Cancel</Text>
         </Pressable>
       </View>
-      <EditHeadContent name={newData.name} category={newData.category} setNewData={setNewData} />
+      <EditHeadContent
+        name={newData.name}
+        setNewData={setNewData}
+        oldData={headData}
+      />
       {/* <BorderLine />
       <HighlightContent />
       <BorderLine /> */}
-      <EditInformationContent {...newData} setNewData={setNewData}/>
+      <EditInformationContent
+        {...newData}
+        setNewData={setNewData}
+        oldData={infoData}
+      />
       {/* <BorderLine />
       <ScheduleContent />
       <BorderLine
@@ -42,6 +146,7 @@ const EditManageSportScreen = () => {
         }}
       />
       <ListFieldsContent /> */}
+      {loading && <LoadingOverlay />}
     </ScrollView>
   );
 };
@@ -66,16 +171,12 @@ const styles = StyleSheet.create({
     objectFit: "cover",
   },
   editContainer: {
-    position: "absolute",
-    backgroundColor: "#c8c8c8b6",
-    top: 10,
-    right: 15,
-    width: 40,
-    height: 40,
+    flexDirection: "row",
+    columnGap: 10,
     borderRadius: 30,
-    borderWidth: 1,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-end",
+    paddingHorizontal: 25,
   },
 });
 

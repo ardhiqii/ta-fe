@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const colors = {
-  football: {
+  futsal: {
     primary800: "#37474f",
     primary100: "#cfd8dc",
   },

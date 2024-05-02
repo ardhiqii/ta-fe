@@ -10,7 +10,7 @@ import { CategoryIcons } from "assets/category/CATEGORY_ICON";
 const CATEGORY_DATA = [
   {
     id: "1",
-    name: "FootBall",
+    name: "Futsal",
     icon: <CategoryIcons.futsal/>
   },
   {

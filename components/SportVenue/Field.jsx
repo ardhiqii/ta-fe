@@ -1,9 +1,12 @@
 import SwipeableContent from "@components/HomeContent/SwipeableContent";
 import TagCategory from "@components/TagCategory";
 import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation } from "@react-navigation/native";
 import { COLOR } from "COLOR";
+import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Admin } from "util/admin/admin";
 
 const TimeDisplay = ({ value, selectedTimes, setSeletectedTimes }) => {
   const selected = selectedTimes?.includes(value);
@@ -47,9 +50,20 @@ const timeStyles = StyleSheet.create({
   },
 });
 
-const Field = ({ id, name, category, price, onChangeSelected }) => {
+const Field = ({
+  id,
+  number,
+  category,
+  price,
+  Sport_Field_id: idVenue,
+  time_open,
+  time_closed = 21,
+  onChangeSelected,
+  updateDataFromResponse
+}) => {
   const [timesData, setTimesData] = useState([]);
   const [selectedTimes, setSeletectedTimes] = useState([]);
+  const nav = useNavigation()
 
   useEffect(() => {
     const generateTimes = (startHour, endHour, intervalInMinutes) => {
@@ -81,18 +95,74 @@ const Field = ({ id, name, category, price, onChangeSelected }) => {
       }
       setTimesData(times);
     };
-    generateTimes(8, 12, 60);
+    const sh = time_open.split(":")[0];
+    const eh = time_closed.split(":")[0];
+    generateTimes(sh, eh, 60);
   }, []);
 
   useEffect(() => {
+    // console.log(selectedTimes);
     onChangeSelected(id, selectedTimes);
   }, [selectedTimes]);
+
+  const alertDeleteFieldId = () => {
+    Alert.alert("Confirmation", "Are you sure want to delete this field?", [
+      {
+        text: "Ok",
+        onPress: deleteFieldIdHandler,
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
+
+  const deleteFieldIdHandler = async () => {
+    const token =
+      "fOf042XZqrW*MPcz4/0yBa9jce9ySHlHSn.Fa8++HS+kBFDMbEViaEl2doRd-Wb=+5fVp3EEmA1G/Cr/5T4)5u4k614aBM1DW1e6m0MTDaw1hl<N)MZm82o-V0tYU17s";
+
+    try {
+      const { data } = await Admin.SportVenue.deleteFieldById(
+        TOKEN_TEMPORARY,
+        idVenue,
+        id
+      );
+      console.log("DELETE FIELD HANDLER DATA", data);
+      if(data){
+        updateDataFromResponse(data)
+      }
+    } catch (e) {
+      console.log("Error occured in deleteFieldIdHandler, in Field", e);
+    }
+  };
+
+  const navigateToBlacklist = () =>{
+    nav.navigate("ManageBlacklistSchedule",{
+      idVenue: idVenue,
+      idField: id,
+      number:number
+    })
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <View style={{ flexDirection: "row", columnGap: 6 }}>
-          <Text style={styles.text}>{name}</Text>
-          <TagCategory category={category} />
+        <View
+          style={{
+            flexDirection: "row",
+            columnGap: 6,
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <View style={{ flexDirection: "row", columnGap: 6 }}>
+            <Text style={styles.text}>Field {number}</Text>
+            <TagCategory category={category} />
+          </View>
+          <View style={{ flexDirection: "row", columnGap: 12 }}>
+            <Text onPress={navigateToBlacklist}>Schedule</Text>
+            <Text onPress={alertDeleteFieldId}>Delete</Text>
+          </View>
         </View>
         <View>
           <Text

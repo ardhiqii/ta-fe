@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
@@ -10,11 +10,13 @@ import {
   PermissionStatus,
   useForegroundPermissions,
 } from "expo-location";
+import { UserContext } from "store/user-contex";
 
 const CustomTopNavigation = () => {
   const [address, setAddress] = useState("");
   const [locationPermissionInfomation, requestPermission] =
     useForegroundPermissions();
+  const {updateCoordinate,user} = useContext(UserContext)
 
   const verifyPermissions = async () => {
     if (locationPermissionInfomation.status === PermissionStatus.UNDETERMINED) {
@@ -45,6 +47,7 @@ const CustomTopNavigation = () => {
       const lat = location.coords.latitude;
       const lng = location.coords.longitude;
       const address = await Location.getAddress(lat, lng);
+      updateCoordinate(`${lat}, ${lng}`)
       setAddress(address);
 
       // console.log(location);

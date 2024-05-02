@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -9,40 +10,114 @@ import {
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import HeadContent from "@components/SportVenue/HeadContent";
-import HighlightContent from "@components/SportVenue/HighlightContent";
 import InformationContent from "@components/SportVenue/InformationContent";
-import ScheduleContent from "@components/SportVenue/ScheduleContent";
-import ListFieldsContent from "@components/SportVenue/ListFieldsContent";
 import { useNavigation } from "@react-navigation/native";
+import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
+import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
+import { Player } from "util/player/player";
+import { UserContext } from "store/user-contex";
+import ReservationContent from "@components/SportVenue/ReservationContent";
+import { LEXEND } from "@fonts/LEXEND";
 
-const token =
-  "6DPsC-4Y57Lx3i9,P99Np5DlxC91kwB*NT1HX1:/(R5J33VtzHbVSY9n3f:P,NIUM245RiYvlcS0Jnh5X:Tnlz)8nwv:;+p02AXky9Y415*0*IS.Z9uc2L6izx?6<KxB";
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
-  const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [fieldsData, setFieldsData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const route = useRoute();
   const { idVenue } = route.params;
-  const nav = useNavigation()
+  const editMode = route?.params?.editMode;
+  const nav = useNavigation();
+  const { user } = useContext(UserContext);
 
+  const fetchVenueData = async () => {
+    try {
+      let response;
+      if (TEMPORARY_ROLE == "admin") {
+        console.log("GETTING DATA AS ADMIN");
+        const { data } = await Admin.SportVenue.getById(
+          TOKEN_TEMPORARY,
+          idVenue
+        );
+        response = data;
+      } else {
+        console.log("GETTING DATA AS PLAYER");
+        const { data } = await Player.SportVenue.getById(
+          TOKEN_TEMPORARY,
+          idVenue,
+          user.coordinate
+        );
+        response = data;
+      }
+      return response;
+    } catch (e) {
+      console.log("Error Occured in fetch venue data, Sport Venue Screen");
+      console.log(e);
+      return null;
+    }
+  };
 
+  const fetchFieldsData = async () => {
+    try {
+      const { data } = await Admin.SportVenue.getAllFields(
+        TOKEN_TEMPORARY,
+        idVenue
+      );
+      const sorted = data.sort((a, b) => a.number - b.number);
+      return sorted;
+    } catch (e) {
+      console.log("Error Occured in fetch fields data, Sport Venue Screen");
+      console.log(e);
+      return null;
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
+    const initData = async () => {
       setLoading(true);
-      const { data } = await Admin.SportVenue.getById(token, idVenue);
-      // console.log(data);
+      const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
+      setVenueData(vd);
+      setFieldsData(fd);
       setLoading(false);
     };
-    // fetchData();
+    initData();
   }, []);
 
+  const NavigateToEdit = () => {
+    nav.navigate("EditManageSportVenueAdmin", {
+      idVenue: idVenue,
+      dataVenue: venueData,
+      type: "EditVenue",
+    });
+  };
 
-  const NavigateToEdit = () =>{
-    nav.navigate("EditManageSportVenueAdmin")
-  }
+  const NavigateToSchedule = () => {
+    nav.navigate("ManageScheduleVenue");
+  };
 
+  const deleteHandler = async () => {
+    try {
+      const response = await Admin.SportVenue.deleteVenue(
+        TOKEN_TEMPORARY,
+        idVenue
+      );
+    } catch (e) {
+      console.log("Error occured in deleteHandler, SportVenueScreen");
+      console.log(e);
+    }
+  };
+
+  const alertDeleteConfirmation = () => {
+    Alert.alert("Confirmation", "Are you sure want to delete this venue?", [
+      {
+        text: "Yes",
+        onPress: deleteHandler,
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
 
   if (loading)
     return (
@@ -50,6 +125,42 @@ const SportVenueScreen = () => {
         <Text>LOADING</Text>
       </View>
     );
+
+  const headData = {
+    name: venueData?.name,
+    category: venueData?.Sport_Kind_Name.toLowerCase(),
+    price_per_hour: venueData?.price_per_hour,
+  };
+
+  const infoData = {
+    description: venueData?.description,
+    geo_coordinate: venueData?.geo_coordinate,
+    is_bike_parking: venueData?.is_bike_parking,
+    is_car_parking: venueData?.is_car_parking,
+    is_public: venueData?.is_public,
+    rules: venueData?.rules,
+  };
+
+  const reservastionData = {
+    fieldsData: fieldsData,
+    category: venueData?.Sport_Kind_Name.toLowerCase(),
+    time_open: venueData?.time_open,
+    time_closed: venueData?.time_closed,
+  };
+
+  const listButtons = [
+    {
+      name: "Edit",
+      onPress: NavigateToEdit,
+      icon: <Feather name="edit" size={24} color={"black"} />,
+    },
+    {
+      name: "Delete",
+      onPress: alertDeleteConfirmation,
+      icon: <Feather name="trash-2" size={24} color={"red"} />,
+    },
+  ];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.imageContainer}>
@@ -59,17 +170,22 @@ const SportVenueScreen = () => {
           }}
           style={styles.image}
         />
-        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
-          <Feather name="edit" size={24} color={"white"} />
-        </Pressable>
       </View>
-      <HeadContent edit={editMode}/>
-      <BorderLine />
+      {editMode && (
+        <>
+          <ManageVenueButtons listButtons={listButtons} />
+          <BorderLine />
+        </>
+      )}
+      <HeadContent {...headData} />
+      {/* <BorderLine />
       <HighlightContent />
+      <BorderLine /> */}
       <BorderLine />
-      <InformationContent />
+      <InformationContent {...infoData} />
       <BorderLine />
-      <ScheduleContent />
+      <ReservationContent {...reservastionData} />
+      {/* <ScheduleContent />
       <BorderLine
         customStyle={{
           borderBottomWidth: 2,
@@ -77,7 +193,7 @@ const SportVenueScreen = () => {
           paddingTop: 2,
         }}
       />
-      <ListFieldsContent />
+      <ListFieldsContent data={fieldsData} category={venueData?.Sport_Kind_Name.toLowerCase()} time_open={venueData?.time_open} time_closed={venueData?.time_closed}/> */}
     </ScrollView>
   );
 };
@@ -101,19 +217,6 @@ const styles = StyleSheet.create({
     height: "100%",
     objectFit: "cover",
   },
-  editContainer: {
-    position: "absolute",
-    backgroundColor: "#c8c8c8b6",
-    top: 10,
-    right: 15,
-    width: 40,
-    height:40,
-    borderRadius:30,
-    borderWidth:1,
-    alignItems:'center',
-    justifyContent:'center',
-    
-  },
 });
 
 const BorderLine = ({ customStyle }) => {
@@ -130,4 +233,56 @@ const BorderLine = ({ customStyle }) => {
   );
 };
 
+const ManageVenueButtons = ({ listButtons }) => {
+  return (
+    <View style={manageStyles.container}>
+      {listButtons.map((item) => (
+        <View key={item.name} style={{ alignItems: "center" }}>
+          <Pressable onPress={item.onPress} style={manageStyles.iconContainer}>
+            {item.icon}
+          </Pressable>
+          <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
+            {item.name}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+};
 
+const manageStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 24,
+    flexDirection: "row",
+    columnGap: 14,
+  },
+  iconContainer: {},
+});
+
+{
+  /* <View style={styles.editModeContainer}>
+      <View style={{ alignItems: "center" }}>
+        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
+          <Feather name="edit" size={24} color={"white"} />
+        </Pressable>
+        <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
+          Edit Venue
+        </Text>
+      </View>
+      <View style={{ alignItems: "center" }}>
+        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
+          <Feather name="edit" size={24} color={"white"} />
+        </Pressable>
+        <Text>Blacklist Schedule</Text>
+      </View>
+      <View style={{ alignItems: "center" }}>
+        <Pressable
+          onPress={alertDeleteConfirmation}
+          style={[styles.editContainer, { backgroundColor: "#fb5f5fb6" }]}
+        >
+          <Feather name="trash-2" size={24} color={"white"} />
+        </Pressable>
+        <Text>Delete</Text>
+      </View>
+    </View> */
+}

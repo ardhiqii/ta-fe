@@ -7,7 +7,8 @@ const MapScreen = () => {
   const [selectedLocation, setSelectedLocation] = useState();
   const nav = useNavigation();
   const route = useRoute();
-  const idVenue = route.params?.idVenue
+  const type = route.params?.type
+  console.log(type);
   const region = {
     latitude: -6.882773,
     longitude: 107.612015,
@@ -36,7 +37,7 @@ const MapScreen = () => {
       params: {
         pickedLat: selectedLocation.lat,
         pickedLng: selectedLocation.lng,
-        idVenue: idVenue
+        type: type
       },
     });
   }, [nav, selectedLocation]);

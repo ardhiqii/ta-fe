@@ -7,14 +7,16 @@ import { LEXEND } from "@fonts/LEXEND";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
+import { Currency } from "util/currency";
 
-const Card = () => {
+const Card = ({id,name,price_per_hour,Sport_Kind_Name,is_public}) => {
   const nav = useNavigation();
   const navigateHandler = async () => {
     nav.navigate("SportVenueNavigation", {
       screen: "ManageSportVenueAdmin",
       params: {
-        idVenue: "2454c84f-51a1-437a-a396-018f0bd5c3e3",
+        idVenue: id,
+        editMode:true,
       },
     });
   };
@@ -32,21 +34,21 @@ const Card = () => {
           </View>
           <View style={styles.infoContainer}>
             <View>
-              <Text style={[styles.text]}>GOR Bulutangkis Merdeka</Text>
+              <Text style={[styles.text]}>{name}</Text>
               <Text
                 style={[
                   styles.text,
                   { fontFamily: LEXEND.SemiBold, color: COLOR.base900 },
                 ]}
               >
-                Rp 50.000 - 65.000
+                Rp.{Currency.format(price_per_hour)}
               </Text>
             </View>
             <View>
               <Text style={[styles.text, { color: COLOR.border }]}>1.7 km</Text>
             </View>
             <View style={{ flexDirection: "row" }}>
-              <TagCategory category={"basket"} />
+              <TagCategory category={Sport_Kind_Name.toLowerCase()} />
             </View>
           </View>
         </View>

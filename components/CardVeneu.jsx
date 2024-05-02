@@ -8,14 +8,14 @@ import { useNavigation } from "@react-navigation/native";
 
 const CardVeneu = ({ idVenue, name, location }) => {
   const nav = useNavigation();
-  const NavigateToVenue = ( ) =>{
+  const NavigateToVenue = () => {
     nav.navigate("SportVenueNavigation", {
-      screen: "EditManageSportVenueAdmin",
+      screen: "SportVenueScreen",
       params: {
-        idVenue: "2454c84f-51a1-437a-a396-018f0bd5c3e3",
+        idVenue: "d28aa20b-d982-4b53-b56d-7307a4410339",
       },
     });
-  }
+  };
   return (
     <Pressable style={styles.container} onPress={NavigateToVenue}>
       <View style={styles.imageContainer}>
@@ -44,9 +44,9 @@ const CardVeneu = ({ idVenue, name, location }) => {
         </View>
 
         <View style={styles.tagsContainer}>
-          <TagCategory category={"football"}/>
-          <TagCategory category={"volley"}/>
-          <TagCategory category={"badminton"}/>
+          <TagCategory category={"futsal"} />
+          <TagCategory category={"volley"} />
+          <TagCategory category={"badminton"} />
         </View>
       </View>
     </Pressable>
@@ -83,6 +83,6 @@ const styles = StyleSheet.create({
   tagsContainer: {
     flexDirection: "row",
     gap: 3,
-    flexWrap:"wrap",
+    flexWrap: "wrap",
   },
 });

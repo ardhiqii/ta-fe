@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import ModifyCategoryVenue from "../ModifyCategoryVenue";
 import Input from "@components/Input";
@@ -6,43 +6,81 @@ import TagCategory from "@components/TagCategory";
 import { Ionicons } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
+import { CATEGORY_ID } from "constant/CATEGORY_ID";
 
-const EditHeadContent = ({ name, category = [], setNewData }) => {
+const EditHeadContent = ({ name, setNewData, oldData }) => {
   const [showModal, setShowModal] = useState(false);
+  const [currCategory, setCurrentCategory] = useState(oldData?.category);
+
+  // useEffect(() => {
+  //   console.log(currCategory);
+  //   console.log(CATEGORY_ID[currCategory]);
+  // }, [currCategory]);
   const updateInputHandler = (inputIdentifier, value) => {
     setNewData((prev) => {
       return { ...prev, [inputIdentifier]: value };
     });
   };
+  const updateCategory = (value) => {
+    updateInputHandler("category", value);
+    updateInputHandler("Sport_Kind_id", CATEGORY_ID[value])
+    setCurrentCategory(value);
+  };
   return (
     <View style={styles.container}>
       <View>
         <Input
-          placeholder={"Your Name Venue"}
+          placeholder={oldData.name ? oldData.name : "Your Name Venue"}
           value={name}
           onUpdateValue={updateInputHandler.bind(this, "name")}
         />
       </View>
       <View style={styles.categoryContainer}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          {category.length ===0 && <View>
-            <Text style={{fontFamily:LEXEND.Regular,fontSize:12,color:COLOR.second300}}>Add your category</Text>
-            </View>}
-          {category?.map((cat, i) => (
-            <View key={i}>
-              <TagCategory category={cat} />
+          {!!!currCategory && (
+            <View>
+              <Text
+                style={{
+                  fontFamily: LEXEND.Regular,
+                  fontSize: 12,
+                  color: COLOR.second300,
+                }}
+              >
+                Add your category
+              </Text>
             </View>
-          ))}
+          )}
+
+          {!!currCategory && <TagCategory category={currCategory} />}
         </View>
         <View>
-          <Pressable onPress={() => setShowModal(true)}>
-            <Ionicons name="add-circle-outline" size={24} />
+          <Pressable
+            style={{
+              borderWidth: 2,
+              borderRadius: 5,
+              width: 70,
+              paddingVertical: 3,
+              justifyContent: "center",
+              alignItems: "center",
+              borderColor: COLOR.base900,
+            }}
+            onPress={() => setShowModal(true)}
+          >
+            <Text
+              style={{
+                fontFamily: LEXEND.Light,
+                fontSize: 12,
+                color: COLOR.base900,
+              }}
+            >
+              {!!currCategory ? "Change" : "Add"}
+            </Text>
           </Pressable>
         </View>
       </View>
       <ModifyCategoryVenue
-        category={category}
-        setCategory={updateInputHandler.bind(this, "category")}
+        category={currCategory}
+        setCategory={updateCategory}
         visible={showModal}
         closeModal={() => setShowModal(false)}
       />

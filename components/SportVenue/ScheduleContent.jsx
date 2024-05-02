@@ -13,7 +13,7 @@ const BoxDate = ({ item, selected, onSelect }) => {
         BoxStyles.container,
         isSelected && BoxStyles.pressedContainer,
       ]}
-      onPress={()=>onSelect(id)}
+      onPress={() => onSelect(id)}
     >
       {({ pressed }) => {
         return (
@@ -60,13 +60,30 @@ const BoxStyles = StyleSheet.create({
   },
 });
 
-const ScheduleContent = () => {
+const ScheduleContent = ({ setDate,order }) => {
   const [dateData, setDateData] = useState([]);
   const [selected, setSelected] = useState();
+
+  const formattedYearMonthDate = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const id = `${year}-${month < 10 ? "0" + month : month}-${
+      day < 10 ? "0" + day : day
+    }`;
+    return id
+  };
+
+  const selectedDateHandler = (formattedId) =>{
+    setSelected(formattedId)
+    setDate(formattedId)
+  }
+
   useEffect(() => {
     const initDates = () => {
       const today = new Date();
-      setSelected(today.toISOString());
+      const formatted = formattedYearMonthDate(today)
+      selectedDateHandler(formatted)
       const futureDate = new Date();
       futureDate.setDate(today.getDate() + 20);
       const dates = [];
@@ -74,7 +91,7 @@ const ScheduleContent = () => {
 
       while (currDate <= futureDate) {
         const formattedDate = {
-          id: currDate.toISOString(),
+          id: formattedYearMonthDate(currDate),
           day: currDate.getDate(),
           month: currDate.toLocaleString("default", { month: "short" }),
           dayOfWeek: currDate.toLocaleString("default", { weekday: "short" }),
@@ -87,6 +104,7 @@ const ScheduleContent = () => {
 
     initDates();
   }, []);
+
   if (!dateData)
     return (
       <View>
@@ -97,7 +115,7 @@ const ScheduleContent = () => {
     <SwipeableContent
       data={dateData}
       renderItem={({ item }) => (
-        <BoxDate item={item} selected={selected} onSelect={setSelected} />
+        <BoxDate item={item} selected={selected} onSelect={selectedDateHandler} />
       )}
     />
   );

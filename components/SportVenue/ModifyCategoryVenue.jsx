@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 
 const ALL_CATEGORY = [
-  "football",
+  "futsal",
   "basket",
   "badminton",
   "volley",
@@ -41,18 +41,16 @@ const ModifyCategoryVenue = ({visible, closeModal,setCategory,category}) => {
               flexWrap: "wrap",
             }}
           >
-            {cat.map((item, i) => (
-              <TagCategory
-                category={item}
-                key={i}
+
+            { !!category &&<TagCategory
+                category={cat}
                 customText={{ fontSize: 14, fontFamily: LEXEND.Regular }}
-              />
-            ))}
+              />}
           </View>
           <BorderLine />
           <View style={{ rowGap: 12, paddingVertical: 10 }}>
             {ALL_CATEGORY.map((item, i) => {
-              const selected = cat.includes(item);
+              const selected = cat === item;
               return (
                 <SelectLabel
                   key={i}
@@ -121,11 +119,7 @@ const styles = StyleSheet.create({
 
 const SelectLabel = ({ value, selected, onChange, cat }) => {
   const changeHandler = () => {
-    if (selected) {
-      onChange(cat.filter((item) => item != value));
-    } else {
-      onChange((prev) => [...prev, value]);
-    }
+    onChange(value)
   };
 
   const name = value.charAt(0).toUpperCase() + value.slice(1);

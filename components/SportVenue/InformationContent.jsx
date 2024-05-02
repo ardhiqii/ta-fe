@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -7,29 +7,42 @@ import {
   Text,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import CustomModal from "@components/CustomModal";
 import Input from "@components/Input";
 import EditInformationContent from "./EditMode/EditInformationContent";
+import { Location } from "util/location";
+import { Currency } from "util/currency";
 
-
-const InformationContent = () => {
+const InformationContent = ({
+  description,
+  geo_coordinate,
+  is_bike_parking,
+  is_car_parking,
+  is_public,
+  rules,
+  price_per_hour,
+}) => {
   const [modal, setModal] = useState(false);
+  const [address, setAddress] = useState("Getting Address... [gettingAddress function still in comment]");
+  useEffect(() => {
+    const gettingAddress = async () => {
+      const coor = geo_coordinate.split(",");
+      const adrs = await Location.getAddress(coor[0], coor[1]);
+      setAddress(adrs);
+    };
+    // gettingAddress();
+  }, []);
   const INFO_BUTTON = [
     {
-      value: `Jl. Cisitu Lama Gg. 1 No.1, RT.006/RW.11, Dago, Kecamatan Coblong, Kota Bandung, Jawa Barat 40135`,
+      value: address,
       button: "Open Map",
       icon: "location-outline",
     },
     {
-      value: `+6988989989`,
-      button: "Call",
-      icon: "call-outline",
-    },
-    {
-      value: `Lapang Badminton dengan 3 lapang yang  udah menggunakan karpet`,
+      value: description,
       icon: "information-circle-outline",
     },
   ];
@@ -37,17 +50,41 @@ const InformationContent = () => {
     <View>
       <View style={styles.darkerContainer} />
       <View style={styles.container}>
+        <View>
+          <Text style={styles.subText}>Venue</Text>
+          <View style={{ flexDirection: "row" }}>
+            <Text style={styles.text}>This venue is currently </Text>
+            <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
+              {is_public ? "public" : "private"}
+            </Text>
+          </View>
+        </View>
+
         {INFO_BUTTON.map((info, i) => (
           <InfoWithButton key={i} {...info} />
         ))}
-        <Text
-          onPress={() => setModal(true)}
-          style={[styles.text, styles.buttonRead]}
-        >
-          Read More
-        </Text>
+
+        <View>
+          <Text style={styles.subText}>Rules</Text>
+          <Text style={styles.text}>{rules}</Text>
+        </View>
+
+        <View style={{ rowGap: 4 }}>
+          <Text style={styles.subText}>Parking</Text>
+          <View style={{ flexDirection: "row", columnGap: 5 }}>
+            <ParkingIcon
+              name={"CAR"}
+              icon={"car-outline"}
+              selected={!!is_car_parking}
+            />
+            <ParkingIcon
+              name={"BIKE"}
+              icon={"bicycle"}
+              selected={!!is_bike_parking}
+            />
+          </View>
+        </View>
       </View>
-      <ModalDetailInformation visible={modal} visibleHandler={setModal} />
     </View>
   );
 };
@@ -78,6 +115,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 5,
   },
+  subText: { color: COLOR.base900, fontFamily: LEXEND.SemiBold, fontSize: 12 },
   buttonRead: {
     textAlign: "center",
     fontFamily: LEXEND.SemiBold,
@@ -85,9 +123,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-const InfoWithButton = ({ value, icon, button }) => {
+const InfoWithButton = ({ value, icon, customIcon, button }) => {
   return (
     <View style={styles.layout}>
       <View
@@ -96,7 +132,8 @@ const InfoWithButton = ({ value, icon, button }) => {
           button && { width: "60%" },
         ]}
       >
-        <Ionicons name={icon} size={22} color={COLOR.base900} />
+        {!icon && customIcon}
+        {icon && <Ionicons name={icon} size={22} color={COLOR.base900} />}
         <Text style={styles.text}>{value}</Text>
       </View>
       {button && (
@@ -116,70 +153,43 @@ const InfoWithButton = ({ value, icon, button }) => {
   );
 };
 
-const ModalDetailInformation = ({ visible, visibleHandler }) => {
-  const INFO_BUTTON = [
-    {
-      value: `Jl. Cisitu Lama Gg. 1 No.1, RT.006/RW.11, Dago, Kecamatan Coblong, Kota Bandung, Jawa Barat 40135`,
-      button: "Open Map",
-      icon: "location-outline",
-    },
-    {
-      value: `+6988989989`,
-      button: "Call",
-      icon: "call-outline",
-    },
-    {
-      value: `Lapang Badminton dengan 3 lapang yang  udah menggunakan karpet`,
-      icon: "information-circle-outline",
-    },
-  ];
+const ParkingIcon = ({ name, icon, selected }) => {
   return (
-    <CustomModal
-      style={{ paddingTop: 50 }}
-      visible={visible}
-      animationType={"slide"}
-      closeModal={() => visibleHandler(false)}
+    <View
+      style={[
+        stylesButton.container,
+        selected && {
+          borderColor: COLOR.base900,
+          backgroundColor: COLOR.base900,
+        },
+      ]}
     >
-      <View style={stylesModal.container}>
-        <View style={stylesModal.navContainer}>
-          <Pressable onPress={() => visibleHandler(false)}>
-            <Ionicons name="close" size={35} color={COLOR.base600} />
-          </Pressable>
-          <Text
-            style={{
-              fontFamily: LEXEND.SemiBold,
-              color: COLOR.base900,
-              fontSize: 20,
-            }}
-          >
-            Detail Venue
-          </Text>
-        </View>
-        <View>
-          {INFO_BUTTON.map((info, i) => (
-            <InfoWithButton key={i} {...info} />
-          ))}
-          <Text>Rule</Text>
-          <Text>
-            Wajib menggunakan sepatu badminton, tidak boleh menggunakan sepatu
-            berdebu
-          </Text>
-        </View>
+      <View style={{}}>
+        <Ionicons
+          name={icon}
+          size={20}
+          color={selected ? "white" : COLOR.second300}
+        />
       </View>
-    </CustomModal>
+      <Text style={[stylesButton.text, selected && { color: "white" }]}>
+        {name}
+      </Text>
+    </View>
   );
 };
 
-const stylesModal = StyleSheet.create({
+const stylesButton = StyleSheet.create({
   container: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
-    paddingHorizontal: 25,
-  },
-  navContainer: {
+    borderWidth: 1,
+    borderColor: COLOR.second300,
+    width: 80,
+    justifyContent: "center",
+    paddingVertical: 4,
     flexDirection: "row",
-    paddingVertical: 8,
-    alignItems: "center",
+    columnGap: 2,
+  },
+  text: {
+    color: COLOR.second300,
+    fontFamily: LEXEND.SemiBold,
   },
 });
