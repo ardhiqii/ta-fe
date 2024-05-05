@@ -5,73 +5,59 @@ import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 import { Location } from "util/location";
-import {
-  getCurrentPositionAsync,
-  PermissionStatus,
-  useForegroundPermissions,
-} from "expo-location";
+
 import { UserContext } from "store/user-contex";
 
 const CustomTopNavigation = () => {
   const [address, setAddress] = useState("");
-  const [locationPermissionInfomation, requestPermission] =
-    useForegroundPermissions();
-  const {updateCoordinate,user} = useContext(UserContext)
+  const { updateCoordinate, user, getCurrentCoorUser } =
+    useContext(UserContext);
+  const nav = useNavigation();
 
-  const verifyPermissions = async () => {
-    if (locationPermissionInfomation.status === PermissionStatus.UNDETERMINED) {
-      const permissionResponse = await requestPermission();
-      return permissionResponse.granted;
-    }
-
-    if (locationPermissionInfomation.status === PermissionStatus.DENIED) {
-      Alert.alert(
-        "Insufficinet Permissions!",
-        "You need to grant location permissions to use this app."
-      );
-      return false;
-    }
-
-    return true;
-  };
   const getCurrentAddress = async () => {
     try {
       setAddress("Getting your address...");
-      const hasPermission = await verifyPermissions();
-      if (!hasPermission){
-        setAddress("Permission Error!")
-        return
+      const coor = await getCurrentCoorUser();
+      const address = await Location.getAddress(coor.lat, coor.lng);
+
+      if (address !== "Failed to fetch address") {
+        setAddress(address);
       }
-
-      const location = await getCurrentPositionAsync();
-      const lat = location.coords.latitude;
-      const lng = location.coords.longitude;
-      const address = await Location.getAddress(lat, lng);
-      updateCoordinate(`${lat}, ${lng}`)
-      setAddress(address);
-
-      // console.log(location);
-      // console.log(address);
     } catch (e) {
       console.log(e);
     }
   };
-  
-  const nav = useNavigation();
+
   useEffect(() => {
-    locationPermissionInfomation;
     const initLocation = async () => {
       await getCurrentAddress();
     };
     initLocation();
   }, []);
+
+  useEffect(() => {
+    const updateAddress = async () => {
+      setAddress("Getting your address...");
+      const coor = user.coordinate;
+      const address = await Location.getAddress(coor.lat, coor.lng);
+      if (address !== "Failed to fetch address") {
+        setAddress(address);
+      }
+    };
+
+    updateAddress();
+  }, [user.coordinate]);
+
+  const navigateToSearch = () => {
+    nav.navigate("Search")
+  };
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
-        <View style={styles.searchContainer}>
+        <Pressable onPress={navigateToSearch} style={styles.searchContainer}>
           <Ionicons name="search" size={20} color={COLOR.border} />
           <Text style={styles.text}>Cari tempat olahraga terbaik untukmu</Text>
-        </View>
+        </Pressable>
         <View style={styles.menuContainer}>
           <Ionicons name="notifications-outline" size={24} color={"white"} />
           <Pressable onPress={() => nav.navigate("MainMenu")}>

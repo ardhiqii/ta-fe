@@ -1,1 +1,1 @@
-export const TEMPORARY_ROLE = "admin";
+export const TEMPORARY_ROLE = "player";

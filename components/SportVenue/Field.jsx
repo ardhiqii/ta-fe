@@ -1,7 +1,7 @@
 import SwipeableContent from "@components/HomeContent/SwipeableContent";
 import TagCategory from "@components/TagCategory";
 import { LEXEND } from "@fonts/LEXEND";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import React, { useEffect, useState } from "react";
@@ -59,12 +59,13 @@ const Field = ({
   time_open,
   time_closed = 21,
   onChangeSelected,
-  updateDataFromResponse
+  updateDataFromResponse,
 }) => {
   const [timesData, setTimesData] = useState([]);
   const [selectedTimes, setSeletectedTimes] = useState([]);
-  const nav = useNavigation()
-
+  const nav = useNavigation();
+  const route = useRoute();
+  const editMode = route?.params?.editMode;
   useEffect(() => {
     const generateTimes = (startHour, endHour, intervalInMinutes) => {
       const times = [];
@@ -128,21 +129,21 @@ const Field = ({
         id
       );
       console.log("DELETE FIELD HANDLER DATA", data);
-      if(data){
-        updateDataFromResponse(data)
+      if (data) {
+        updateDataFromResponse(data);
       }
     } catch (e) {
       console.log("Error occured in deleteFieldIdHandler, in Field", e);
     }
   };
 
-  const navigateToBlacklist = () =>{
-    nav.navigate("ManageBlacklistSchedule",{
+  const navigateToBlacklist = () => {
+    nav.navigate("ManageBlacklistSchedule", {
       idVenue: idVenue,
       idField: id,
-      number:number
-    })
-  }
+      number: number,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -159,10 +160,12 @@ const Field = ({
             <Text style={styles.text}>Field {number}</Text>
             <TagCategory category={category} />
           </View>
-          <View style={{ flexDirection: "row", columnGap: 12 }}>
-            <Text onPress={navigateToBlacklist}>Schedule</Text>
-            <Text onPress={alertDeleteFieldId}>Delete</Text>
-          </View>
+          {editMode && (
+            <View style={{ flexDirection: "row", columnGap: 12 }}>
+              <Text onPress={navigateToBlacklist}>Schedule</Text>
+              <Text onPress={alertDeleteFieldId}>Delete</Text>
+            </View>
+          )}
         </View>
         <View>
           <Text

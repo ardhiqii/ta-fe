@@ -5,16 +5,34 @@ import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import TagCategory from "./TagCategory";
 import { useNavigation } from "@react-navigation/native";
+import { Currency } from "util/currency";
 
-const CardVeneu = ({ idVenue, name, location }) => {
+const CardVeneu = ({
+  id: idVenue,
+  name,
+  geo_coordinate,
+  distance,
+  Sport_Kind_Name: category,
+  is_bike_parking,
+  is_car_parking,
+  is_public,
+  price_per_hour: price,
+}) => {
   const nav = useNavigation();
   const NavigateToVenue = () => {
     nav.navigate("SportVenueNavigation", {
       screen: "SportVenueScreen",
       params: {
-        idVenue: "d28aa20b-d982-4b53-b56d-7307a4410339",
+        idVenue: idVenue,
       },
     });
+  };
+  if (!is_public) {
+    return;
+  }
+  const convertDistance = (distance) => {
+    const number = distance.toFixed(1);
+    return number + " km";
   };
   return (
     <Pressable style={styles.container} onPress={NavigateToVenue}>
@@ -22,17 +40,22 @@ const CardVeneu = ({ idVenue, name, location }) => {
         <Entypo name="cross" size={60} color={COLOR.second800} />
       </View>
       <View style={styles.infoContainer}>
-        <Text style={[styles.text, { color: COLOR.border }]}>1.7 km</Text>
-        <Text style={styles.text}>{name}</Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.text}>{name}</Text>
+
+          <Text style={[styles.text, { color: COLOR.border }]}>
+            {convertDistance(distance)}
+          </Text>
+        </View>
         <Text
           style={[
             styles.text,
             { color: COLOR.base900, fontFamily: LEXEND.SemiBold },
           ]}
         >
-          Rp 200.000 - 150.000
+          Rp.{Currency.format(price)}
         </Text>
-        <View
+        {/* <View
           style={{ alignItems: "center", flexDirection: "row", columnGap: 4 }}
         >
           <Ionicons name="star" size={14} color={COLOR.gold} />
@@ -41,12 +64,23 @@ const CardVeneu = ({ idVenue, name, location }) => {
           <Text style={[styles.text, { color: COLOR.border }]}>
             Dipesan 26x
           </Text>
-        </View>
-
+        </View> */}
         <View style={styles.tagsContainer}>
-          <TagCategory category={"futsal"} />
-          <TagCategory category={"volley"} />
-          <TagCategory category={"badminton"} />
+          <TagCategory category={category.toLowerCase()} />
+        </View>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", columnGap: 4 }}
+        >
+          
+          <View style={{ flexDirection: "row", columnGap: 4 }}>
+            {!!is_car_parking && (
+              <Ionicons name="car-outline" size={22} color={COLOR.base900} />
+            )}
+
+            {!!is_bike_parking && (
+              <Ionicons name="bicycle" size={22} color={COLOR.base900} />
+            )}
+          </View>
         </View>
       </View>
     </Pressable>
@@ -57,14 +91,14 @@ export default CardVeneu;
 
 const styles = StyleSheet.create({
   container: {
-    width: 160,
-    height: 288,
+    width: 130,
+    height: 230,
     borderRadius: 10,
     // backgroundColor: "#e9e9e9",
     borderWidth: 1,
   },
   imageContainer: {
-    height: 140,
+    height: 120,
     borderBottomWidth: 1,
     color: COLOR.base800,
     justifyContent: "center",
@@ -74,7 +108,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 8,
-    rowGap: 2,
+    rowGap: 4,
   },
   text: {
     fontFamily: LEXEND.Light,

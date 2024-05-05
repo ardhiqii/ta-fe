@@ -12,6 +12,7 @@ import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import SportVenueNavigation from "./SportVenueNavigation";
 import MapScreen from "@screens/MapScreen";
+import SearchScreen from "@screens/SearchScreen";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -59,6 +60,7 @@ const AuthenticatedNavigation = () => {
           },
         }}
       />
+      <Stack.Screen name="Search" component={SearchScreen} options={{headerShown:false}} />
       <Stack.Screen
         name="SportVenueNavigation"
         component={SportVenueNavigation}

@@ -1,9 +1,9 @@
 import axios, { Axios } from "axios";
 
-const getAllVenue = async (token) => {
+const getAllVenue = async (token,filter) => {
   const url = process.env.BASE_URL + "/player/sportVenue";
   try {
-    const { data } = await axios.get(url, {
+    const { data } = await axios.post(url, filter, {
       headers: {
         token: token,
       },
@@ -25,7 +25,7 @@ const getById = async (token, id, coordinate) => {
   const url = process.env.BASE_URL + "/player/sportVenue/" + id;
 
   try {
-    const data = await axios.get(
+    const { data } = await axios.post(
       url,
       { coordinate: coordinate },
       {
@@ -34,16 +34,34 @@ const getById = async (token, id, coordinate) => {
         },
       }
     );
-    // console.log("util sport venue");
-    console.log(data);
     return data;
   } catch (e) {
-    console.log("Error occured in util sportVenue", e);
+    console.log("Error occured in util sportVenue, getById", e);
     console.log(e.response.data);
+    let message = e.response.data.message;
+    message = message.split("is ")[1];
+    return { data: message };
+  }
+};
+
+const getAllFields = async (token, idVenue) => {
+  const url = process.env.BASE_URL + "/player/sportVenue/fields/" + idVenue;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    console.log("Error occured in util sportVenue", e);
   }
 };
 
 export const SportVenue = {
   getAllVenue,
   getById,
+  getAllFields
 };

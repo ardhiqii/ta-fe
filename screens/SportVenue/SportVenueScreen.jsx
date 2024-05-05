@@ -20,6 +20,7 @@ import { Player } from "util/player/player";
 import { UserContext } from "store/user-contex";
 import ReservationContent from "@components/SportVenue/ReservationContent";
 import { LEXEND } from "@fonts/LEXEND";
+import { COLOR } from "COLOR";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
@@ -30,27 +31,16 @@ const SportVenueScreen = () => {
   const editMode = route?.params?.editMode;
   const nav = useNavigation();
   const { user } = useContext(UserContext);
+  const isAdmin = TEMPORARY_ROLE == "admin";
 
   const fetchVenueData = async () => {
     try {
-      let response;
-      if (TEMPORARY_ROLE == "admin") {
-        console.log("GETTING DATA AS ADMIN");
-        const { data } = await Admin.SportVenue.getById(
-          TOKEN_TEMPORARY,
-          idVenue
-        );
-        response = data;
-      } else {
-        console.log("GETTING DATA AS PLAYER");
-        const { data } = await Player.SportVenue.getById(
-          TOKEN_TEMPORARY,
-          idVenue,
-          user.coordinate
-        );
-        response = data;
-      }
-      return response;
+      const coordinate = `${user.coordinate.lat}, ${user.coordinate.lng} `;
+      const { data } = isAdmin
+        ? await Admin.SportVenue.getById(TOKEN_TEMPORARY, idVenue)
+        : await Player.SportVenue.getById(TOKEN_TEMPORARY, idVenue, coordinate);
+
+      return data;
     } catch (e) {
       console.log("Error Occured in fetch venue data, Sport Venue Screen");
       console.log(e);
@@ -60,10 +50,10 @@ const SportVenueScreen = () => {
 
   const fetchFieldsData = async () => {
     try {
-      const { data } = await Admin.SportVenue.getAllFields(
-        TOKEN_TEMPORARY,
-        idVenue
-      );
+      const { data } = isAdmin
+        ? await Admin.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue)
+        : await Player.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue);
+
       const sorted = data.sort((a, b) => a.number - b.number);
       return sorted;
     } catch (e) {
@@ -91,9 +81,6 @@ const SportVenueScreen = () => {
     });
   };
 
-  const NavigateToSchedule = () => {
-    nav.navigate("ManageScheduleVenue");
-  };
 
   const deleteHandler = async () => {
     try {
@@ -125,6 +112,23 @@ const SportVenueScreen = () => {
         <Text>LOADING</Text>
       </View>
     );
+
+  if (venueData === "not public") {
+    return (
+      <View style={{ marginTop: 40 }}>
+        <Text
+          style={{
+            fontFamily: LEXEND.SemiBold,
+            fontSize: 20,
+            textAlign: "center",
+            color: COLOR.border,
+          }}
+        >
+          This venue on private
+        </Text>
+      </View>
+    );
+  }
 
   const headData = {
     name: venueData?.name,

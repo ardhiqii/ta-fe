@@ -57,7 +57,6 @@ const ManageBlacklistSchedule = () => {
       if (data) {
         setBlacklistData(data);
       } else {
-        console.log("GOT IN HERE");
         setBlacklistData([]);
       }
     } catch (e) {

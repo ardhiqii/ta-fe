@@ -117,13 +117,13 @@ const ListFieldsContent = ({
     );
   return (
     <View style={styles.container}>
-      <View style={{}}>
+      {editMode && <View style={{}}>
         <View style={styles.addContainer}>
           <Pressable style={styles.addButton}>
             <Text onPress={alertAddNewField}>Add New Field</Text>
           </Pressable>
         </View>
-      </View>
+      </View>}
       {fieldsData.map((field, i) => {
         return (
           <Field

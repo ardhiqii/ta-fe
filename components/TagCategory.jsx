@@ -34,6 +34,7 @@ const colors = {
 };
 
 const TagCategory = ({ category,customText }) => {
+  
   const name = category.charAt(0).toUpperCase() + category.slice(1);
   return (
     <View

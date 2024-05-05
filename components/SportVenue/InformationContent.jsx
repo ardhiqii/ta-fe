@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Linking,
   Modal,
   Pressable,
   StatusBar,
@@ -26,24 +27,36 @@ const InformationContent = ({
   price_per_hour,
 }) => {
   const [modal, setModal] = useState(false);
-  const [address, setAddress] = useState("Getting Address... [gettingAddress function still in comment]");
+  const [address, setAddress] = useState("Getting Address...");
   useEffect(() => {
     const gettingAddress = async () => {
-      const coor = geo_coordinate.split(",");
-      const adrs = await Location.getAddress(coor[0], coor[1]);
-      setAddress(adrs);
+      try {
+        const coor = geo_coordinate.split(",");
+        const adrs = await Location.getAddress(coor[0], coor[1]);
+        setAddress(adrs);
+      } catch (e) {
+        console.log(e);
+      }
     };
-    // gettingAddress();
+    gettingAddress();
   }, []);
+
+  const navigateToMap = () => {
+    const coor = geo_coordinate.split(",");
+    const url = `https://www.google.com/maps/search/?api=1&query=${coor[0]},${coor[1]}`;
+    Linking.openURL(url);
+  };
   const INFO_BUTTON = [
     {
       value: address,
       button: "Open Map",
       icon: "location-outline",
+      onPress: navigateToMap,
     },
     {
       value: description,
       icon: "information-circle-outline",
+      onPress: () => {},
     },
   ];
   return (
@@ -70,7 +83,7 @@ const InformationContent = ({
         </View>
 
         <View style={{ rowGap: 4 }}>
-          <Text style={styles.subText}>Parking</Text>
+          <Text style={styles.subText}>Parking lot</Text>
           <View style={{ flexDirection: "row", columnGap: 5 }}>
             <ParkingIcon
               name={"CAR"}
@@ -123,7 +136,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const InfoWithButton = ({ value, icon, customIcon, button }) => {
+const InfoWithButton = ({ value, icon, customIcon, button, onPress }) => {
   return (
     <View style={styles.layout}>
       <View
@@ -137,7 +150,7 @@ const InfoWithButton = ({ value, icon, customIcon, button }) => {
         <Text style={styles.text}>{value}</Text>
       </View>
       {button && (
-        <Pressable style={styles.buttonContainer}>
+        <Pressable onPress={onPress} style={styles.buttonContainer}>
           <Text
             style={{
               fontFamily: LEXEND.Regular,
