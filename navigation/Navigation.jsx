@@ -95,7 +95,7 @@ const BottomTabNavigator = () => {
     <>
       <BottomTab.Navigator sceneContainerStyle={{ backgroundColor: "white" }}>
         <BottomTab.Screen
-          name="Home"
+          name="HomeScreen"
           component={HomeScreen}
           options={{ headerShown: false }}
         />

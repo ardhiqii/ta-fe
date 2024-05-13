@@ -12,12 +12,17 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 
-const Filter = ({ items, label, onUpdate }) => {
+const Filter = ({ items, label, onUpdate, value }) => {
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState(label);
 
-  const toggleDropdown = () => {
-    setOpen(!open);
+  useEffect(() => {
+    if (value !== undefined) {
+      selectHandler(value);
+    }
+  }, []);
+  const toggleDropdown = (value) => {
+    setOpen(value);
   };
 
   const selectHandler = (value) => {
@@ -28,13 +33,13 @@ const Filter = ({ items, label, onUpdate }) => {
       onUpdate(value.toLowerCase());
       setSelect(value);
     }
-    toggleDropdown()
+    toggleDropdown(false);
   };
 
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={toggleDropdown}
+        onPress={toggleDropdown.bind(this, !open)}
         style={[
           styles.buttonContainer,
           open && { borderBottomEndRadius: 0, borderBottomStartRadius: 0 },

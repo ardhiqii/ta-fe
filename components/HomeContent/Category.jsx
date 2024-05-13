@@ -1,66 +1,83 @@
 import React from "react";
 import GroupContentLayout from "./GroupContentLayout";
 import SwipeableContent from "./SwipeableContent";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import { CategoryIcons } from "assets/category/CATEGORY_ICON";
+import { useNavigation } from "@react-navigation/native";
 
 const CATEGORY_DATA = [
   {
     id: "1",
     name: "Futsal",
-    icon: <CategoryIcons.futsal/>
+    icon: <CategoryIcons.futsal />,
   },
   {
     id: "2",
     name: "Basket",
-    icon: <CategoryIcons.basket/>
+    icon: <CategoryIcons.basket />,
   },
   {
     id: "3",
     name: "Badminton",
-    icon: <CategoryIcons.badminton/>
+    icon: <CategoryIcons.badminton />,
   },
   {
     id: "4",
     name: "Volley",
-    icon: <CategoryIcons.voli/>
+    icon: <CategoryIcons.voli />,
   },
   {
     id: "5",
     name: "Swimming",
-    icon: <CategoryIcons.renang/>
+    icon: <CategoryIcons.renang />,
   },
   {
     id: "6",
     name: "Bowling",
-    icon: <CategoryIcons.bowling/>
+    icon: <CategoryIcons.bowling />,
   },
   {
     id: "7",
     name: "Tennis",
-    icon: <CategoryIcons.tenis/>
+    icon: <CategoryIcons.tenis />,
   },
 ];
 
-const CategoryRender = ({ item }) => {
+const CategoryRender = ({ item, navigation }) => {
+
+  const navigateToSearch = () =>{
+    navigation.navigate("Search",{
+      filters:{
+        category:item.name
+      }
+    })
+  }
+
   return (
-    <View key={item.id} style={styles.container}>
-      <View style={styles.imageContainer}>
-        
-        {item.icon}
-      </View>
+    <Pressable
+      onPress={navigateToSearch}
+      key={item.id}
+      style={styles.container}
+    >
+      <View style={styles.imageContainer}>{item.icon}</View>
       <Text style={styles.text}>{item.name}</Text>
-    </View>
+    </Pressable>
   );
 };
 
 const Category = () => {
+  const nav = useNavigation();
   return (
     <GroupContentLayout title={"Category"}>
-      <SwipeableContent data={CATEGORY_DATA} renderItem={CategoryRender} />
+      <SwipeableContent
+        data={CATEGORY_DATA}
+        renderItem={({ item }) => (
+          <CategoryRender item={item} navigation={nav} />
+        )}
+      />
     </GroupContentLayout>
   );
 };

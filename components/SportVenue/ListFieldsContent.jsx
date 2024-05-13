@@ -9,72 +9,71 @@ import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import ModalAddBlacklistField from "./Blacklist/ModalAddBlacklistField";
-
-const FIELDS_DATA = [
-  {
-    id: "1",
-    name: "Field",
-    category: "basket",
-    price: "Rp 100.000",
-    selected: [],
-  },
-  {
-    id: "2",
-    name: "Field",
-    category: "badminton",
-    price: "Rp 120.000",
-    selected: [],
-  },
-];
+import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
+import { Player } from "util/player/player";
 
 const ListFieldsContent = ({
-  data = [],
+  defaultData = [],
   category,
   time_open,
   time_closed,
   date,
   onChangeOrder,
+  orderData = [],
 }) => {
-  const [fieldsData, setFieldsData] = useState(data);
+  const [fieldsData, setFieldsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const route = useRoute();
   const idVenue = route?.params?.idVenue;
   const editMode = route?.params?.editMode;
-
-  const updateDataFromResponse = (data) => {
-    setLoading(true);
-    const temp = data.map((d) => {
-      return { ...d, selected: [] };
-    });
-    const sorted = temp.sort((a, b) => a.number - b.number);
-    setFieldsData(sorted);
-    setLoading(false);
-  };
-
+  
   useEffect(() => {
     setLoading(true);
-    updateDataFromResponse(data);
+    updateDataFromResponse();
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      // console.log("CALLED");
-      // onChangeOrder(date, fieldsData);
-      // console.log(fieldsData);
-    }
-  }, [fieldsData]);
+    setLoading(true);
+    updateDataFromResponse();
+    setLoading(false);
+  }, [date]);
+
+
+  const updateDataFromResponse = () => {
+    setLoading(true);
+    let current = orderData?.filter((o) => o.date === date)[0]?.fieldsData;
+
+    const sorted = defaultData?.sort((a, b) => a.number - b.number);
+
+    const temp = sorted.map((d) => {
+      let value = [];
+      if (current) {
+        let temp = current.filter((c) => {
+          return c.number === d.number;
+        });
+        if (temp[0]) {
+          temp = temp[0].selected;
+          value = temp;
+        }
+      }
+      return { ...d, selected: value };
+    });
+    setFieldsData(temp);
+    setLoading(false);
+  };
 
   const handleSelectedFields = (id, value) => {
-    setFieldsData((prev) =>
-      prev.map((field) => {
-        if (field.id === id) {
-          return { ...field, selected: value };
-        }
-        return field;
-      })
-    );
-    // onChangeOrder(date, fieldsData);
+    let newFieldData = fieldsData.map((p) => {
+      if (p.id === id) {
+        return { ...p, selected: value };
+      }
+      return p;
+    });
+
+    setFieldsData(newFieldData);
+    newFieldData = newFieldData.filter((p) => p.selected.length !== 0);
+    onChangeOrder(date, newFieldData);
   };
 
   const alertAddNewField = () => {
@@ -117,14 +116,16 @@ const ListFieldsContent = ({
     );
   return (
     <View style={styles.container}>
-      {editMode && <View style={{}}>
-        <View style={styles.addContainer}>
-          <Pressable style={styles.addButton}>
-            <Text onPress={alertAddNewField}>Add New Field</Text>
-          </Pressable>
+      {editMode && (
+        <View style={{}}>
+          <View style={styles.addContainer}>
+            <Pressable style={styles.addButton}>
+              <Text onPress={alertAddNewField}>Add New Field</Text>
+            </Pressable>
+          </View>
         </View>
-      </View>}
-      {fieldsData.map((field, i) => {
+      )}
+      {fieldsData?.map((field, i) => {
         return (
           <Field
             {...field}
@@ -134,10 +135,22 @@ const ListFieldsContent = ({
             key={i}
             onChangeSelected={handleSelectedFields}
             updateDataFromResponse={updateDataFromResponse}
+            date={date}
           />
         );
       })}
-      {fieldsData.length === 0 && <Text style={{fontFamily:LEXEND.SemiBold,fontSize:14,textAlign:'center',color:COLOR.border}}>Add your field by pressing Add New Field</Text>}
+      {(editMode && fieldsData?.length === 0) && (
+        <Text
+          style={{
+            fontFamily: LEXEND.SemiBold,
+            fontSize: 14,
+            textAlign: "center",
+            color: COLOR.border,
+          }}
+        >
+          Add your field by pressing Add New Field
+        </Text>
+      )}
     </View>
   );
 };

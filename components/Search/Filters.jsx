@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View } from "react-native";
 import Filter from "./Filter";
 import { CATEGORY_ID } from "constant/CATEGORY_ID";
+import { useRoute } from "@react-navigation/native";
 
 const CATEGORY_FILTER = {
   label: "Category",
@@ -20,6 +21,10 @@ const PARKING_FILTER = {
   items: ["Car", "Bike"],
 };
 const Filters = ({ updateFilter }) => {
+  const route = useRoute();
+
+  const categoryValue = route?.params?.filters?.category;
+
   const updateCategory = (value) => {
     let cat = value !== null ? CATEGORY_ID[value] : value;
     updateFilter("Sport_Kind_id", cat);
@@ -43,8 +48,13 @@ const Filters = ({ updateFilter }) => {
     <View
       style={{ flexDirection: "row", paddingHorizontal: 25, columnGap: 10 }}
     >
-      <Filter key={0} {...CATEGORY_FILTER} onUpdate={updateCategory} />
-      <Filter key={1} {...PARKING_FILTER} onUpdate={updatePark}/>
+      <Filter
+        key={0}
+        {...CATEGORY_FILTER}
+        onUpdate={updateCategory}
+        value={categoryValue}
+      />
+      <Filter key={1} {...PARKING_FILTER} onUpdate={updatePark} />
     </View>
   );
 };

@@ -1,6 +1,6 @@
 import axios, { Axios } from "axios";
 
-const getAllVenue = async (token,filter) => {
+const getAllVenue = async (token, filter) => {
   const url = process.env.BASE_URL + "/player/sportVenue";
   try {
     const { data } = await axios.post(url, filter, {
@@ -60,8 +60,48 @@ const getAllFields = async (token, idVenue) => {
   }
 };
 
+const getBlacklistFieldById = async (token, idField, month, year) => {
+  const url =
+    process.env.BASE_URL +
+    `/player/sportVenue/fields/schedule/blacklist/${idField}/${month}/${year}`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
+    return [];
+  }
+};
+
+const getReservedFieldById = async (token, idField, month, year) => {
+  const url =
+    process.env.BASE_URL +
+    `/player/sportVenue/fields/schedule/reservation/${idField}/${month}/${year}`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    console.log("Error occured in util sportVenue, getReservedFieldById", e);
+    return [];
+  }
+};
+
 export const SportVenue = {
   getAllVenue,
   getById,
-  getAllFields
+  getAllFields,
+  getBlacklistFieldById,
+  getReservedFieldById
 };

@@ -4,13 +4,15 @@ import { COLOR } from "COLOR";
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const BoxDate = ({ item, selected, onSelect }) => {
+const BoxDate = ({ item, selected, onSelect,includedDate }) => {
   const { id, day, month, dayOfWeek } = item;
   const isSelected = selected === id;
+  const include = includedDate.includes(id)
   return (
     <Pressable
       style={({ pressed }) => [
         BoxStyles.container,
+        include && {backgroundColor:"#c8eef0"} ,
         isSelected && BoxStyles.pressedContainer,
       ]}
       onPress={() => onSelect(id)}
@@ -60,10 +62,10 @@ const BoxStyles = StyleSheet.create({
   },
 });
 
-const ScheduleContent = ({ setDate,order }) => {
+const ScheduleContent = ({ setDate,orderData }) => {
   const [dateData, setDateData] = useState([]);
   const [selected, setSelected] = useState();
-
+  const [includedDate, setIncludedDate] = useState([])
   const formattedYearMonthDate = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -105,6 +107,11 @@ const ScheduleContent = ({ setDate,order }) => {
     initDates();
   }, []);
 
+  useEffect(()=>{
+    const temp = orderData.map((m)=> m.date)
+    setIncludedDate(temp)
+  },[orderData])
+
   if (!dateData)
     return (
       <View>
@@ -115,7 +122,7 @@ const ScheduleContent = ({ setDate,order }) => {
     <SwipeableContent
       data={dateData}
       renderItem={({ item }) => (
-        <BoxDate item={item} selected={selected} onSelect={selectedDateHandler} />
+        <BoxDate item={item} selected={selected} onSelect={selectedDateHandler} includedDate={includedDate} />
       )}
     />
   );

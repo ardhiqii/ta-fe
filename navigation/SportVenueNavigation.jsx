@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditManageSportScreen from "@screens/SportVenue/Admin/EditManageSportScreen";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 import ManageBlacklistSchedule from "@screens/SportVenue/Admin/ManageBlacklistSchedule";
+import OrderReviewScreen from "@screens/SportVenue/OrderReviewScreen";
+import OrderReview from "@screens/SportVenue/OrderReviewScreen";
 import SportVenueScreen from "@screens/SportVenue/SportVenueScreen";
 import { COLOR } from "COLOR";
 
@@ -54,6 +56,11 @@ const SportVenueNavigation = () => {
         name="ManageBlacklistSchedule"
         component={ManageBlacklistSchedule}
         options={{ headerTitle: "Manage Blacklist" }}
+      />
+      <Stack.Screen
+        name="OrderReviewScreen"
+        component={OrderReviewScreen}
+        options={{ headerTitle: "Order Review" }}
       />
     </Stack.Navigator>
   );

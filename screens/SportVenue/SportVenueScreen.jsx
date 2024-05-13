@@ -65,6 +65,7 @@ const SportVenueScreen = () => {
   useEffect(() => {
     const initData = async () => {
       setLoading(true);
+
       const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
       setVenueData(vd);
       setFieldsData(fd);
@@ -146,6 +147,7 @@ const SportVenueScreen = () => {
   };
 
   const reservastionData = {
+    name: venueData?.name,
     fieldsData: fieldsData,
     category: venueData?.Sport_Kind_Name.toLowerCase(),
     time_open: venueData?.time_open,
@@ -206,7 +208,7 @@ export default SportVenueScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 50,
+    paddingBottom: 80,
     rowGap: 12,
   },
   imageContainer: {

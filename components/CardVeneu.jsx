@@ -71,7 +71,6 @@ const CardVeneu = ({
         <View
           style={{ flexDirection: "row", alignItems: "center", columnGap: 4 }}
         >
-          
           <View style={{ flexDirection: "row", columnGap: 4 }}>
             {!!is_car_parking && (
               <Ionicons name="car-outline" size={22} color={COLOR.base900} />
