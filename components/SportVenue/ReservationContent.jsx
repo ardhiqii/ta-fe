@@ -16,12 +16,11 @@ const ReservationContent = ({
   time_closed,
   pricePerHour,
   orders,
-  setOrders
+  setOrders,
+  setForceRefresh
 }) => {
-  // const [order, setOrder] = useState([]);
   const [date, setDate] = useState();
   const nav = useNavigation();
-  const isAdmin = TEMPORARY_ROLE === "admin";
 
   // useEffect(() => {
   //   console.log("CHECKING ORDER IN RESERVEATIONCONTENT");
@@ -71,6 +70,7 @@ const ReservationContent = ({
           time_open={time_open}
           date={date}
           onChangeOrder={orderHandler}
+          setForceRefresh={setForceRefresh}
         />
       </View>
       

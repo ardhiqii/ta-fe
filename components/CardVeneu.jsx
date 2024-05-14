@@ -41,8 +41,9 @@ const CardVeneu = ({
       </View>
       <View style={styles.infoContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={styles.text}>{name}</Text>
-
+          <Text style={styles.text} numberOfLines={1}>
+            {name}
+          </Text>
           <Text style={[styles.text, { color: COLOR.border }]}>
             {convertDistance(distance)}
           </Text>

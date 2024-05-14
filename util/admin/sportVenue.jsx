@@ -2,6 +2,7 @@ import axios, { Axios } from "axios";
 
 const getAllVenue = async (token) => {
   const url = process.env.BASE_URL + "/admin/sportVenue";
+  console.log(token);
   try {
     const { data } = await axios.get(url, {
       headers: {

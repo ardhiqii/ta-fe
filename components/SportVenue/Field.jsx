@@ -9,6 +9,8 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Admin } from "util/admin/admin";
 import TimeDisplay from "./TimeDisplay";
 import { Player } from "util/player/player";
+import { useContext } from "react";
+import { UserContext } from "store/user-contex";
 
 const Field = ({
   id,
@@ -31,14 +33,17 @@ const Field = ({
   const [reserved, setReserved] = useState([]);
   const [currReserved,setCurrReserved] = useState([])
 
+  const {user } = useContext(UserContext)
+  const nav = useNavigation();
+  const route = useRoute();
+  const editMode = route?.params?.editMode;
+
+  
   const today = new Date();
   const futureDate = new Date();
   futureDate.setDate(today.getDate() + 20);
   const nowMonth = today.getMonth() + 1;
   const futureMonth = futureDate.getMonth() + 1;
-  const nav = useNavigation();
-  const route = useRoute();
-  const editMode = route?.params?.editMode;
 
   useEffect(() => {
     setLoading(true);
@@ -94,13 +99,13 @@ const Field = ({
     try {
       const data = await Promise.all([
         Player.SportVenue.getBlacklistFieldById(
-          TOKEN_TEMPORARY,
+          user.token,
           id,
           nowMonth,
           today.getFullYear()
         ),
         Player.SportVenue.getBlacklistFieldById(
-          TOKEN_TEMPORARY,
+          user.token,
           id,
           futureMonth,
           futureDate.getFullYear()
@@ -120,13 +125,13 @@ const Field = ({
     try {
       const data = await Promise.all([
         Player.SportVenue.getReservedFieldById(
-          TOKEN_TEMPORARY,
+          user.token,
           id,
           nowMonth,
           today.getFullYear()
         ),
         Player.SportVenue.getReservedFieldById(
-          TOKEN_TEMPORARY,
+          user.token,
           id,
           futureMonth,
           futureDate.getFullYear()
@@ -190,7 +195,7 @@ const Field = ({
 
     try {
       const { data } = await Admin.SportVenue.deleteFieldById(
-        TOKEN_TEMPORARY,
+        user.token,
         idVenue,
         id
       );

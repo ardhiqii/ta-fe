@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,6 +11,7 @@ import { COLOR } from "COLOR";
 import ModalAddBlacklistField from "./Blacklist/ModalAddBlacklistField";
 import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 import { Player } from "util/player/player";
+import { UserContext } from "store/user-contex";
 
 const ListFieldsContent = ({
   defaultData = [],
@@ -20,13 +21,16 @@ const ListFieldsContent = ({
   date,
   onChangeOrder,
   orderData = [],
+  setForceRefresh
 }) => {
   const [fieldsData, setFieldsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const route = useRoute();
+
+  const { user } = useContext(UserContext);
   const idVenue = route?.params?.idVenue;
   const editMode = route?.params?.editMode;
-  
+
   useEffect(() => {
     setLoading(true);
     updateDataFromResponse();
@@ -38,7 +42,6 @@ const ListFieldsContent = ({
     updateDataFromResponse();
     setLoading(false);
   }, [date]);
-
 
   const updateDataFromResponse = () => {
     setLoading(true);
@@ -89,18 +92,16 @@ const ListFieldsContent = ({
   };
 
   const addNewFieldHandler = async () => {
-    const token =
-      "fOf042XZqrW*MPcz4/0yBa9jce9ySHlHSn.Fa8++HS+kBFDMbEViaEl2doRd-Wb=+5fVp3EEmA1G/Cr/5T4)5u4k614aBM1DW1e6m0MTDaw1hl<N)MZm82o-V0tYU17s";
     const number =
       fieldsData.length > 0 ? fieldsData[fieldsData.length - 1].number + 1 : 1;
     try {
       const { data } = await Admin.SportVenue.addNewField(
-        TOKEN_TEMPORARY,
+        user.token,
         idVenue,
         number
       );
       if (data) {
-        updateDataFromResponse(data);
+        setForceRefresh(true)
       }
     } catch (e) {
       console.log("Error occured addNewFieldHandler, ListFieldsContent", e);
@@ -139,7 +140,7 @@ const ListFieldsContent = ({
           />
         );
       })}
-      {(editMode && fieldsData?.length === 0) && (
+      {fieldsData?.length === 0 && (
         <Text
           style={{
             fontFamily: LEXEND.SemiBold,
@@ -148,7 +149,7 @@ const ListFieldsContent = ({
             color: COLOR.border,
           }}
         >
-          Add your field by pressing Add New Field
+          {editMode ? "Add your field by pressing Add New Field" : "Owner venue not adding the field"}
         </Text>
       )}
     </View>

@@ -2,7 +2,7 @@ import EditHeadContent from "@components/SportVenue/EditMode/EditHeadContent";
 import EditInformationContent from "@components/SportVenue/EditMode/EditInformationContent";
 import InformationContent from "@components/SportVenue/InformationContent";
 import ListFieldsContent from "@components/SportVenue/ListFieldsContent";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -20,6 +20,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import LoadingOverlay from "@components/LoadingOverlay";
 import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
+import { UserContext } from "store/user-contex";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
@@ -27,6 +28,7 @@ const TYPEMANAGE = {
 };
 
 const EditManageSportScreen = () => {
+  const {user} = useContext(UserContext)
   const route = useRoute();
   const nav = useNavigation();
   const idVenue = route?.params?.idVenue;
@@ -86,11 +88,11 @@ const EditManageSportScreen = () => {
     if (type === TYPEMANAGE.Add) {
       console.log("ADDING");
       console.log(newData);
-      const data = await Admin.SportVenue.addVenue(TOKEN_TEMPORARY, newData);
+      const data = await Admin.SportVenue.addVenue(user.token, newData);
       console.log(data);
 
     } else {
-      const data = await Admin.SportVenue.editVenue(TOKEN_TEMPORARY, newData);
+      const data = await Admin.SportVenue.editVenue(user.token, newData);
       console.log(data);
     }
 

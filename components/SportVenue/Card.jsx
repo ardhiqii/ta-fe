@@ -9,21 +9,21 @@ import { useNavigation } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { Currency } from "util/currency";
 
-const Card = ({id,name,price_per_hour,Sport_Kind_Name,is_public}) => {
+const Card = ({ id, name, price_per_hour, Sport_Kind_Name, is_public }) => {
   const nav = useNavigation();
   const navigateHandler = async () => {
     nav.navigate("SportVenueNavigation", {
       screen: "ManageSportVenueAdmin",
       params: {
         idVenue: id,
-        editMode:true,
+        editMode: true,
       },
     });
   };
   return (
     <Pressable onPress={navigateHandler}>
       <View style={styles.container}>
-        <View style={{flexDirection:'row', columnGap:8}}>
+        <View style={{ flexDirection: "row", columnGap: 8 }}>
           <View style={styles.imageContainer}>
             <Image
               source={{
@@ -44,9 +44,7 @@ const Card = ({id,name,price_per_hour,Sport_Kind_Name,is_public}) => {
                 Rp.{Currency.format(price_per_hour)}
               </Text>
             </View>
-            <View>
-              <Text style={[styles.text, { color: COLOR.border }]}>1.7 km</Text>
-            </View>
+            <View></View>
             <View style={{ flexDirection: "row" }}>
               <TagCategory category={Sport_Kind_Name.toLowerCase()} />
             </View>
@@ -68,10 +66,10 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal:25,
+    paddingHorizontal: 25,
     flexDirection: "row",
     columnGap: 10,
-    justifyContent:'space-between'
+    justifyContent: "space-between",
   },
   imageContainer: {
     borderWidth: 1,

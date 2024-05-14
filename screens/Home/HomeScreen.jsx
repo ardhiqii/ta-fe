@@ -12,7 +12,10 @@ import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
 const HomeScreen = () => {
   const { user } = useContext(UserContext);
-  const isAdmin = TEMPORARY_ROLE === "admin";
+  if (!user) {
+    return;
+  }
+  const isAdmin = user.role === "admin";
   console.log("#### HOME SCREEN ###");
   console.log(user);
 
@@ -27,12 +30,15 @@ const HomeScreen = () => {
 
   const AdminHomeScreen = () => {
     return (
-      <View style={{marginTop:28,flexGrow:1,}}>
-        <Text style={{fontFamily:LEXEND.Bold,textAlign:'center'}}>Your Sport Venue</Text>
+      <View style={{ marginTop: 28, flexGrow: 1 }}>
+        <Text style={{ fontFamily: LEXEND.Bold, textAlign: "center" }}>
+          Your Sport Venue
+        </Text>
         <ListSportVenuesScreen />
       </View>
     );
   };
+
   return (
     <>
       <StatusBar translucent={true} />

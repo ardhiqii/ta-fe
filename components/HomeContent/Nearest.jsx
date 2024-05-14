@@ -34,7 +34,7 @@ const Nearest = () => {
     };
     try {
       const { data } = await Player.SportVenue.getAllVenue(
-        TOKEN_TEMPORARY,
+        user.token,
         filter
       );
       setNearestData(data);

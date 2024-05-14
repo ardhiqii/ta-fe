@@ -263,7 +263,7 @@ const EditInformationContent = ({
                 ? oldData.time_closed.slice(0, -3)
                 : dataTime.init_close
                 ? "00:00"
-                : convertToHourMinute(dataTime.open)}
+                : convertToHourMinute(dataTime.close)}
             </Text>
           </Pressable>
         </View>

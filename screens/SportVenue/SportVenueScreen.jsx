@@ -26,6 +26,7 @@ import Button from "@components/UI/Button";
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
   const [fieldsData, setFieldsData] = useState([]);
+  const [forceRefresh, setForceRefresh] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,15 +35,14 @@ const SportVenueScreen = () => {
   const editMode = route?.params?.editMode;
   const nav = useNavigation();
   const { user } = useContext(UserContext);
-  const isAdmin = TEMPORARY_ROLE == "admin";
+  const isAdmin = user.role == "admin";
 
   const fetchVenueData = async () => {
     try {
-      const coordinate = `${user.coordinate.lat}, ${user.coordinate.lng} `;
+      const coordinate = `${user?.coordinate?.lat}, ${user?.coordinate?.lng} `;
       const { data } = isAdmin
-        ? await Admin.SportVenue.getById(TOKEN_TEMPORARY, idVenue)
-        : await Player.SportVenue.getById(TOKEN_TEMPORARY, idVenue, coordinate);
-
+        ? await Admin.SportVenue.getById(user.token, idVenue)
+        : await Player.SportVenue.getById(user.token, idVenue, coordinate);
       return data;
     } catch (e) {
       console.log("Error Occured in fetch venue data, Sport Venue Screen");
@@ -54,8 +54,8 @@ const SportVenueScreen = () => {
   const fetchFieldsData = async () => {
     try {
       const { data } = isAdmin
-        ? await Admin.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue)
-        : await Player.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue);
+        ? await Admin.SportVenue.getAllFields(user.token, idVenue)
+        : await Player.SportVenue.getAllFields(user.token, idVenue);
 
       const sorted = data.sort((a, b) => a.number - b.number);
       return sorted;
@@ -65,17 +65,25 @@ const SportVenueScreen = () => {
       return null;
     }
   };
-  useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
 
-      const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
-      setVenueData(vd);
-      setFieldsData(fd);
-      setLoading(false);
-    };
+  const initData = async () => {
+    setLoading(true);
+
+    const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
+    setVenueData(vd);
+    setFieldsData(fd);
+    setLoading(false);
+  };
+  useEffect(() => {
     initData();
   }, []);
+
+  useEffect(()=>{
+    if(forceRefresh){
+      setForceRefresh(false)
+      initData();
+    }
+  },[forceRefresh])
 
   const NavigateToEdit = () => {
     nav.navigate("EditManageSportVenueAdmin", {
@@ -87,10 +95,7 @@ const SportVenueScreen = () => {
 
   const deleteHandler = async () => {
     try {
-      const response = await Admin.SportVenue.deleteVenue(
-        TOKEN_TEMPORARY,
-        idVenue
-      );
+      const response = await Admin.SportVenue.deleteVenue(user.token, idVenue);
     } catch (e) {
       console.log("Error occured in deleteHandler, SportVenueScreen");
       console.log(e);
@@ -165,6 +170,7 @@ const SportVenueScreen = () => {
     pricePerHour: venueData?.price_per_hour,
     orders: orders,
     setOrders: setOrders,
+    setForceRefresh: setForceRefresh
   };
 
   const listButtons = [

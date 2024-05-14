@@ -6,8 +6,7 @@ import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { Currency } from "util/currency";
 
-
-const HeadContent = ({name,category,price_per_hour}) => {
+const HeadContent = ({ name, category, price_per_hour }) => {
   return (
     <>
       <View style={styles.container}>
@@ -16,8 +15,15 @@ const HeadContent = ({name,category,price_per_hour}) => {
           <TagCategory category={category} />
         </View>
         <View>
-          <Text style={{fontFamily:LEXEND.SemiBold,fontSize:12,color:COLOR.second700}}>
-            Rp.{Currency.format(price_per_hour)}/hour</Text>
+          <Text
+            style={{
+              fontFamily: LEXEND.SemiBold,
+              fontSize: 12,
+              color: COLOR.second700,
+            }}
+          >
+            Rp.{Currency.format(price_per_hour)}/hour
+          </Text>
         </View>
       </View>
     </>
@@ -37,5 +43,3 @@ const styles = StyleSheet.create({
     color: COLOR.second900,
   },
 });
-
-

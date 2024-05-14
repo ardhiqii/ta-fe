@@ -7,8 +7,9 @@ import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { UserContext } from "store/user-contex";
 import { Currency } from "util/currency";
 import { Player } from "util/player/player";
 
@@ -25,6 +26,8 @@ const OrderReviewScreen = () => {
   const [totalPrice, setTotalPrice] = useState(0);
 
   const [loading, setLoading] = useState(false);
+
+  const {user} = useContext(UserContext)
 
   useEffect(() => {
     let totalHour = 0;
@@ -105,7 +108,7 @@ const OrderReviewScreen = () => {
     try {
       const arrayPomise = [];
       currentOrder.map((c) => {
-        arrayPomise.push(Player.Booking.newOrder(TOKEN_TEMPORARY, c));
+        arrayPomise.push(Player.Booking.newOrder(user.token, c));
       });
 
       const resp = await Promise.all(arrayPomise);

@@ -17,6 +17,8 @@ export const login = async (username, password, role) => {
     return data;
   } catch (e) {
     console.log("Error Message: ", e);
+    console.log(e.response.data);
+    return e.response.data;
   }
 };
 
@@ -42,18 +44,18 @@ export const register = async (name, username, password, phone, role) => {
 };
 
 export const relogin = async (token, role) => {
-  const url_relogin = process.env.BASE_URL + `/${role}/auth/relogin`;
+  const url_relogin = process.env.BASE_URL + `/auth/relogin`;
   try {
     const { data } = await axios.get(url_relogin, {
       headers: {
         token: token,
       },
     });
-    if(data){
-      if(!data.relogin_status){
-        return null
+    if (data) {
+      if (!data.relogin_status) {
+        return null;
       }
-      return data
+      return data;
     }
   } catch (e) {
     console.log(e);
