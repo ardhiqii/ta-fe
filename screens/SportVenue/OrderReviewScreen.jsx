@@ -5,9 +5,11 @@ import TimeDisplay from "@components/SportVenue/TimeDisplay";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { COLOR } from "COLOR";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import React, { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Currency } from "util/currency";
 import { Player } from "util/player/player";
 
 const OrderReviewScreen = () => {
@@ -15,12 +17,24 @@ const OrderReviewScreen = () => {
   const nav = useNavigation();
   const ordersRoute = route?.params?.orders;
   const nameVenue = route?.params?.nameVenue;
+  const price = route?.params?.pricePerHour;
 
   const [orders, setOrders] = useState(
     ordersRoute?.length === 0 ? [] : ordersRoute
   );
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let totalHour = 0;
+    orders.map((o) => {
+      o.fieldsData.map((f) => {
+        totalHour = totalHour + f.selected.length;
+      });
+    });
+    setTotalPrice(totalHour * price);
+  }, []);
 
   useEffect(() => {
     // console.log(JSON.stringify(orders,null,2));
@@ -107,9 +121,9 @@ const OrderReviewScreen = () => {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        {orders.map((o) => (
+        {orders.map((o, i) => (
           <OrderContent
-            key={o.date}
+            key={o.date + i}
             {...o}
             updateFieldsData={updateFieldsData}
             nameVenue={nameVenue}
@@ -118,7 +132,10 @@ const OrderReviewScreen = () => {
         ))}
       </ScrollView>
       <View style={styles.button}>
-        <View style={{ width: "90%" }}>
+        <Text style={{ fontFamily: LEXEND.Light }}>
+          Total Price:<Text style={{fontFamily:LEXEND.Regular}}> Rp.{Currency.format(totalPrice)}</Text>
+        </Text>
+        <View style={{ width: "100%" }}>
           <Button onPress={confirmHandler}>Confirm</Button>
         </View>
       </View>
@@ -133,13 +150,20 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 24,
     rowGap: 12,
-    paddingBottom: 120,
+    paddingHorizontal: 25,
+    paddingBottom: 150,
   },
   button: {
     position: "absolute",
     width: "100%",
-    alignItems: "center",
-    bottom: 50,
+    bottom: 0,
+    height: 110,
+    backgroundColor: "white",
+    paddingHorizontal: 25,
+    borderTopWidth: 1,
+    borderColor: COLOR.border,
+    paddingVertical: 8,
+    rowGap: 12,
   },
 });
 

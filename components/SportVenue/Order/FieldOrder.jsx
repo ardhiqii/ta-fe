@@ -130,7 +130,7 @@ const FieldOrder = ({
             </Pressable>
           </View>
         </View>
-        <View>
+        <View style={{rowGap:8}}>
           <Text style={styles.subtext}>Ordered Time</Text>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <SwipeableContent
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     rowGap: 1,
     backgroundColor: "#f3f3f356",
     paddingVertical: 12,
-    paddingHorizontal: 25,
+    paddingHorizontal: 14,
   },
   subtext: {
     fontFamily: LEXEND.Regular,

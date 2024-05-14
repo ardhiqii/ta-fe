@@ -3,6 +3,8 @@ import Category from "@components/HomeContent/Category";
 import Nearest from "@components/HomeContent/Nearest";
 
 import Recommend from "@components/HomeContent/Recommend";
+import { LEXEND } from "@fonts/LEXEND";
+import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 
 import React, { useContext } from "react";
@@ -13,17 +15,30 @@ const HomeScreen = () => {
   const isAdmin = TEMPORARY_ROLE === "admin";
   console.log("#### HOME SCREEN ###");
   console.log(user);
+
+  const PlayerHomeScreen = () => {
+    return (
+      <>
+        <Category />
+        <Nearest />
+      </>
+    );
+  };
+
+  const AdminHomeScreen = () => {
+    return (
+      <View style={{marginTop:28,flexGrow:1,}}>
+        <Text style={{fontFamily:LEXEND.Bold,textAlign:'center'}}>Your Sport Venue</Text>
+        <ListSportVenuesScreen />
+      </View>
+    );
+  };
   return (
     <>
-      <StatusBar backgroundColor={"transparent"} translucent={true} />
-      <CustomTopNavigation />
+      <StatusBar translucent={true} />
+      {!isAdmin && <CustomTopNavigation />}
       <ScrollView contentContainerStyle={styles.container}>
-        <Category />
-        {!isAdmin && (
-          <>
-            <Nearest />
-          </>
-        )}
+        {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
       </ScrollView>
     </>
   );
@@ -35,5 +50,6 @@ const styles = StyleSheet.create({
     marginTop: 12,
     rowGap: 20,
     paddingBottom: 20,
+    flexGrow: 1,
   },
 });

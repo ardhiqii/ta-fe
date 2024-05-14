@@ -21,11 +21,14 @@ import { UserContext } from "store/user-contex";
 import ReservationContent from "@components/SportVenue/ReservationContent";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
+import Button from "@components/UI/Button";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
   const [fieldsData, setFieldsData] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const route = useRoute();
   const { idVenue } = route.params;
   const editMode = route?.params?.editMode;
@@ -82,7 +85,6 @@ const SportVenueScreen = () => {
     });
   };
 
-
   const deleteHandler = async () => {
     try {
       const response = await Admin.SportVenue.deleteVenue(
@@ -105,6 +107,14 @@ const SportVenueScreen = () => {
         text: "Cancel",
       },
     ]);
+  };
+
+  const navigateToOrderReview = () => {
+    nav.navigate("OrderReviewScreen", {
+      orders: orders,
+      nameVenue: venueData?.name,
+      pricePerHour: venueData?.price_per_hour,
+    });
   };
 
   if (loading)
@@ -152,6 +162,9 @@ const SportVenueScreen = () => {
     category: venueData?.Sport_Kind_Name.toLowerCase(),
     time_open: venueData?.time_open,
     time_closed: venueData?.time_closed,
+    pricePerHour: venueData?.price_per_hour,
+    orders: orders,
+    setOrders: setOrders,
   };
 
   const listButtons = [
@@ -168,30 +181,31 @@ const SportVenueScreen = () => {
   ];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-          }}
-          style={styles.image}
-        />
-      </View>
-      {editMode && (
-        <>
-          <ManageVenueButtons listButtons={listButtons} />
-          <BorderLine />
-        </>
-      )}
-      <HeadContent {...headData} />
-      {/* <BorderLine />
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
+            }}
+            style={styles.image}
+          />
+        </View>
+        {editMode && (
+          <>
+            <ManageVenueButtons listButtons={listButtons} />
+            <BorderLine />
+          </>
+        )}
+        <HeadContent {...headData} />
+        {/* <BorderLine />
       <HighlightContent />
       <BorderLine /> */}
-      <BorderLine />
-      <InformationContent {...infoData} />
-      <BorderLine />
-      <ReservationContent {...reservastionData} />
-      {/* <ScheduleContent />
+        <BorderLine />
+        <InformationContent {...infoData} />
+        <BorderLine />
+        <ReservationContent {...reservastionData} />
+        {/* <ScheduleContent />
       <BorderLine
         customStyle={{
           borderBottomWidth: 2,
@@ -200,7 +214,21 @@ const SportVenueScreen = () => {
         }}
       />
       <ListFieldsContent data={fieldsData} category={venueData?.Sport_Kind_Name.toLowerCase()} time_open={venueData?.time_open} time_closed={venueData?.time_closed}/> */}
-    </ScrollView>
+      </ScrollView>
+      {orders?.length > 0 && (
+        <View
+          style={{
+            marginTop: 12,
+            paddingHorizontal: 25,
+            width: "100%",
+            position: "absolute",
+            bottom: 20,
+          }}
+        >
+          <Button onPress={navigateToOrderReview}>Order</Button>
+        </View>
+      )}
+    </>
   );
 };
 

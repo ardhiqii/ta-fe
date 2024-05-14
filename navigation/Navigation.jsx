@@ -13,6 +13,7 @@ import { LEXEND } from "@fonts/LEXEND";
 import SportVenueNavigation from "./SportVenueNavigation";
 import MapScreen from "@screens/MapScreen";
 import SearchScreen from "@screens/SearchScreen";
+import TransactionScreen from "@screens/Transaction/TransactionScreen";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -99,6 +100,22 @@ const BottomTabNavigator = () => {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
+        <BottomTab.Screen name="TransactionScreen" component={TransactionScreen} options={{
+        headerBackTitleVisible: false,
+        headerStyle: {
+          backgroundColor: COLOR.base900,
+        },
+        headerTitleStyle: {
+          fontFamily: LEXEND.SemiBold,
+          fontSize: 28,
+          color: "white",
+        },
+        headerTintColor: "white",
+        headerShadowVisible: false,
+        contentStyle: {
+          backgroundColor: "white",
+        },
+      }} />
       </BottomTab.Navigator>
     </>
   );

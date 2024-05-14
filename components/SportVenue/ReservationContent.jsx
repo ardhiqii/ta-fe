@@ -14,10 +14,13 @@ const ReservationContent = ({
   category,
   time_open,
   time_closed,
+  pricePerHour,
+  orders,
+  setOrders
 }) => {
-  const [order, setOrder] = useState([]);
+  // const [order, setOrder] = useState([]);
   const [date, setDate] = useState();
-  const nav = useNavigation()
+  const nav = useNavigation();
   const isAdmin = TEMPORARY_ROLE === "admin";
 
   // useEffect(() => {
@@ -26,12 +29,6 @@ const ReservationContent = ({
   // }, [order]);
 
 
-  const navigateToOrderReview = ()=>{
-    nav.navigate("OrderReviewScreen",{
-      orders:order,
-      nameVenue:name
-    })
-  }
 
   const orderHandler = (date, fieldsData) => {
     const newOrder = {
@@ -39,7 +36,7 @@ const ReservationContent = ({
       fieldsData: fieldsData,
     };
     let isNewDate = true;
-    let updateOrder = order.map((o) => {
+    let updateOrder = orders.map((o) => {
       if (o.date === date) {
         isNewDate = false;
         return { ...o, fieldsData: fieldsData };
@@ -52,41 +49,32 @@ const ReservationContent = ({
       updateOrder.push(newOrder);
     }
     updateOrder = updateOrder.filter((o) => o.fieldsData.length !== 0);
-    setOrder(updateOrder);
+    setOrders(updateOrder);
   };
 
   return (
-    <View style={{ rowGap: 12 }}>
-      <ScheduleContent setDate={setDate} orderData={order} />
-      <BorderLine
-        customStyle={{
-          borderBottomWidth: 2,
-          borderStyle: "dashed",
-          paddingTop: 2,
-        }}
-      />
-      <ListFieldsContent
-        orderData={order}
-        defaultData={fieldsData}
-        category={category}
-        time_closed={time_closed}
-        time_open={time_open}
-        date={date}
-        onChangeOrder={orderHandler}
-      />
-      {order?.length > 0 && (
-        <View
-          style={{
-            paddingHorizontal: 25,
-            position: "absolute",
-            bottom: -60,
-            width: "100%",
+    <>
+      <View style={{ rowGap: 12 }}>
+        <ScheduleContent setDate={setDate} orderData={orders} />
+        <BorderLine
+          customStyle={{
+            borderBottomWidth: 2,
+            borderStyle: "dashed",
+            paddingTop: 2,
           }}
-        >
-          <Button onPress={navigateToOrderReview}>Order</Button>
-        </View>
-      )}
-    </View>
+        />
+        <ListFieldsContent
+          orderData={orders}
+          defaultData={fieldsData}
+          category={category}
+          time_closed={time_closed}
+          time_open={time_open}
+          date={date}
+          onChangeOrder={orderHandler}
+        />
+      </View>
+      
+    </>
   );
 };
 
