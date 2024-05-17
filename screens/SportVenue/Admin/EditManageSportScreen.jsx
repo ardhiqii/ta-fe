@@ -24,11 +24,11 @@ import { UserContext } from "store/user-contex";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
-  Edit: "EditVenue"
+  Edit: "EditVenue",
 };
 
 const EditManageSportScreen = () => {
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext);
   const route = useRoute();
   const nav = useNavigation();
   const idVenue = route?.params?.idVenue;
@@ -65,12 +65,13 @@ const EditManageSportScreen = () => {
     rules: dataVenue?.rules,
     price_per_hour: dataVenue?.price_per_hour,
     time_open: dataVenue?.time_open,
-    time_closed: dataVenue?.time_closed
+    time_closed: dataVenue?.time_closed,
   };
 
-
   const alertConfirmation = () => {
-    const alertMessage = `Are you sure want to ${type == TYPEMANAGE.Add ? "add venue" : "save"}?`
+    const alertMessage = `Are you sure want to ${
+      type == TYPEMANAGE.Add ? "add venue" : "save"
+    }?`;
     Alert.alert("Confirmation", alertMessage, [
       {
         text: "Ok",
@@ -84,20 +85,34 @@ const EditManageSportScreen = () => {
   const saveHandler = async () => {
     setLoading(true);
     console.log(newData);
- 
+
     if (type === TYPEMANAGE.Add) {
       console.log("ADDING");
-      console.log(newData);
-      const data = await Admin.SportVenue.addVenue(user.token, newData);
-      console.log(data);
-
+      const isValid = isValidNewData(newData);
+      if (isValid) {
+        const data = await Admin.SportVenue.addVenue(user.token, newData);
+        console.log(data);
+      } else {
+        console.log("YES WRONG");
+        Alert.alert("Data not valid", "Check again your input, fill all the input")
+      }
     } else {
       const data = await Admin.SportVenue.editVenue(user.token, newData);
       console.log(data);
     }
-
     setLoading(false);
-    nav.goBack();
+    // nav.goBack();
+  };
+
+  const isValidNewData = (data) => {
+    let valid = true;
+    for (const [key, value] of Object.entries(data)) {
+      if (value === null || value === "" || value === 0) {
+        valid = false;
+        break;
+      }
+    }
+    return valid;
   };
 
   return (
@@ -110,10 +125,13 @@ const EditManageSportScreen = () => {
           style={styles.image}
         />
       </View>
+      
       <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
           <Feather name="save" size={24} color={"black"} />
-          <Text style={{ fontFamily: LEXEND.Regular }}>{type ? type : "Save"}</Text>
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            {type ? type : "Save"}
+          </Text>
         </Pressable>
         <Pressable style={{ alignItems: "center" }}>
           <Feather

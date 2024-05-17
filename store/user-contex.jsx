@@ -81,7 +81,6 @@ const UserContextProvider = ({ children }) => {
       if (!hasPermission) {
         return;
       }
-
       const location = await getCurrentPositionAsync();
       const lat = location.coords.latitude;
       const lng = location.coords.longitude;

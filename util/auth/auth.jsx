@@ -29,10 +29,9 @@ export const register = async (name, username, password, phone, role) => {
     username: username,
     password: password,
     name: name,
+    phone: phone,
   };
-  if (role === "admin") {
-    bodyData["phone"] = phone;
-  }
+
   console.log("CALLED REGISTER UTIL");
   try {
     const { data } = await axios.post(url_register, bodyData);

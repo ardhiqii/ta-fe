@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Alert,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -78,12 +79,16 @@ const SportVenueScreen = () => {
     initData();
   }, []);
 
-  useEffect(()=>{
-    if(forceRefresh){
-      setForceRefresh(false)
+  const onRefresh = useCallback(() => {
+    initData();
+  }, []);
+
+  useEffect(() => {
+    if (forceRefresh) {
       initData();
+      setForceRefresh(false);
     }
-  },[forceRefresh])
+  }, [forceRefresh]);
 
   const NavigateToEdit = () => {
     nav.navigate("EditManageSportVenueAdmin", {
@@ -170,7 +175,7 @@ const SportVenueScreen = () => {
     pricePerHour: venueData?.price_per_hour,
     orders: orders,
     setOrders: setOrders,
-    setForceRefresh: setForceRefresh
+    setForceRefresh: setForceRefresh,
   };
 
   const listButtons = [
@@ -188,7 +193,12 @@ const SportVenueScreen = () => {
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.imageContainer}>
           <Image
             source={{

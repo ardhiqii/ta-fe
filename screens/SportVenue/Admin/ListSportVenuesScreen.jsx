@@ -1,9 +1,16 @@
 import Card from "@components/SportVenue/Card";
-import React, { useContext, useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { LEXEND } from "@fonts/LEXEND";
@@ -15,18 +22,22 @@ const ListSportVenuesScreen = () => {
   const nav = useNavigation();
   const { user } = useContext(UserContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const { data } = await Admin.SportVenue.getAllVenue(user.token);
-      if (data) {
-        setVenuesData(data);
-      }
-      setLoading(false);
-    };
+  const fetchData = async () => {
+    setLoading(true);
+    const { data } = await Admin.SportVenue.getAllVenue(user.token);
+    if (data) {
+      setVenuesData(data);
+    }
+    setLoading(false);
+  };
 
+  useEffect(() => {
     fetchData();
-  }, [nav]);
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    fetchData();
+  }, []);
 
   const NavigateAddHandler = () => {
     nav.navigate("SportVenueNavigation", {
@@ -59,14 +70,19 @@ const ListSportVenuesScreen = () => {
           </Text>
         </View>
       )}
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
         {venuesData.map((venue, i) => (
           <View key={i} style={{ rowGap: 16 }}>
             <Card {...venue} />
             <View style={{ height: 2, backgroundColor: "#cfd8dc" }} />
           </View>
         ))}
-      </View>
+      </ScrollView>
       <Pressable style={styles.addContainer} onPress={NavigateAddHandler}>
         <Ionicons name="add" size={35} color={COLOR.gold} />
       </Pressable>

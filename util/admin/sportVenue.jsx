@@ -2,7 +2,7 @@ import axios, { Axios } from "axios";
 
 const getAllVenue = async (token) => {
   const url = process.env.BASE_URL + "/admin/sportVenue";
-  console.log(token);
+  console.log("token",token);
   try {
     const { data } = await axios.get(url, {
       headers: {
@@ -65,6 +65,7 @@ const addVenue = async (token, dataVenue) => {
     return data;
   } catch (e) {
     console.log(e);
+    console.log(e.response.data);
   }
 };
 

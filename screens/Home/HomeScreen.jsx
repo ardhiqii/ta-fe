@@ -30,7 +30,7 @@ const HomeScreen = () => {
 
   const AdminHomeScreen = () => {
     return (
-      <View style={{ marginTop: 28, flexGrow: 1 }}>
+      <View style={{ marginTop: 20, flexGrow: 1 }}>
         <Text style={{ fontFamily: LEXEND.Bold, textAlign: "center" }}>
           Your Sport Venue
         </Text>
@@ -41,7 +41,7 @@ const HomeScreen = () => {
 
   return (
     <>
-      <StatusBar translucent={true} />
+      <StatusBar translucent={true} backgroundColor={"transparent"} barStyle="dark-content" />
       {!isAdmin && <CustomTopNavigation />}
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
