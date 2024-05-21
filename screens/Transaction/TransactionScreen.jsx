@@ -3,6 +3,7 @@ import CardOrder from "@components/Transaction/CardOrder";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
+import { CATEGORY_ID } from "constant/CATEGORY_ID";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   RefreshControl,
@@ -15,33 +16,69 @@ import { UserContext } from "store/user-contex";
 import { Player } from "util/player/player";
 
 const STATUS_FILTER = {
-  label: "Status",
+  label: "status",
   items: [
-    "All",
-    "Payment",
-    "Waiting Aprroval",
-    "Approved",
-    "Rejected",
-    "Cancelled",
+    "all",
+    "payment",
+    "waiting_approval",
+    "approved",
+    "rejected",
+    "cancelled",
+  ],
+};
+
+const ROLE_Filter = {
+  label: "role",
+  items: ["host", "member"],
+};
+
+const CATEGORY_FILTER = {
+  label: "category",
+  items: [
+    "futsal",
+    "basket",
+    "badminton",
+    "volley",
+    "swimming",
+    "bowling",
+    "tennis",
   ],
 };
 
 const TransactionScreen = () => {
   const [transactionData, setTransactionData] = useState([]);
-  const [status, setStatus] = useState("All");
+  const [status, setStatus] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("host");
+  const [categoryFilter, setCategoryFilter] = useState();
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
 
   const fetchData = async () => {
     setLoading(true);
+    const cat =
+      categoryFilter !== null && categoryFilter !== undefined
+        ? CATEGORY_ID[categoryFilter]
+        : "all";
+    const stat = status !== null ? status: 'all'
     try {
-      const { data } = await Player.Booking.getAllOrdersByStatus(
-        user.token,
-        FormattedStatus(status)
-      );
-      setTransactionData(data);
+      const { data } =
+        roleFilter === "host"
+          ? await Player.Booking.getAllOrdersByStatus(
+              user.token,
+              FormattedStatus(stat)
+            )
+          : await Player.Booking.getAllJoinedReservationByStatus(
+              user.token,
+              cat
+            );
+      if (data) {
+        setTransactionData(data);
+      }
     } catch (e) {
       console.log(e);
+      if (e.data === null) {
+        setTransactionData([]);
+      }
     }
     setLoading(false);
   };
@@ -52,8 +89,15 @@ const TransactionScreen = () => {
 
   useEffect(() => {
     fetchData();
-  }, [status]);
+  }, [status, categoryFilter, roleFilter]);
 
+  // if (loading) {
+  //   return (
+  //     <View>
+  //       <Text>Loading</Text>
+  //     </View>
+  //   );
+  // }
   return (
     <View style={styles.container}>
       <View
@@ -66,7 +110,23 @@ const TransactionScreen = () => {
           zIndex: 4,
         }}
       >
-        <Filter {...STATUS_FILTER} value={status} onUpdate={setStatus} />
+        <View style={{ flexDirection: "row", columnGap: 12 }}>
+          {roleFilter === "host" && (
+            <Filter {...STATUS_FILTER} value={status} onUpdate={setStatus} />
+          )}
+          {roleFilter === "member" && (
+            <Filter
+              {...CATEGORY_FILTER}
+              value={categoryFilter}
+              onUpdate={setCategoryFilter}
+            />
+          )}
+          <Filter
+            {...ROLE_Filter}
+            value={roleFilter}
+            onUpdate={setRoleFilter}
+          />
+        </View>
       </View>
       {loading && <Text>LOADING</Text>}
       {transactionData?.length === 0 && (
@@ -91,7 +151,7 @@ const TransactionScreen = () => {
           }
         >
           <View style={{ rowGap: 20 }}>
-            {transactionData.map((t) => (
+            {transactionData?.map((t) => (
               <CardOrder data={t} key={t.reservation_id} />
             ))}
           </View>

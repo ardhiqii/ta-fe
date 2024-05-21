@@ -35,11 +35,11 @@ const InformationContent = ({
         const adrs = await Location.getAddress(coor[0], coor[1]);
         setAddress(adrs);
       } catch (e) {
-        console.log(e);
+        console.log("InformationContent getting address",e);
       }
     };
     gettingAddress();
-  }, []);
+  }, [geo_coordinate]);
 
   const navigateToMap = () => {
     const coor = geo_coordinate.split(",");

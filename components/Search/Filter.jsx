@@ -30,8 +30,10 @@ const Filter = ({ items, label, onUpdate, value }) => {
       onUpdate(null);
       setSelect(label);
     } else {
-      onUpdate(value.toLowerCase());
-      setSelect(value);
+      if (value) {
+        onUpdate(value.toLowerCase());
+        setSelect(value);
+      }
     }
     toggleDropdown(false);
   };
@@ -45,21 +47,21 @@ const Filter = ({ items, label, onUpdate, value }) => {
           open && { borderBottomEndRadius: 0, borderBottomStartRadius: 0 },
         ]}
       >
-        <Text style={{ fontFamily: LEXEND.Regular }}>{select}</Text>
+        <Text style={{ fontFamily: LEXEND.Regular }}>{allCapital(select)}</Text>
         <Ionicons name={open ? "arrow-up" : "arrow-down"} />
       </Pressable>
       {open && (
         <View style={styles.listContainer}>
           {items.map((d, i) => {
-            let name = d.toLowerCase();
-            name = name.charAt(0).toUpperCase() + name.slice(1);
+            const name = allCapital(d);
+
             return (
               <Pressable
                 key={i + 1}
-                onPress={selectHandler.bind(this, name)}
+                onPress={selectHandler.bind(this, d)}
                 style={[
                   styles.itemContainer,
-                  select === name && { backgroundColor: "#ccd7d1" },
+                  select === d && { backgroundColor: "#ccd7d1" },
                 ]}
               >
                 <Text style={{ fontFamily: LEXEND.Regular }}>{name}</Text>
@@ -105,3 +107,13 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
 });
+
+const allCapital = (status) => {
+  let displayStatus = status.toLowerCase().split("_");
+  for (let [i, s] of displayStatus.entries()) {
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+    displayStatus[i] = s;
+  }
+  displayStatus = displayStatus.join(" ");
+  return displayStatus;
+};

@@ -3,6 +3,7 @@ import Category from "@components/HomeContent/Category";
 import Nearest from "@components/HomeContent/Nearest";
 
 import Recommend from "@components/HomeContent/Recommend";
+import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
@@ -11,7 +12,7 @@ import React, { useContext } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
 const HomeScreen = () => {
-  const { user } = useContext(UserContext);
+  const { user,logoutUser } = useContext(UserContext);
   if (!user) {
     return;
   }
@@ -41,10 +42,16 @@ const HomeScreen = () => {
 
   return (
     <>
-      <StatusBar translucent={true} backgroundColor={"transparent"} barStyle="dark-content" />
+      <StatusBar
+        translucent={true}
+        backgroundColor={"transparent"}
+        barStyle="dark-content"
+      />
       {!isAdmin && <CustomTopNavigation />}
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
+      
+      <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>
   );

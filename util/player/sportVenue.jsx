@@ -2,8 +2,7 @@ import axios, { Axios } from "axios";
 
 const getAllVenue = async (token, filter) => {
   const url = process.env.BASE_URL + "/player/sportVenue";
-  console.log(token);
-  console.log(filter);
+
   try {
     const { data } = await axios.post(url, filter, {
       headers: {
@@ -105,5 +104,5 @@ export const SportVenue = {
   getById,
   getAllFields,
   getBlacklistFieldById,
-  getReservedFieldById
+  getReservedFieldById,
 };

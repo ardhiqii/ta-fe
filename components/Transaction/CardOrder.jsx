@@ -4,14 +4,23 @@ import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation } from "@react-navigation/native";
 
 const CardOrder = ({ data }) => {
+  const nav = useNavigation();
   const timeStart = data.time_start.slice(0, -3);
   const timeEnd = data.time_end.slice(0, -3);
-  const bookingStatus =
-    data.booking_status.charAt(0).toUpperCase() + data.booking_status.slice(1);
+  const navigateToById = () => {
+    nav.navigate("TransactionNavigation", {
+      screen: "TransactionByIdScreen",
+      params: {
+        idReservation: data.reservation_id,
+        idVenue: data.venue_id,
+      },
+    });
+  };
   return (
-    <Pressable style={styles.container}>
+    <Pressable style={styles.container} onPress={navigateToById}>
       {/* ### Header ### */}
       <View
         style={{
@@ -35,7 +44,11 @@ const CardOrder = ({ data }) => {
             {data.playing_date}
           </Text>
         </View>
-        <Text style={{ fontFamily: LEXEND.Regular }}>{bookingStatus}</Text>
+        {data.booking_status && (
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            {allCapital(data?.booking_status)}
+          </Text>
+        )}
       </View>
       {/* ### Information ### */}
       <View style={{ paddingHorizontal: 10, paddingVertical: 10, rowGap: 8 }}>
@@ -135,4 +148,14 @@ const TimeDisplay = ({ item }) => {
       </Text>
     </View>
   );
+};
+
+const allCapital = (status) => {
+  let displayStatus = status.toLowerCase().split("_");
+  for (let [i, s] of displayStatus.entries()) {
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+    displayStatus[i] = s;
+  }
+  displayStatus = displayStatus.join(" ");
+  return displayStatus;
 };

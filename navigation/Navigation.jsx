@@ -14,6 +14,7 @@ import SportVenueNavigation from "./SportVenueNavigation";
 import MapScreen from "@screens/MapScreen";
 import SearchScreen from "@screens/SearchScreen";
 import TransactionScreen from "@screens/Transaction/TransactionScreen";
+import TransactionNavigation from "./TransactionNavigation";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -72,6 +73,11 @@ const AuthenticatedNavigation = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name="TransactionNavigation"
+        component={TransactionNavigation}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name="Map"
         component={MapScreen}
         options={{
@@ -108,6 +114,7 @@ const BottomTabNavigator = () => {
           name="TransactionScreen"
           component={TransactionScreen}
           options={{
+            title:'Reservation',
             headerBackTitleVisible: false,
             headerStyle: {
               backgroundColor: COLOR.base900,

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { Currency } from "util/currency";
 
-const HeadContent = ({ name, category, price_per_hour }) => {
+const HeadContent = ({ name, category, price_per_hour, field_number }) => {
   return (
     <>
       <View style={styles.container}>
@@ -22,7 +22,9 @@ const HeadContent = ({ name, category, price_per_hour }) => {
               color: COLOR.second700,
             }}
           >
-            Rp.{Currency.format(price_per_hour)}/hour
+            {price_per_hour
+              ? `Rp.${Currency.format(price_per_hour)}/hour`
+              : `Field ${field_number}`}
           </Text>
         </View>
       </View>
@@ -34,7 +36,7 @@ export default HeadContent;
 
 const styles = StyleSheet.create({
   container: {
-    rowGap: 12,
+    rowGap: 8,
     paddingHorizontal: 25,
   },
   text: {

@@ -18,7 +18,7 @@ const CustomTopNavigation = () => {
     try {
       setAddress("Getting your address...");
       const coor = await getCurrentCoorUser();
-      const address = await Location.getAddress(coor.lat, coor.lng);
+      const address = await Location.getAddress(coor?.lat, coor?.lng);
 
       if (address !== "Failed to fetch address") {
         setAddress(address);
@@ -49,7 +49,7 @@ const CustomTopNavigation = () => {
   }, [user.coordinate]);
 
   const navigateToSearch = () => {
-    nav.navigate("Search")
+    nav.navigate("Search");
   };
   return (
     <View style={styles.container}>
