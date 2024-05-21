@@ -47,7 +47,7 @@ const Filter = ({ items, label, onUpdate, value }) => {
           open && { borderBottomEndRadius: 0, borderBottomStartRadius: 0 },
         ]}
       >
-        <Text style={{ fontFamily: LEXEND.Regular }}>{allCapital(select)}</Text>
+        <Text numberOfLines={1} style={{ fontFamily: LEXEND.Regular, width:'80%' }}>{allCapital(select)}</Text>
         <Ionicons name={open ? "arrow-up" : "arrow-down"} />
       </Pressable>
       {open && (

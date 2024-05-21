@@ -42,32 +42,45 @@ const getAllOrdersByStatus = async (token, status) => {
   }
 };
 
-const getAllJoinedReservationByStatus = async (token, sportKindId) => {
-  const url =
-    process.env.BASE_URL + "/player/reservation/joined/" + sportKindId;
-  console.log(url);
+
+const getAllPublicReservations = async (token, coordinate,sportKindId,mabarType,sortBy) => {
+  const url = process.env.BASE_URL + `/player/reservation/public/${sportKindId}/${mabarType}/${sortBy}` ;
   try {
-    console.log("MASJ");
     const { data } = await axios.get(url, {
       headers: {
         token: token,
+        geo_coordinate: coordinate
       },
     });
-
-    console.log(data);
     if (data) {
       return data;
     }
   } catch (e) {
     // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
     if (e.response && e.response.data) {
-      throw e.response.data;
+      return e.response.data;
     } else {
-      console.log(
-        "Error occured in util Booking, getAllJoinedReservationByStatus",
-        e
-      );
+      console.log("Error occured in util Booking, getAllPublicReservations", e);
     }
+  }
+};
+
+const getAllJoinedReservationByStatus = async (token, sportKindId) => {
+  const url =
+    process.env.BASE_URL + "/player/reservation/joined/" + sportKindId;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
+    console.log("Error occured getAllJoinedReservationByStatus", e);
+    throw e.response.data;
   }
 };
 
@@ -167,10 +180,64 @@ const removeMemberByUsername = async (token, idReservation, username) => {
   }
 };
 
+const leaveReservation = async (token, idReservation) => {
+  const url =
+    process.env.BASE_URL + `/player/reservation/leave/${idReservation}`;
+  try {
+    const { data } = await axios.delete(
+      url,
+
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+    console.log(data);
+    return data;
+  } catch (e) {
+    // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
+    if (e.response && e.response.data) {
+      throw e.response.data;
+    } else {
+      console.log("Error occured in util Booking, leaveReservation", e);
+    }
+  }
+};
+
 const changeStatusOpenMember = async (token, idReservation, isOpenMember) => {
   const url =
     process.env.BASE_URL +
     `/player/reservation/open/${idReservation}/${isOpenMember}`;
+  try {
+    const data = await axios.put(
+      url,
+      {},
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+    return data;
+  } catch (e) {
+    // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
+    if (e.response && e.response.data) {
+      throw e.response.data;
+    } else {
+      console.log("Error occured in util Booking, changeStatusOpenMember", e);
+    }
+  }
+};
+
+const changeStatusPublicReservation = async (
+  token,
+  idReservation,
+  isPublic
+) => {
+  const url =
+    process.env.BASE_URL +
+    `/player/reservation/public/${idReservation}/${isPublic}`;
   try {
     const data = await axios.put(
       url,
@@ -239,6 +306,32 @@ const cancelReservation = async (token, idReservation) => {
   }
 };
 
+
+const joinReservation = async (token, idReservation) => {
+  const url =
+    process.env.BASE_URL + `/player/reservation/join/${idReservation}`;
+  try {
+    const { data } = await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+    return data;
+  } catch (e) {
+    // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
+    if (e.response && e.response.data) {
+      throw e.response.data;
+    } else {
+      console.log("Error occured in util Booking, joinReservation", e);
+    }
+    console.log(e.response);
+  }
+};
+
 export const Booking = {
   newOrder,
   getAllOrdersByStatus,
@@ -249,5 +342,9 @@ export const Booking = {
   changeStatusOpenMember,
   uploadPayment,
   cancelReservation,
+  joinReservation,
   getAllJoinedReservationByStatus,
+  leaveReservation,
+  changeStatusPublicReservation,
+  getAllPublicReservations
 };

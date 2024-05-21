@@ -24,8 +24,11 @@ const TransactionByIdScreen = () => {
   const idVenue = route?.params?.idVenue;
   const [transactionData, setTransactionData] = useState();
   const [venueData, setVenueData] = useState();
-  const { user } = useContext(UserContext);
+  const [members, setMembers] = useState([]);
 
+  const [forceRefresh, setForceRefresh] = useState(false);
+
+  const { user } = useContext(UserContext);
   const fetchData = async () => {
     if (idReservation) {
       try {
@@ -56,17 +59,42 @@ const TransactionByIdScreen = () => {
     }
   };
 
+  const fetchMemberData = async () => {
+    try {
+      const { data } = await Player.Booking.getMembersById(
+        user.token,
+        idReservation
+      );
+      return data;
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
+  };
+
   const fetchAllData = async () => {
     setLoading(true);
-    const [td, vd] = await Promise.all([fetchData(), fetchVenueData()]);
+    const [td, vd, md] = await Promise.all([
+      fetchData(),
+      fetchVenueData(),
+      fetchMemberData(),
+    ]);
     setTransactionData(td);
     setVenueData(vd);
+    setMembers(md);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchAllData();
   }, []);
+
+  useEffect(() => {
+    if (forceRefresh) {
+      setForceRefresh(false);
+      fetchAllData();
+    }
+  }, [forceRefresh]);
 
   const onRefresh = useCallback(() => {
     fetchAllData();
@@ -97,6 +125,7 @@ const TransactionByIdScreen = () => {
 
   const matchData = {
     isOpenMember: transactionData?.info?.is_open_member,
+    isReservationPublic: transactionData?.info?.is_public,
     timeStart: transactionData?.info?.time_start,
     timeEnd: transactionData?.info.time_end,
     date: transactionData?.info?.playing_date,
@@ -107,6 +136,7 @@ const TransactionByIdScreen = () => {
   const listMembersData = {
     idReservation: idReservation,
     roleReviewer: transactionData?.role,
+    membersData: members,
   };
 
   const bottomActionData = {
@@ -115,6 +145,8 @@ const TransactionByIdScreen = () => {
     roleReviewer: transactionData?.role,
     token: user?.token,
     idReservation: idReservation,
+    registered: isRegisteredAsMember(members, user?.username),
+    setForceRefresh: setForceRefresh,
   };
   return (
     <>
@@ -178,4 +210,13 @@ const BorderLine = ({ customStyle }) => {
       ]}
     />
   );
+};
+
+const isRegisteredAsMember = (members, username) => {
+  const included = members.filter((m) => {
+    if (m.username === username) {
+      return true;
+    }
+  });
+  return included.length === 1;
 };

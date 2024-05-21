@@ -9,39 +9,14 @@ import { COLOR } from "COLOR";
 import CustomModal from "@components/CustomModal";
 import InviteMemberModal from "./InviteMemberModal";
 
-const ListMembers = ({ idReservation, roleReviewer }) => {
+const ListMembers = ({ idReservation, roleReviewer,membersData,username }) => {
   const [loading, setLoading] = useState(false);
-  const [members, setMembers] = useState([]);
   const [visible, setVisible] = useState(false);
   const [forceRefresh, setForceRefresh] = useState(false);
   const { user } = useContext(UserContext);
 
   const isReviewerHost = roleReviewer === "host";
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const { data } = await Player.Booking.getMembersById(
-        user.token,
-        idReservation
-      );
-      setMembers(data);
-    } catch (e) {
-      console.log(e);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (forceRefresh) {
-      setForceRefresh(false);
-      fetchData();
-    }
-  }, [forceRefresh]);
 
   const removeMemberHandler = async (username) => {
     setLoading(true);
@@ -79,13 +54,14 @@ const ListMembers = ({ idReservation, roleReviewer }) => {
           {loading && <Text>Loading</Text>}
           {!loading && (
             <View>
-              {members.map((m, i) => (
+              {membersData.map((m, i) => (
                 <ItemMember
                   {...m}
                   index={i}
                   key={m.username + m.role + i}
                   removeMemberHandler={removeMemberHandler}
                   isReviewerHost={isReviewerHost}
+                  
                 />
               ))}
             </View>

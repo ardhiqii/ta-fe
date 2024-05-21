@@ -12,9 +12,12 @@ const MatchInformation = ({
   roleReviewer,
   token,
   idReservation,
+  isReservationPublic,
 }) => {
   const isReviewerHost = roleReviewer === "host";
   const [openMember, setOpenMember] = useState(isOpenMember);
+
+  const [isPublic, setIsPublic] = useState(isReservationPublic);
 
   const changeOpenMemberHandler = async () => {
     try {
@@ -29,43 +32,106 @@ const MatchInformation = ({
     } catch (e) {}
   };
 
+  const changePublicReservationHandler = async () => {
+    try {
+      const { data } = await Player.Booking.changeStatusPublicReservation(
+        token,
+        idReservation,
+        !isPublic
+      );
+      if (data.edit_status) {
+        setIsPublic(!isPublic);
+      }
+    } catch (e) {}
+  };
+
   return (
     <View style={styles.container}>
-      <View style={styles.layout}>
-        <View>
-          <Text style={styles.subText}>Match</Text>
-          <Text style={styles.text}>
-            This match is currently{" "}
-            <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
-              {openMember ? "open member" : "not open member"}
-            </Text>
-          </Text>
-        </View>
-        {isReviewerHost && (
-          <Pressable
-            onPress={changeOpenMemberHandler}
+      <View>
+        <Text style={styles.subText}>Match</Text>
+        <View style={[{ rowGap: 12 }, !isReviewerHost && { rowGap: 0 }]}>
+          <View
             style={{
-              borderWidth: 2,
-              borderRadius: 5,
-              width: 80,
-              paddingVertical: 5,
-              justifyContent: "center",
+              flexDirection: "row",
               alignItems: "center",
-              borderColor: COLOR.base900,
+              justifyContent: "space-between",
             }}
           >
-            <Text
-              style={{
-                fontFamily: LEXEND.Light,
-                fontSize: 10,
-                color: COLOR.base900,
-              }}
-            >
-              Change
+            <Text style={styles.text}>
+              This reservation is currently{" "}
+              <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
+                {openMember ? "open member" : "not open member"}
+              </Text>
             </Text>
-          </Pressable>
-        )}
+
+            {isReviewerHost && (
+              <Pressable
+                onPress={changeOpenMemberHandler}
+                style={{
+                  borderWidth: 2,
+                  borderRadius: 5,
+                  width: 80,
+                  paddingVertical: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderColor: COLOR.base900,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: LEXEND.Light,
+                    fontSize: 10,
+                    color: COLOR.base900,
+                  }}
+                >
+                  Change
+                </Text>
+              </Pressable>
+            )}
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.text}>
+              This reservation is currently{" "}
+              <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
+                {isPublic ? "public" : "private"}
+              </Text>
+            </Text>
+
+            {isReviewerHost && (
+              <Pressable
+                onPress={changePublicReservationHandler}
+                style={{
+                  borderWidth: 2,
+                  borderRadius: 5,
+                  width: 80,
+                  paddingVertical: 5,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderColor: COLOR.base900,
+                }}
+              >
+                <Text
+                  style={{
+                    fontFamily: LEXEND.Light,
+                    fontSize: 10,
+                    color: COLOR.base900,
+                  }}
+                >
+                  Change
+                </Text>
+              </Pressable>
+            )}
+          </View>
+        </View>
       </View>
+
       <View style={{ flexDirection: "row", columnGap: 20 }}>
         <View>
           <Text style={styles.subText}>Date</Text>

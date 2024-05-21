@@ -15,6 +15,7 @@ import MapScreen from "@screens/MapScreen";
 import SearchScreen from "@screens/SearchScreen";
 import TransactionScreen from "@screens/Transaction/TransactionScreen";
 import TransactionNavigation from "./TransactionNavigation";
+import FindReservationScreen from "@screens/FindReservation/FindReservationScreen";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -111,10 +112,31 @@ const BottomTabNavigator = () => {
           options={{ headerShown: false }}
         />
         <BottomTab.Screen
+          name="FindReservationScreen"
+          component={FindReservationScreen}
+          options={{
+            title: "Find Reservation",
+            headerBackTitleVisible: false,
+            headerStyle: {
+              backgroundColor: COLOR.base900,
+            },
+            headerTitleStyle: {
+              fontFamily: LEXEND.SemiBold,
+              fontSize: 28,
+              color: "white",
+            },
+            headerTintColor: "white",
+            headerShadowVisible: false,
+            contentStyle: {
+              backgroundColor: "white",
+            },
+          }}
+        />
+        <BottomTab.Screen
           name="TransactionScreen"
           component={TransactionScreen}
           options={{
-            title:'Reservation',
+            title: "Reservation",
             headerBackTitleVisible: false,
             headerStyle: {
               backgroundColor: COLOR.base900,
@@ -141,7 +163,7 @@ const Navigation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!user?.token);
 
   useEffect(() => {
-    setIsAuthenticated(!!user?.token)
+    setIsAuthenticated(!!user?.token);
   }, [user?.token]);
   return (
     <NavigationContainer>

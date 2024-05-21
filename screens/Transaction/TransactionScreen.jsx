@@ -2,6 +2,7 @@ import Filter from "@components/Search/Filter";
 import CardOrder from "@components/Transaction/CardOrder";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
+import { useFocusEffect } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import { CATEGORY_ID } from "constant/CATEGORY_ID";
 import React, { useCallback, useContext, useEffect, useState } from "react";
@@ -50,6 +51,7 @@ const TransactionScreen = () => {
   const [status, setStatus] = useState("all");
   const [roleFilter, setRoleFilter] = useState("host");
   const [categoryFilter, setCategoryFilter] = useState();
+
   const [loading, setLoading] = useState(true);
   const { user } = useContext(UserContext);
 
@@ -59,7 +61,7 @@ const TransactionScreen = () => {
       categoryFilter !== null && categoryFilter !== undefined
         ? CATEGORY_ID[categoryFilter]
         : "all";
-    const stat = status !== null ? status: 'all'
+    const stat = status !== null ? status : "all";
     try {
       const { data } =
         roleFilter === "host"
@@ -74,6 +76,7 @@ const TransactionScreen = () => {
       if (data) {
         setTransactionData(data);
       }
+
     } catch (e) {
       console.log(e);
       if (e.data === null) {
@@ -85,19 +88,14 @@ const TransactionScreen = () => {
 
   const onRefresh = useCallback(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
   }, [status, categoryFilter, roleFilter]);
 
-  // if (loading) {
-  //   return (
-  //     <View>
-  //       <Text>Loading</Text>
-  //     </View>
-  //   );
-  // }
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [status, categoryFilter, roleFilter])
+  );
+
   return (
     <View style={styles.container}>
       <View
@@ -129,7 +127,7 @@ const TransactionScreen = () => {
         </View>
       </View>
       {loading && <Text>LOADING</Text>}
-      {transactionData?.length === 0 && (
+      {!loading && transactionData?.length === 0 && (
         <Text
           style={{
             fontFamily: LEXEND.SemiBold,
@@ -138,7 +136,7 @@ const TransactionScreen = () => {
             color: COLOR.border,
           }}
         >
-          There is no transaction
+          There is no reservation
         </Text>
       )}
       {!loading && (

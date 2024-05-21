@@ -2,10 +2,11 @@ import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import { Currency } from "util/currency";
 import * as ImagePicker from "expo-image-picker";
 import { Player } from "util/player/player";
+import { useNavigation } from "@react-navigation/native";
 
 const BottomAction = ({
   bookingStatus,
@@ -13,10 +14,15 @@ const BottomAction = ({
   roleReviewer,
   token,
   idReservation,
+  registered,
+  setForceRefresh,
 }) => {
   const isReviewerHost = roleReviewer == "host";
   const displayStatus = allCapital(bookingStatus);
   const cancelAble = checkCancelAble(bookingStatus, isReviewerHost);
+
+  const joinAble = !registered && !isReviewerHost;
+  const nav = useNavigation();
 
   const uploadImage = async () => {
     const image = await pickImage();
@@ -59,10 +65,42 @@ const BottomAction = ({
     }
   };
 
-  const actionHandler = async () => {};
+  const leaveReservationHandler = async () => {
+    try {
+      const resp = await Player.Booking.leaveReservation(token, idReservation);
+      if (resp.leave_status) {
+        nav.goBack();
+      }
+    } catch (e) {
+      console.log("error occured leaveReservationHandler", e);
+    }
+  };
+
+  const alertLeaveReservation = () => {
+    Alert.alert("Confirmation", "Are you sure you want to leave?", [
+      {
+        text: "Yes",
+        onPress: leaveReservationHandler,
+      },
+      {
+        text: "No",
+      },
+    ]);
+  };
+
+  const joinHandler = async () => {
+    try {
+      const resp = await Player.Booking.joinReservation(token, idReservation);
+      if (resp.join_status) {
+        setForceRefresh(true);
+      }
+    } catch (e) {
+      console.log("error occured leaveReservationHandler", e);
+    }
+  };
 
   return (
-    <View style={[styles.container, !cancelAble && { height: 50 }]}>
+    <View style={[styles.container]}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={{ fontFamily: LEXEND.Regular }}>
           Status:{" "}
@@ -90,6 +128,21 @@ const BottomAction = ({
             </Button>
           </View>
         )}
+        { !isReviewerHost &&!joinAble && (
+          <View style={{ flex: 1 }}>
+            <Button
+              onPress={alertLeaveReservation}
+              customStyle={{ backgroundColor: COLOR.accent1 }}
+            >
+              Leave
+            </Button>
+          </View>
+        )}
+        {joinAble && (
+          <View style={{ flex: 1 }}>
+            <Button onPress={joinHandler}>Join</Button>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -99,12 +152,12 @@ export default BottomAction;
 
 const styles = StyleSheet.create({
   container: {
-    height: 110,
     borderTopWidth: 2,
     borderColor: COLOR.border,
     paddingHorizontal: 25,
     paddingTop: 10,
     rowGap: 8,
+    paddingBottom: 25,
   },
 });
 
