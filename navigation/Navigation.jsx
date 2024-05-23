@@ -16,6 +16,8 @@ import SearchScreen from "@screens/SearchScreen";
 import TransactionScreen from "@screens/Transaction/TransactionScreen";
 import TransactionNavigation from "./TransactionNavigation";
 import FindReservationScreen from "@screens/FindReservation/FindReservationScreen";
+import ReservationAdminScreen from "@screens/ReservationAdmin/ReservationAdminScreen";
+import ReservationAdminNavigation from "./ReservationAdminNavigation";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -34,6 +36,8 @@ const AuthNavigation = () => {
 };
 
 const AuthenticatedNavigation = () => {
+  const { user } = useContext(UserContext);
+  const isUserAdmin = user?.role === "admin";
   return (
     <Stack.Navigator screenOptions={{ headerBackTitleVisible: false }}>
       <Stack.Screen
@@ -73,11 +77,19 @@ const AuthenticatedNavigation = () => {
         component={SportVenueNavigation}
         options={{ headerShown: false }}
       />
+
       <Stack.Screen
         name="TransactionNavigation"
         component={TransactionNavigation}
         options={{ headerShown: false }}
       />
+
+      <Stack.Screen
+        name="ReservationAdminNavigation"
+        component={ReservationAdminNavigation}
+        options={{ headerShown: false }}
+      />
+
       <Stack.Screen
         name="Map"
         component={MapScreen}
@@ -103,6 +115,8 @@ const AuthenticatedNavigation = () => {
 };
 
 const BottomTabNavigator = () => {
+  const { user } = useContext(UserContext);
+  const isUserAdmin = user?.role === "admin";
   return (
     <>
       <BottomTab.Navigator sceneContainerStyle={{ backgroundColor: "white" }}>
@@ -111,30 +125,10 @@ const BottomTabNavigator = () => {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
+        {isUserAdmin && <>
         <BottomTab.Screen
-          name="FindReservationScreen"
-          component={FindReservationScreen}
-          options={{
-            title: "Find Reservation",
-            headerBackTitleVisible: false,
-            headerStyle: {
-              backgroundColor: COLOR.base900,
-            },
-            headerTitleStyle: {
-              fontFamily: LEXEND.SemiBold,
-              fontSize: 28,
-              color: "white",
-            },
-            headerTintColor: "white",
-            headerShadowVisible: false,
-            contentStyle: {
-              backgroundColor: "white",
-            },
-          }}
-        />
-        <BottomTab.Screen
-          name="TransactionScreen"
-          component={TransactionScreen}
+          name="Reservation"
+          component={ReservationAdminScreen}
           options={{
             title: "Reservation",
             headerBackTitleVisible: false,
@@ -153,6 +147,53 @@ const BottomTabNavigator = () => {
             },
           }}
         />
+        </>}
+        {!isUserAdmin && (
+          <>
+            <BottomTab.Screen
+              name="FindReservationScreen"
+              component={FindReservationScreen}
+              options={{
+                title: "Find Reservation",
+                headerBackTitleVisible: false,
+                headerStyle: {
+                  backgroundColor: COLOR.base900,
+                },
+                headerTitleStyle: {
+                  fontFamily: LEXEND.SemiBold,
+                  fontSize: 28,
+                  color: "white",
+                },
+                headerTintColor: "white",
+                headerShadowVisible: false,
+                contentStyle: {
+                  backgroundColor: "white",
+                },
+              }}
+            />
+            <BottomTab.Screen
+              name="TransactionScreen"
+              component={TransactionScreen}
+              options={{
+                title: "Reservation",
+                headerBackTitleVisible: false,
+                headerStyle: {
+                  backgroundColor: COLOR.base900,
+                },
+                headerTitleStyle: {
+                  fontFamily: LEXEND.SemiBold,
+                  fontSize: 28,
+                  color: "white",
+                },
+                headerTintColor: "white",
+                headerShadowVisible: false,
+                contentStyle: {
+                  backgroundColor: "white",
+                },
+              }}
+            />
+          </>
+        )}
       </BottomTab.Navigator>
     </>
   );

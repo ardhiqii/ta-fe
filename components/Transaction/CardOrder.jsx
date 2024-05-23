@@ -6,18 +6,30 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 
-const CardOrder = ({ data }) => {
+const CardOrder = ({ data, role }) => {
   const nav = useNavigation();
   const timeStart = data.time_start.slice(0, -3);
   const timeEnd = data.time_end.slice(0, -3);
+
+  const isReviwerAdmin = role === "admin";
   const navigateToById = () => {
-    nav.navigate("TransactionNavigation", {
-      screen: "TransactionByIdScreen",
-      params: {
-        idReservation: data.reservation_id,
-        idVenue: data.venue_id,
-      },
-    });
+    {
+      !isReviwerAdmin
+        ? nav.navigate("TransactionNavigation", {
+            screen: "TransactionByIdScreen",
+            params: {
+              idReservation: data.reservation_id,
+              idVenue: data.venue_id,
+            },
+          })
+        : nav.navigate("ReservationAdminNavigation", {
+            screen: "ReservationByIdScreen",
+            params: {
+              idReservation: data.reservation_id,
+              idVenue: data.venue_id,
+            },
+          });
+    }
   };
   return (
     <Pressable style={styles.container} onPress={navigateToById}>
@@ -88,10 +100,14 @@ const CardOrder = ({ data }) => {
                 alignItems: "center",
               }}
             >
-              <FontAwesome5 name={"user-friends"} color={COLOR.border} />
-              <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }}>
-                {data.count_member}
-              </Text>
+              {data.count_member && (
+                <>
+                  <FontAwesome5 name={"user-friends"} color={COLOR.border} />
+                  <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }}>
+                    {data.count_member}
+                  </Text>
+                </>
+              )}
             </View>
           </View>
         </View>

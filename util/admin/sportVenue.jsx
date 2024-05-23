@@ -2,7 +2,6 @@ import axios, { Axios } from "axios";
 
 const getAllVenue = async (token) => {
   const url = process.env.BASE_URL + "/admin/sportVenue";
-  console.log("token",token);
   try {
     const { data } = await axios.get(url, {
       headers: {
@@ -159,7 +158,7 @@ const getBlacklistFieldById = async (token, idField, month, year) => {
     }
   } catch (e) {
     console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
-    return []
+    return [];
   }
 };
 

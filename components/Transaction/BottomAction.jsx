@@ -7,6 +7,7 @@ import { Currency } from "util/currency";
 import * as ImagePicker from "expo-image-picker";
 import { Player } from "util/player/player";
 import { useNavigation } from "@react-navigation/native";
+import DisplayQRModal from "./DisplayQRModal";
 
 const BottomAction = ({
   bookingStatus,
@@ -17,10 +18,11 @@ const BottomAction = ({
   registered,
   setForceRefresh,
 }) => {
+  const [visible, setVisible] = useState(false);
+
   const isReviewerHost = roleReviewer == "host";
   const displayStatus = allCapital(bookingStatus);
   const cancelAble = checkCancelAble(bookingStatus, isReviewerHost);
-
   const joinAble = !registered && !isReviewerHost;
   const nav = useNavigation();
 
@@ -100,51 +102,59 @@ const BottomAction = ({
   };
 
   return (
-    <View style={[styles.container]}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ fontFamily: LEXEND.Regular }}>
-          Status:{" "}
-          <Text style={{ fontFamily: LEXEND.Bold }}>{displayStatus}</Text>
-        </Text>
-        {isReviewerHost && (
-          <Text style={{ fontFamily: LEXEND.Bold }}>
-            Rp.{Currency.format(totalPrice)}
+    <>
+      <View style={[styles.container]}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            Status:{" "}
+            <Text style={{ fontFamily: LEXEND.Bold }}>{displayStatus}</Text>
           </Text>
-        )}
+          {isReviewerHost && (
+            <Text style={{ fontFamily: LEXEND.Bold }}>
+              Rp.{Currency.format(totalPrice)}
+            </Text>
+          )}
+        </View>
+        <View style={{ flexDirection: "row", columnGap: 12 }}>
+          {cancelAble && (
+            <View style={{ flex: 1 }}>
+              <Button onPress={uploadImage}>Upload</Button>
+            </View>
+          )}
+          {bookingStatus === "approved" && (
+            <View style={{ flex: 1 }}>
+              <Button onPress={() => setVisible(true)}>Show QR</Button>
+            </View>
+          )}
+          {cancelAble && (
+            <View style={{ flex: 1 }}>
+              <Button
+                onPress={cancelReservation}
+                customStyle={{ backgroundColor: COLOR.accent1 }}
+              >
+                Cancel
+              </Button>
+            </View>
+          )}
+          {!isReviewerHost && !joinAble && (
+            <View style={{ flex: 1 }}>
+              <Button
+                onPress={alertLeaveReservation}
+                customStyle={{ backgroundColor: COLOR.accent1 }}
+              >
+                Leave
+              </Button>
+            </View>
+          )}
+          {joinAble && (
+            <View style={{ flex: 1 }}>
+              <Button onPress={joinHandler}>Join</Button>
+            </View>
+          )}
+        </View>
       </View>
-      <View style={{ flexDirection: "row", columnGap: 12 }}>
-        {cancelAble && (
-          <View style={{ flex: 1 }}>
-            <Button onPress={uploadImage}>Upload</Button>
-          </View>
-        )}
-        {cancelAble && (
-          <View style={{ flex: 1 }}>
-            <Button
-              onPress={cancelReservation}
-              customStyle={{ backgroundColor: COLOR.accent1 }}
-            >
-              Cancel
-            </Button>
-          </View>
-        )}
-        { !isReviewerHost &&!joinAble && (
-          <View style={{ flex: 1 }}>
-            <Button
-              onPress={alertLeaveReservation}
-              customStyle={{ backgroundColor: COLOR.accent1 }}
-            >
-              Leave
-            </Button>
-          </View>
-        )}
-        {joinAble && (
-          <View style={{ flex: 1 }}>
-            <Button onPress={joinHandler}>Join</Button>
-          </View>
-        )}
-      </View>
-    </View>
+      {bookingStatus === "approved" && <DisplayQRModal visible={visible} closeModal={() => setVisible(false)} token={token} idReservation={idReservation} />}
+    </>
   );
 };
 

@@ -6,7 +6,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import { Player } from "util/player/player";
-const InviteMemberModal = ({ visible, closeModal, token, idReservation,setForceRefresh }) => {
+const InviteMemberModal = ({
+  visible,
+  closeModal,
+  token,
+  idReservation,
+  setForceRefresh,
+}) => {
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -17,8 +23,10 @@ const InviteMemberModal = ({ visible, closeModal, token, idReservation,setForceR
         idReservation,
         username
       );
-      closeModal()
-      setForceRefresh(true)
+      if (data) {
+        closeModal();
+        setForceRefresh(true);
+      }
     } catch (e) {
       let error = e?.message;
       error = error?.split(" " + idReservation + " ")[0];

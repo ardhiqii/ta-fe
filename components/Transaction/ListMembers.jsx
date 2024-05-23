@@ -9,28 +9,33 @@ import { COLOR } from "COLOR";
 import CustomModal from "@components/CustomModal";
 import InviteMemberModal from "./InviteMemberModal";
 
-const ListMembers = ({ idReservation, roleReviewer,membersData,username }) => {
+const ListMembers = ({
+  idReservation,
+  roleReviewer,
+  membersData,
+  username,
+  setForceRefresh,
+}) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [forceRefresh, setForceRefresh] = useState(false);
+
   const { user } = useContext(UserContext);
 
   const isReviewerHost = roleReviewer === "host";
 
-
   const removeMemberHandler = async (username) => {
-    setLoading(true);
     try {
       const { data } = await Player.Booking.removeMemberByUsername(
         user.token,
         idReservation,
         username
       );
-      setForceRefresh(true);
+      if (data) {
+        setForceRefresh(true);
+      }
     } catch (e) {
       console.log(e);
     }
-    setLoading(false);
   };
 
   return (
@@ -61,7 +66,6 @@ const ListMembers = ({ idReservation, roleReviewer,membersData,username }) => {
                   key={m.username + m.role + i}
                   removeMemberHandler={removeMemberHandler}
                   isReviewerHost={isReviewerHost}
-                  
                 />
               ))}
             </View>

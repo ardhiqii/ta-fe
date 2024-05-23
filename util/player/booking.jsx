@@ -332,6 +332,32 @@ const joinReservation = async (token, idReservation) => {
   }
 };
 
+const getReservationQR = async (token, idReservation) => {
+  const url =
+    process.env.BASE_URL + `/player/reservation/QR/${idReservation}`;
+  try {
+    const { data } = await axios.post(
+      url,
+      {},
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+    return data;
+  } catch (e) {
+    // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
+    if (e.response && e.response.data) {
+      throw e.response.data;
+    } else {
+      console.log("Error occured in util Booking, getReservationQR", e);
+    }
+    console.log(e.response);
+  }
+};
+
+
 export const Booking = {
   newOrder,
   getAllOrdersByStatus,
@@ -346,5 +372,6 @@ export const Booking = {
   getAllJoinedReservationByStatus,
   leaveReservation,
   changeStatusPublicReservation,
-  getAllPublicReservations
+  getAllPublicReservations,
+  getReservationQR
 };
