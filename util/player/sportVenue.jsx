@@ -75,7 +75,7 @@ const getBlacklistFieldById = async (token, idField, month, year) => {
       return data;
     }
   } catch (e) {
-    console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
+    // console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
     return [];
   }
 };
@@ -94,7 +94,7 @@ const getReservedFieldById = async (token, idField, month, year) => {
       return data;
     }
   } catch (e) {
-    console.log("Error occured in util sportVenue, getReservedFieldById", e);
+    // console.log("Error occured in util sportVenue, getReservedFieldById", e);
     return [];
   }
 };

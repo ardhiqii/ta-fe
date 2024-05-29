@@ -140,6 +140,7 @@ const ListFieldsContent = ({
             key={i}
             onChangeSelected={handleSelectedFields}
             updateDataFromResponse={updateDataFromResponse}
+            setForceRefresh={setForceRefresh}
             blacklistData={filtered}
             reservedData={reservedFilter}
             date={date}

@@ -26,6 +26,7 @@ const Field = ({
   updateDataFromResponse,
   blacklistData = [],
   reservedData = [],
+  setForceRefresh,
   date,
 }) => {
   const [timesData, setTimesData] = useState([]);
@@ -104,9 +105,7 @@ const Field = ({
   };
 
   const deleteFieldIdHandler = async () => {
-    const token =
-      "fOf042XZqrW*MPcz4/0yBa9jce9ySHlHSn.Fa8++HS+kBFDMbEViaEl2doRd-Wb=+5fVp3EEmA1G/Cr/5T4)5u4k614aBM1DW1e6m0MTDaw1hl<N)MZm82o-V0tYU17s";
-
+    setLoading(true)
     try {
       const { data } = await Admin.SportVenue.deleteFieldById(
         user.token,
@@ -115,11 +114,13 @@ const Field = ({
       );
       console.log("DELETE FIELD HANDLER DATA", data);
       if (data) {
-        updateDataFromResponse(data);
+        // updateDataFromResponse(data);
+        setForceRefresh(true)
       }
     } catch (e) {
       console.log("Error occured in deleteFieldIdHandler, in Field", e);
     }
+    setLoading(false)
   };
 
   const navigateToBlacklist = () => {

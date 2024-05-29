@@ -23,9 +23,12 @@ import ReservationContent from "@components/SportVenue/ReservationContent";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import Button from "@components/UI/Button";
+import Carousel from "@components/Carousel";
+import AlbumContent from "./AlbumContent";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
+  const [albumData, setAlbumData] = useState([]);
   const [fieldsData, setFieldsData] = useState([]);
   const [forceRefresh, setForceRefresh] = useState(false);
   const [orders, setOrders] = useState([]);
@@ -67,23 +70,47 @@ const SportVenueScreen = () => {
     }
   };
 
+  const fetchAlbum = async () => {
+    try {
+      const { data } = await Admin.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      );
+      return data;
+    } catch (e) {
+      console.log("Error occured fetchAlbum SportVenueScreen", e);
+      return null;
+    }
+  };
+
   const initData = async () => {
     setLoading(true);
 
-    const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
+    const [vd, fd, ad] = await Promise.all([
+      fetchVenueData(),
+      fetchFieldsData(),
+      fetchAlbum(),
+    ]);
     setVenueData(vd);
     setFieldsData(fd);
+    setAlbumData(ad);
     setLoading(false);
   };
-  // useEffect(() => {
-  //   initData();
-  // }, []);
+  useEffect(() => {
+    initData();
+  }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      initData();
-    }, [nav])
-  );
+  const updateAlbumData = async () => {
+    const ad = await fetchAlbum();
+    setAlbumData(ad);
+
+  };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     initData();
+  //   }, [nav])
+  // );
 
   const onRefresh = useCallback(() => {
     initData();
@@ -100,6 +127,7 @@ const SportVenueScreen = () => {
     nav.navigate("EditManageSportVenueAdmin", {
       idVenue: idVenue,
       dataVenue: venueData,
+      albumData: albumData,
       type: "EditVenue",
     });
   };
@@ -205,14 +233,14 @@ const SportVenueScreen = () => {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       >
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-            }}
-            style={styles.image}
+        {
+          <AlbumContent
+            albumData={albumData}
+            editMode
+            updateAlbumData={updateAlbumData}
+            idVenue={idVenue}
           />
-        </View>
+        }
         {editMode && (
           <>
             <ManageVenueButtons listButtons={listButtons} />
@@ -314,31 +342,3 @@ const manageStyles = StyleSheet.create({
   },
   iconContainer: {},
 });
-
-{
-  /* <View style={styles.editModeContainer}>
-      <View style={{ alignItems: "center" }}>
-        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
-          <Feather name="edit" size={24} color={"white"} />
-        </Pressable>
-        <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
-          Edit Venue
-        </Text>
-      </View>
-      <View style={{ alignItems: "center" }}>
-        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
-          <Feather name="edit" size={24} color={"white"} />
-        </Pressable>
-        <Text>Blacklist Schedule</Text>
-      </View>
-      <View style={{ alignItems: "center" }}>
-        <Pressable
-          onPress={alertDeleteConfirmation}
-          style={[styles.editContainer, { backgroundColor: "#fb5f5fb6" }]}
-        >
-          <Feather name="trash-2" size={24} color={"white"} />
-        </Pressable>
-        <Text>Delete</Text>
-      </View>
-    </View> */
-}

@@ -2,18 +2,13 @@ import CustomTopNavigation from "@components/CustomTopNavigation";
 import Category from "@components/HomeContent/Category";
 import Nearest from "@components/HomeContent/Nearest";
 
-import Recommend from "@components/HomeContent/Recommend";
-import SwipeableContent from "@components/HomeContent/SwipeableContent";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
-import { COLOR } from "COLOR";
-import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
-import { generateTimes } from "util/admin/generate_times";
 
 const HomeScreen = () => {
   const [timesData, setTimesData] = useState([]);
@@ -24,7 +19,6 @@ const HomeScreen = () => {
   const isAdmin = user.role === "admin";
   console.log("#### HOME SCREEN ###");
   console.log(user);
-  
 
   const PlayerHomeScreen = () => {
     return (

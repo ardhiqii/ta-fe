@@ -21,6 +21,7 @@ import LoadingOverlay from "@components/LoadingOverlay";
 import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { UserContext } from "store/user-contex";
+import AlbumContent from "../AlbumContent";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
@@ -33,6 +34,7 @@ const EditManageSportScreen = () => {
   const nav = useNavigation();
   const idVenue = route?.params?.idVenue;
   const dataVenue = route?.params?.dataVenue;
+  const albumData = route?.params?.albumData;
   const type = route?.params?.type;
   const [newData, setNewData] = useState({
     id: idVenue ? idVenue : null,
@@ -67,6 +69,8 @@ const EditManageSportScreen = () => {
     time_open: dataVenue?.time_open,
     time_closed: dataVenue?.time_closed,
   };
+
+
 
   const alertConfirmation = () => {
     const alertMessage = `Are you sure want to ${
@@ -125,14 +129,7 @@ const EditManageSportScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-          }}
-          style={styles.image}
-        />
-      </View>
+      <AlbumContent albumData={albumData} />
 
       <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
