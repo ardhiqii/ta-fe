@@ -31,6 +31,12 @@ const ListSportVenuesScreen = () => {
     setLoading(false);
   };
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchData();
+  //   }, [nav])
+  // );
+
   useEffect(() => {
     fetchData();
   }, []);

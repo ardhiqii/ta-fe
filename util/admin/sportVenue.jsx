@@ -206,6 +206,25 @@ const deleteBlacklistScheduleByFieldId = async (token, idBlacklist) => {
     );
   }
 };
+
+const getReservedFieldById = async (token, idField, month, year) => {
+  const url =
+    process.env.BASE_URL +
+    `/admin/sportVenue/fields/schedule/reservation/${idField}/${month}/${year}`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    console.log("Error occured in util sportVenue, getReservedFieldById", e);
+    return [];
+  }
+};
 export const SportVenue = {
   getAllVenue,
   getById,
@@ -218,4 +237,5 @@ export const SportVenue = {
   getBlacklistFieldById,
   addBlacklistScheduleByFieldId,
   deleteBlacklistScheduleByFieldId,
+  getReservedFieldById,
 };

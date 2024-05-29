@@ -41,8 +41,7 @@ const ReservationAdminByIdScreen = () => {
   const route = useRoute();
   const idReservation = route?.params?.idReservation;
 
-  console.log(idReservation);
-  console.log(user.token);
+
   const fetchData = async () => {
     setLoading(true);
     try {

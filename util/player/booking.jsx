@@ -1,5 +1,10 @@
 import axios, { Axios } from "axios";
 
+const x = axios.create({
+  baseURL: "",
+  
+})
+
 const newOrder = async (token, reqBody) => {
   const url = process.env.BASE_URL + "/player/reservation";
   try {

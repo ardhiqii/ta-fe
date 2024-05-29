@@ -134,7 +134,7 @@ const TransactionByIdScreen = () => {
   }, [forceRefresh]);
 
   const onRefresh = useCallback(() => {
-    fetchAllData();
+    forceRefreshData();
   }, []);
 
   if (loading) {
@@ -174,6 +174,7 @@ const TransactionByIdScreen = () => {
   };
 
   const bottomActionData = {
+    isOpenMember: transactionData?.info?.is_open_member,
     bookingStatus: transactionData?.info?.booking_status,
     totalPrice: transactionData?.info?.total_price,
     roleReviewer: transactionData?.role,

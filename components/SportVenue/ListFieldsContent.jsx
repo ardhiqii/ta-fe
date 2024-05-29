@@ -20,8 +20,10 @@ const ListFieldsContent = ({
   time_closed,
   date,
   onChangeOrder,
+  blacklistData = [],
+  reservedData = [],
   orderData = [],
-  setForceRefresh
+  setForceRefresh,
 }) => {
   const [fieldsData, setFieldsData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,6 @@ const ListFieldsContent = ({
   const { user } = useContext(UserContext);
   const idVenue = route?.params?.idVenue;
   const editMode = route?.params?.editMode;
-
   useEffect(() => {
     setLoading(true);
     updateDataFromResponse();
@@ -101,7 +102,7 @@ const ListFieldsContent = ({
         number
       );
       if (data) {
-        setForceRefresh(true)
+        setForceRefresh(true);
       }
     } catch (e) {
       console.log("Error occured addNewFieldHandler, ListFieldsContent", e);
@@ -127,6 +128,9 @@ const ListFieldsContent = ({
         </View>
       )}
       {fieldsData?.map((field, i) => {
+        const filtered = blacklistData[field.id];
+        const reservedFilter = reservedData[field.id];
+
         return (
           <Field
             {...field}
@@ -136,6 +140,8 @@ const ListFieldsContent = ({
             key={i}
             onChangeSelected={handleSelectedFields}
             updateDataFromResponse={updateDataFromResponse}
+            blacklistData={filtered}
+            reservedData={reservedFilter}
             date={date}
           />
         );
@@ -149,7 +155,9 @@ const ListFieldsContent = ({
             color: COLOR.border,
           }}
         >
-          {editMode ? "Add your field by pressing Add New Field" : "Owner venue not adding the field"}
+          {editMode
+            ? "Add your field by pressing Add New Field"
+            : "Owner venue not adding the field"}
         </Text>
       )}
     </View>

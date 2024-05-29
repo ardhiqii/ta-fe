@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import HeadContent from "@components/SportVenue/HeadContent";
@@ -75,9 +75,15 @@ const SportVenueScreen = () => {
     setFieldsData(fd);
     setLoading(false);
   };
-  useEffect(() => {
-    initData();
-  }, []);
+  // useEffect(() => {
+  //   initData();
+  // }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      initData();
+    }, [nav])
+  );
 
   const onRefresh = useCallback(() => {
     initData();
@@ -241,7 +247,7 @@ const SportVenueScreen = () => {
             bottom: 20,
           }}
         >
-          <Button onPress={navigateToOrderReview}>Order</Button>
+          {!isAdmin && <Button onPress={navigateToOrderReview}>Order</Button>}
         </View>
       )}
     </>

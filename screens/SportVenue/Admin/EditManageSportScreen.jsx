@@ -84,7 +84,6 @@ const EditManageSportScreen = () => {
   };
   const saveHandler = async () => {
     setLoading(true);
-    console.log(newData);
 
     if (type === TYPEMANAGE.Add) {
       console.log("ADDING");
@@ -94,22 +93,31 @@ const EditManageSportScreen = () => {
         console.log(data);
       } else {
         console.log("YES WRONG");
-        Alert.alert("Data not valid", "Check again your input, fill all the input")
+        Alert.alert(
+          "Data not valid",
+          "Check again your input, fill all the input"
+        );
       }
     } else {
       const data = await Admin.SportVenue.editVenue(user.token, newData);
-      console.log(data);
     }
     setLoading(false);
-    // nav.goBack();
+    nav.goBack();
   };
 
   const isValidNewData = (data) => {
     let valid = true;
     for (const [key, value] of Object.entries(data)) {
-      if (value === null || value === "" || value === 0) {
-        valid = false;
-        break;
+      if (
+        key !== "id" &&
+        key !== "is_car_parking" &&
+        key !== "is_bike_parking"
+      ) {
+        if (value == null || value === "" || value === 0) {
+          console.log(key, value);
+          valid = false;
+          break;
+        }
       }
     }
     return valid;
@@ -125,7 +133,7 @@ const EditManageSportScreen = () => {
           style={styles.image}
         />
       </View>
-      
+
       <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
           <Feather name="save" size={24} color={"black"} />

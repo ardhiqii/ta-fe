@@ -17,13 +17,14 @@ const BottomAction = ({
   idReservation,
   registered,
   setForceRefresh,
+  isOpenMember,
 }) => {
   const [visible, setVisible] = useState(false);
 
   const isReviewerHost = roleReviewer == "host";
   const displayStatus = allCapital(bookingStatus);
   const cancelAble = checkCancelAble(bookingStatus, isReviewerHost);
-  const joinAble = !registered && !isReviewerHost;
+  const joinAble = !registered && !isReviewerHost && !isOpenMember;
   const nav = useNavigation();
 
   const uploadImage = async () => {
@@ -153,7 +154,14 @@ const BottomAction = ({
           )}
         </View>
       </View>
-      {bookingStatus === "approved" && <DisplayQRModal visible={visible} closeModal={() => setVisible(false)} token={token} idReservation={idReservation} />}
+      {bookingStatus === "approved" && (
+        <DisplayQRModal
+          visible={visible}
+          closeModal={() => setVisible(false)}
+          token={token}
+          idReservation={idReservation}
+        />
+      )}
     </>
   );
 };

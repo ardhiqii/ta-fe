@@ -9,13 +9,20 @@ const TimeDisplay = ({
   selectedTimes,
   onChangeSelected,
   dataBlacklist,
-  dataReserved
+  blacklisted,
+  isReserved,
+  dataReserved,
 }) => {
-  const selected = selectedTimes?.includes(value);
-  const blacklisted = dataBlacklist?.includes(value);
-  const reserved = dataReserved?.includes(value)
+  // if (dataBlacklist.length !== 0) {
+  //   console.log(dataBlacklist);
+  // }
+  const from = value.split("UNTIL")[0];
+  const to = value.split("UNTIL")[1];
+  const startFormatted = convertedTime(from);
+  const endFormatted = convertedTime(to);
 
-  const disabled = blacklisted || reserved
+  const selected = selectedTimes?.includes(value);
+  const disabled = blacklisted || isReserved;
   const handleSelected = () => {
     let updateSelected = selectedTimes;
     if (selected) {
@@ -37,10 +44,21 @@ const TimeDisplay = ({
         ]}
       >
         <Text style={[timeStyles.text, selected && { color: COLOR.base500 }]}>
-          {value}
+          {startFormatted} - {endFormatted}
         </Text>
       </Pressable>
-      {disabled && <Text style={{textAlign:'center',fontFamily:LEXEND.Light,fontSize:11,color:COLOR.accent1}}>{reserved ? "Ordered" : "Closed"}</Text>}
+      {disabled && (
+        <Text
+          style={{
+            textAlign: "center",
+            fontFamily: LEXEND.Light,
+            fontSize: 11,
+            color: COLOR.accent1,
+          }}
+        >
+          {isReserved ? "Ordered" : "Closed"}
+        </Text>
+      )}
     </View>
   );
 };
@@ -67,3 +85,17 @@ const timeStyles = StyleSheet.create({
 });
 
 export default TimeDisplay;
+
+const convertedTime = (date) => {
+  const fromDate = new Date(date);
+  let formattedHour =
+    fromDate.getHours() < 10
+      ? `0${fromDate.getHours()}`
+      : `${fromDate.getHours()}`;
+  let formattedMinute =
+    fromDate.getMinutes() < 10
+      ? `0${fromDate.getMinutes()}`
+      : `${fromDate.getMinutes()}`;
+  const formatted = `${formattedHour}:${formattedMinute}`;
+  return formatted;
+};
