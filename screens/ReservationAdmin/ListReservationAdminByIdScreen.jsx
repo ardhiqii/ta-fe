@@ -24,6 +24,7 @@ const ListReservationAdminByIdScreen = () => {
   const route = useRoute();
   const idVenue = route?.params?.idVenue;
   const routeOrdersData = route?.params?.ordersData;
+  const imageUri = route?.params?.imageUri;
 
   const [ordersData, setOrdersData] = useState(routeOrdersData);
   const [status, setStatus] = useState("all");
@@ -80,7 +81,7 @@ const ListReservationAdminByIdScreen = () => {
       )}
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {!loading && ordersData.map((o) => {
-          return <CardOrder data={o} key={o.reservation_id} role={"admin"} />;
+          return <CardOrder data={o} key={o.reservation_id} role={"admin"} imageUri={imageUri} />;
         })}
       </ScrollView>
     </View>

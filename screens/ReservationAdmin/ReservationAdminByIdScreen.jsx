@@ -40,6 +40,7 @@ const ReservationAdminByIdScreen = () => {
   const { user } = useContext(UserContext);
   const route = useRoute();
   const idReservation = route?.params?.idReservation;
+  const imageUri = route?.params?.imageUri;
 
 
   const fetchData = async () => {

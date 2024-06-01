@@ -72,10 +72,13 @@ const SportVenueScreen = () => {
 
   const fetchAlbum = async () => {
     try {
-      const { data } = await Admin.SportVenue.getAlbumVenuById(
+      const { data } = isAdmin ? await Admin.SportVenue.getAlbumVenuById(
         user.token,
         idVenue
-      );
+      ) : await Player.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      )
       return data;
     } catch (e) {
       console.log("Error occured fetchAlbum SportVenueScreen", e);
@@ -236,7 +239,7 @@ const SportVenueScreen = () => {
         {
           <AlbumContent
             albumData={albumData}
-            editMode
+            editMode={isAdmin}
             updateAlbumData={updateAlbumData}
             idVenue={idVenue}
           />

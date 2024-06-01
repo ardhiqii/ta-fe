@@ -1,10 +1,11 @@
 import TagCategory from "@components/TagCategory";
 import { COLOR } from "COLOR";
-import React from "react";
+import React, { useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
+import ImageVenue from "@components/SportVenue/ImageVenue";
 
 const CardOrder = ({ data, role }) => {
   const nav = useNavigation();
@@ -68,12 +69,7 @@ const CardOrder = ({ data, role }) => {
           style={{ flexDirection: "row", columnGap: 8, alignItems: "center" }}
         >
           <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-              }}
-              style={styles.image}
-            />
+            <ImageVenue idVenue={data.venue_id} />
           </View>
           <View
             style={{

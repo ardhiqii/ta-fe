@@ -99,10 +99,27 @@ const getReservedFieldById = async (token, idField, month, year) => {
   }
 };
 
+const getAlbumVenuById = async (token, idVenue) => {
+  const url = process.env.BASE_URL + `/player/sportVenue/${idVenue}/album`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    // console.log("util sport venue");
+    return data;
+  } catch (e) {
+    console.log("Error occured in util sportVenue getAlbumVenuById", e);
+    console.log(e.response.data);
+  }
+};
+
 export const SportVenue = {
   getAllVenue,
   getById,
   getAllFields,
   getBlacklistFieldById,
   getReservedFieldById,
+  getAlbumVenuById
 };

@@ -31,10 +31,7 @@ const HomeScreen = () => {
 
   const AdminHomeScreen = () => {
     return (
-      <View style={{ marginTop: 20, flexGrow: 1 }}>
-        <Text style={{ fontFamily: LEXEND.Bold, textAlign: "center" }}>
-          Your Sport Venue
-        </Text>
+      <View style={{ flexGrow: 1 }}>
         <ListSportVenuesScreen />
       </View>
     );

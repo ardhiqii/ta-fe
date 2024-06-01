@@ -1,5 +1,11 @@
 import Card from "@components/SportVenue/Card";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import {
   Pressable,
   RefreshControl,
@@ -21,6 +27,27 @@ const ListSportVenuesScreen = () => {
   const [loading, setLoading] = useState(true);
   const nav = useNavigation();
   const { user } = useContext(UserContext);
+
+  useLayoutEffect(() => {
+    nav.setOptions({
+      headerShown: true,
+      title: "Your Sport Venue",
+      headerBackTitleVisible: false,
+      headerStyle: {
+        backgroundColor: COLOR.base900,
+      },
+      headerTitleStyle: {
+        fontFamily: LEXEND.SemiBold,
+        fontSize: 28,
+        color: "white",
+      },
+      headerTintColor: "white",
+      headerShadowVisible: false,
+      contentStyle: {
+        backgroundColor: "white",
+      },
+    });
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -100,7 +127,6 @@ export default ListSportVenuesScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 12,
     paddingBottom: 10,
     rowGap: 16,
   },

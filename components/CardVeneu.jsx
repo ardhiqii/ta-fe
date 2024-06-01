@@ -1,11 +1,14 @@
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
 import TagCategory from "./TagCategory";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "util/currency";
+import { Player } from "util/player/player";
+import { UserContext } from "store/user-contex";
+import ImageVenue from "./SportVenue/ImageVenue";
 
 const CardVeneu = ({
   id: idVenue,
@@ -18,7 +21,9 @@ const CardVeneu = ({
   is_public,
   price_per_hour: price,
 }) => {
+  const { user } = useContext(UserContext);
   const nav = useNavigation();
+
   const NavigateToVenue = () => {
     nav.navigate("SportVenueNavigation", {
       screen: "SportVenueScreen",
@@ -37,7 +42,7 @@ const CardVeneu = ({
   return (
     <Pressable style={styles.container} onPress={NavigateToVenue}>
       <View style={styles.imageContainer}>
-        <Entypo name="cross" size={60} color={COLOR.second800} />
+        <ImageVenue idVenue={idVenue} />
       </View>
       <View style={styles.infoContainer}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -105,6 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    overflow: "hidden",
   },
   infoContainer: {
     padding: 8,
@@ -118,5 +124,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 3,
     flexWrap: "wrap",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
   },
 });
