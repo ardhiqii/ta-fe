@@ -4,6 +4,7 @@ import Nearest from "@components/HomeContent/Nearest";
 
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation } from "@react-navigation/native";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 
 import React, { useContext, useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
 
 const HomeScreen = () => {
-  const [timesData, setTimesData] = useState([]);
+  const nav = useNavigation()
   const { user, logoutUser } = useContext(UserContext);
   if (!user) {
     return;
@@ -19,6 +20,12 @@ const HomeScreen = () => {
   const isAdmin = user.role === "admin";
   console.log("#### HOME SCREEN ###");
   console.log(user);
+
+  const navigateTo = ()=>{
+    nav.navigate("MatchNavigation",{
+      screen: "MatchScreen"
+    })
+  }
 
   const PlayerHomeScreen = () => {
     return (
@@ -48,6 +55,7 @@ const HomeScreen = () => {
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
 
+        <Button onPress={navigateTo}>Navigate Match Screen</Button>
         <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>

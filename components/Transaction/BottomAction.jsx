@@ -24,7 +24,7 @@ const BottomAction = ({
   const isReviewerHost = roleReviewer == "host";
   const displayStatus = allCapital(bookingStatus);
   const cancelAble = checkCancelAble(bookingStatus, isReviewerHost);
-  const joinAble = !registered && !isReviewerHost && !isOpenMember;
+  const joinAble = !registered && !isReviewerHost && isOpenMember;
   const nav = useNavigation();
 
   const uploadImage = async () => {

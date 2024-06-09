@@ -18,6 +18,7 @@ import TransactionNavigation from "./TransactionNavigation";
 import FindReservationScreen from "@screens/FindReservation/FindReservationScreen";
 import ReservationAdminScreen from "@screens/ReservationAdmin/ReservationAdminScreen";
 import ReservationAdminNavigation from "./ReservationAdminNavigation";
+import MatchNavigation from "./MatchNavigation";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -87,6 +88,11 @@ const AuthenticatedNavigation = () => {
       <Stack.Screen
         name="ReservationAdminNavigation"
         component={ReservationAdminNavigation}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MatchNavigation"
+        component={MatchNavigation}
         options={{ headerShown: false }}
       />
 

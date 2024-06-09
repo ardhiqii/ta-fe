@@ -17,7 +17,7 @@ import LoadingOverlay from "@components/LoadingOverlay";
 
 const { width, height } = Dimensions.get("window");
 
-const AlbumContent = ({ idVenue, albumData, editMode = false,updateAlbumData }) => {
+const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
   const data =

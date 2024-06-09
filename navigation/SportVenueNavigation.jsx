@@ -4,7 +4,6 @@ import EditManageSportScreen from "@screens/SportVenue/Admin/EditManageSportScre
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 import ManageBlacklistSchedule from "@screens/SportVenue/Admin/ManageBlacklistSchedule";
 import OrderReviewScreen from "@screens/SportVenue/OrderReviewScreen";
-import OrderReview from "@screens/SportVenue/OrderReviewScreen";
 import SportVenueScreen from "@screens/SportVenue/SportVenueScreen";
 import { COLOR } from "COLOR";
 
