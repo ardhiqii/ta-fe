@@ -2,7 +2,7 @@ import EditHeadContent from "@components/SportVenue/EditMode/EditHeadContent";
 import EditInformationContent from "@components/SportVenue/EditMode/EditInformationContent";
 import InformationContent from "@components/SportVenue/InformationContent";
 import ListFieldsContent from "@components/SportVenue/ListFieldsContent";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -20,17 +20,21 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import LoadingOverlay from "@components/LoadingOverlay";
 import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
+import { UserContext } from "store/user-contex";
+import AlbumContent from "../AlbumContent";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
-  Edit: "EditVenue"
+  Edit: "EditVenue",
 };
 
 const EditManageSportScreen = () => {
+  const { user } = useContext(UserContext);
   const route = useRoute();
   const nav = useNavigation();
   const idVenue = route?.params?.idVenue;
   const dataVenue = route?.params?.dataVenue;
+  const albumData = route?.params?.albumData;
   const type = route?.params?.type;
   const [newData, setNewData] = useState({
     id: idVenue ? idVenue : null,
@@ -63,12 +67,15 @@ const EditManageSportScreen = () => {
     rules: dataVenue?.rules,
     price_per_hour: dataVenue?.price_per_hour,
     time_open: dataVenue?.time_open,
-    time_closed: dataVenue?.time_closed
+    time_closed: dataVenue?.time_closed,
   };
 
 
+
   const alertConfirmation = () => {
-    const alertMessage = `Are you sure want to ${type == TYPEMANAGE.Add ? "add venue" : "save"}?`
+    const alertMessage = `Are you sure want to ${
+      type == TYPEMANAGE.Add ? "add venue" : "save"
+    }?`;
     Alert.alert("Confirmation", alertMessage, [
       {
         text: "Ok",
@@ -81,37 +88,55 @@ const EditManageSportScreen = () => {
   };
   const saveHandler = async () => {
     setLoading(true);
-    console.log(newData);
- 
+
     if (type === TYPEMANAGE.Add) {
       console.log("ADDING");
-      console.log(newData);
-      const data = await Admin.SportVenue.addVenue(TOKEN_TEMPORARY, newData);
-      console.log(data);
-
+      const isValid = isValidNewData(newData);
+      if (isValid) {
+        const data = await Admin.SportVenue.addVenue(user.token, newData);
+        console.log(data);
+      } else {
+        console.log("YES WRONG");
+        Alert.alert(
+          "Data not valid",
+          "Check again your input, fill all the input"
+        );
+      }
     } else {
-      const data = await Admin.SportVenue.editVenue(TOKEN_TEMPORARY, newData);
-      console.log(data);
+      const data = await Admin.SportVenue.editVenue(user.token, newData);
     }
-
     setLoading(false);
     nav.goBack();
   };
 
+  const isValidNewData = (data) => {
+    let valid = true;
+    for (const [key, value] of Object.entries(data)) {
+      if (
+        key !== "id" &&
+        key !== "is_car_parking" &&
+        key !== "is_bike_parking"
+      ) {
+        if (value == null || value === "" || value === 0) {
+          console.log(key, value);
+          valid = false;
+          break;
+        }
+      }
+    }
+    return valid;
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-          }}
-          style={styles.image}
-        />
-      </View>
+      <AlbumContent albumData={albumData} />
+
       <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
           <Feather name="save" size={24} color={"black"} />
-          <Text style={{ fontFamily: LEXEND.Regular }}>{type ? type : "Save"}</Text>
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            {type ? type : "Save"}
+          </Text>
         </Pressable>
         <Pressable style={{ alignItems: "center" }}>
           <Feather

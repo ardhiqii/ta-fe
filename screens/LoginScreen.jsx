@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import RoleChoice from "@components/Auth/RoleChoice";
 import LoadingOverlay from "@components/LoadingOverlay";
+import { Role } from "util/role";
 const LoginScreen = () => {
   const [formValue, setFormValue] = useState({
     enteredUsername: "",
@@ -56,7 +57,10 @@ const LoginScreen = () => {
       if (!data.login_status) {
         Alert.alert("Something wrong", "Invalid username or password");
       } else {
-        updateUser(data.data);
+        const userData = data.data;
+        userData["role"] = formValue.role;
+        await Role.storeLocal(formValue.role)
+        updateUser(userData);
       }
     }
   };

@@ -15,10 +15,12 @@ const Input = ({
   onUpdateValue,
   value,
   label,
-  isPassword,
+  isPassword=false,
   keyboardType = "default",
   placeholder,
-  multiline
+  multiline,
+  inputContainerStyle,
+  textInputStyle,
 }) => {
   const [secure, setSecure] = useState(true);
 
@@ -26,9 +28,9 @@ const Input = ({
     <KeyboardAvoidingView style={styles.container} behavior="height">
       <View>
         {label && <Text style={styles.label}>{label}</Text>}
-        <View style={[styles.inputContainer, !multiline && {height:40}]}>
+        <View style={[styles.inputContainer, !multiline && {height:40},inputContainerStyle]}>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput,textInputStyle]}
             keyboardType={keyboardType}
             autoCapitalize="sentences"
             secureTextEntry={isPassword && secure}

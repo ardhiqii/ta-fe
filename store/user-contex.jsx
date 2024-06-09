@@ -7,12 +7,14 @@ import {
   useForegroundPermissions,
 } from "expo-location";
 import { Alert } from "react-native";
+import { Role } from "util/role";
 
 export const UserContext = createContext({
   user: {},
   updateUser: () => {},
   updateCoordinate: () => {},
   getCurrentCoorUser: () => string,
+  logoutUser: ()=>{},
 });
 
 const defaultData = {
@@ -42,6 +44,13 @@ const UserContextProvider = ({ children }) => {
       };
     });
   };
+
+  const logoutUser = async () => {
+    await Token.removeLocal();
+    await Role.removeLocal();
+    setDataUser(null);
+  };
+
   const getCurrentCoorUser = async () => {
     const verifyPermissions = async () => {
       if (
@@ -58,8 +67,8 @@ const UserContextProvider = ({ children }) => {
             "Insufficinet Permissions!",
             "Please grant location permission and turn on GPS"
           );
-        }else{
-          getCurrentCoorUser()
+        } else {
+          getCurrentCoorUser();
         }
 
         return false;
@@ -72,7 +81,6 @@ const UserContextProvider = ({ children }) => {
       if (!hasPermission) {
         return;
       }
-
       const location = await getCurrentPositionAsync();
       const lat = location.coords.latitude;
       const lng = location.coords.longitude;
@@ -96,6 +104,7 @@ const UserContextProvider = ({ children }) => {
     updateUser: updateUser,
     updateCoordinate: updateCoordinate,
     getCurrentCoorUser: getCurrentCoorUser,
+    logoutUser:logoutUser
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

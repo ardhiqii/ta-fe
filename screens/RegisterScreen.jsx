@@ -116,13 +116,11 @@ const RegisterScreen = () => {
             isPassword={true}
           />
 
-          {formValue.role === "admin" && (
-            <Input
-              label={"Phone Number"}
-              onUpdateValue={updateInputValueHandler.bind(this, "enteredPhone")}
-              keyboardType="phone-pad"
-            />
-          )}
+          <Input
+            label={"Phone Number"}
+            onUpdateValue={updateInputValueHandler.bind(this, "enteredPhone")}
+            keyboardType="phone-pad"
+          />
         </View>
         <View style={{ flexDirection: "column", rowGap: 14 }}>
           <Button onPress={onSubmit} configGradient>

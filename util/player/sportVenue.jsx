@@ -2,6 +2,7 @@ import axios, { Axios } from "axios";
 
 const getAllVenue = async (token, filter) => {
   const url = process.env.BASE_URL + "/player/sportVenue";
+
   try {
     const { data } = await axios.post(url, filter, {
       headers: {
@@ -74,7 +75,7 @@ const getBlacklistFieldById = async (token, idField, month, year) => {
       return data;
     }
   } catch (e) {
-    console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
+    // console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
     return [];
   }
 };
@@ -93,8 +94,24 @@ const getReservedFieldById = async (token, idField, month, year) => {
       return data;
     }
   } catch (e) {
-    console.log("Error occured in util sportVenue, getReservedFieldById", e);
+    // console.log("Error occured in util sportVenue, getReservedFieldById", e);
     return [];
+  }
+};
+
+const getAlbumVenuById = async (token, idVenue) => {
+  const url = process.env.BASE_URL + `/player/sportVenue/${idVenue}/album`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    // console.log("util sport venue");
+    return data;
+  } catch (e) {
+    console.log("Error occured in util sportVenue getAlbumVenuById", e);
+    console.log(e.response.data);
   }
 };
 
@@ -103,5 +120,6 @@ export const SportVenue = {
   getById,
   getAllFields,
   getBlacklistFieldById,
-  getReservedFieldById
+  getReservedFieldById,
+  getAlbumVenuById
 };

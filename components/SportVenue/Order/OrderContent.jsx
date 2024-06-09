@@ -17,12 +17,18 @@ const OrderContent = ({
   const route = useRoute();
   const price = route?.params?.pricePerHour;
   const [totalPrice, setTotalPrice] = useState(0);
+
+
   useEffect(() => {
-    let totalHour = 0;
-    fieldsData.map((f) => {
-      totalHour = f.selected.length + totalHour;
-    });
-    setTotalPrice(price * totalHour);
+    let totalMinutes = 0;
+    fieldsData.map((f)=>{
+      totalMinutes += f.totalMinutes
+    })
+    const { hours, minutes } = convertMinutesToHoursAndMinutes(totalMinutes);
+    let tempPrice = hours * price
+    tempPrice += (minutes/60) * price
+    
+    setTotalPrice(tempPrice);
   }, []);
   return (
     <View
@@ -87,3 +93,10 @@ const BorderLine = ({ customStyle }) => {
     />
   );
 };
+
+
+function convertMinutesToHoursAndMinutes(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60); // Calculate the total hours
+  const minutes = totalMinutes % 60; // Calculate the remaining minutes
+  return { hours, minutes };
+}

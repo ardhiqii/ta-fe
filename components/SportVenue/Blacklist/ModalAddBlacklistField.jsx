@@ -1,13 +1,14 @@
 import Input from "@components/Input";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Fontisto } from "@expo/vector-icons";
 import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import LoadingOverlay from "@components/LoadingOverlay";
+import { UserContext } from "store/user-contex";
 
 const ModalAddBlacklistField = ({
   visible,
@@ -28,6 +29,7 @@ const ModalAddBlacklistField = ({
     init_to: true,
   });
   const [loading, setLoading] = useState(false);
+  const {user} = useContext(UserContext)
 
   const onChangeHandler = (identifier, value) => {
     setSchedule((prev) => {
@@ -95,7 +97,7 @@ const ModalAddBlacklistField = ({
     try {
       setLoading(true);
       const resp = await Admin.SportVenue.addBlacklistScheduleByFieldId(
-        TOKEN_TEMPORARY,
+        user.token,
         dataBlacklist
       );
       console.log(resp);

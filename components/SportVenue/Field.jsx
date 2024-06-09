@@ -9,6 +9,9 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Admin } from "util/admin/admin";
 import TimeDisplay from "./TimeDisplay";
 import { Player } from "util/player/player";
+import { useContext } from "react";
+import { UserContext } from "store/user-contex";
+import { generateTimes } from "util/admin/generate_times";
 
 const Field = ({
   id,
@@ -21,6 +24,9 @@ const Field = ({
   time_closed = 21,
   onChangeSelected,
   updateDataFromResponse,
+  blacklistData = [],
+  reservedData = [],
+  setForceRefresh,
   date,
 }) => {
   const [timesData, setTimesData] = useState([]);
@@ -29,148 +35,62 @@ const Field = ({
   const [blacklist, setBlacklist] = useState([]);
   const [currBlacklist, setCurrBlacklist] = useState();
   const [reserved, setReserved] = useState([]);
-  const [currReserved,setCurrReserved] = useState([])
+  const [currReserved, setCurrReserved] = useState([]);
 
-  const today = new Date();
-  const futureDate = new Date();
-  futureDate.setDate(today.getDate() + 20);
-  const nowMonth = today.getMonth() + 1;
-  const futureMonth = futureDate.getMonth() + 1;
+  const { user } = useContext(UserContext);
   const nav = useNavigation();
   const route = useRoute();
   const editMode = route?.params?.editMode;
 
-  useEffect(() => {
+  const filteredBlacklist = blacklistData?.filter((b) => b.date === date);
+
+  const filteredReserved = reservedData?.filter((r) => {
+    const fullDate = convertToFullDate(date);
+    let currDate = r.date.split(" ");
+    currDate = `${parseInt(currDate[1])} ${currDate[2]} ${currDate[3]}`;
+
+    return currDate == fullDate;
+  });
+
+  const initData = async () => {
     setLoading(true);
-    fetchBlacklist();
-    fetchReserved()
-    const sh = time_open.split(":")[0];
-    const eh = time_closed.split(":")[0];
-    const times = generateTimes(sh, eh, 60);
-    setTimesData(times);
+    try {
+      const times = generateTimes(time_open, time_closed, date);
+      setTimesData(times);
+    } catch (e) {
+      console.log(e);
+    }
+
     setLoading(false);
-  }, []);
+  };
 
   useEffect(() => {
+    initData();
+  }, [date]);
 
+  useEffect(() => {
     let times = [];
-    const filtered = blacklist?.filter((b) => b.date === date);
-    filtered?.map((f) => {
-      const sh = f?.fromTime.split(":")[0];
-      const eh = f?.toTime.split(":")[0];
-      const curr = generateTimes(sh, eh, 60);
-      times = times.concat(curr);
-    });
-
-    setCurrBlacklist(times);
 
     const convertDate = new Date(date);
-    const dayNumber = convertDate.getDate()
+    const dayNumber = convertDate.getDate();
     const year = convertDate.getFullYear();
-    const monthName = convertDate.toLocaleString('default', { month: 'long' });
+    const monthName = convertDate.toLocaleString("default", { month: "long" });
 
-    const fullDate = `${dayNumber} ${monthName} ${year}`
+    const fullDate = `${dayNumber} ${monthName} ${year}`;
 
-    let timesReserved = []
-    const filteredReserved = reserved?.filter((r)=>{
-      let currDate = r.date.split(" ")
-      currDate =  `${currDate[1]} ${currDate[2]} ${currDate[3]}`
-      return currDate === fullDate
-    })
-
-    filteredReserved?.map((f) => {
-      const sh = f?.time_start.split(":")[0];
-      const eh = f?.time_end.split(":")[0];
-      const curr = generateTimes(sh, eh, 60);
-      timesReserved = timesReserved.concat(curr);
+    let timesReserved = [];
+    const filteredReserved = reserved?.filter((r) => {
+      let currDate = r.date.split(" ");
+      currDate = `${currDate[1]} ${currDate[2]} ${currDate[3]}`;
+      return currDate === fullDate;
     });
 
-    setCurrReserved(timesReserved)
-
-
-  }, [reserved,blacklist, date]);
-
-  const fetchBlacklist = async () => {
-    try {
-      const data = await Promise.all([
-        Player.SportVenue.getBlacklistFieldById(
-          TOKEN_TEMPORARY,
-          id,
-          nowMonth,
-          today.getFullYear()
-        ),
-        Player.SportVenue.getBlacklistFieldById(
-          TOKEN_TEMPORARY,
-          id,
-          futureMonth,
-          futureDate.getFullYear()
-        ),
-      ]);
-      const bl =
-        nowMonth !== futureMonth
-          ? data[0].data.concat(data[1].data)
-          : data[0].data;
-      setBlacklist(bl);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const fetchReserved = async() =>{
-    try {
-      const data = await Promise.all([
-        Player.SportVenue.getReservedFieldById(
-          TOKEN_TEMPORARY,
-          id,
-          nowMonth,
-          today.getFullYear()
-        ),
-        Player.SportVenue.getReservedFieldById(
-          TOKEN_TEMPORARY,
-          id,
-          futureMonth,
-          futureDate.getFullYear()
-        ),
-      ]);
-      const bl =
-        nowMonth !== futureMonth
-          ? data[0].data.concat(data[1].data)
-          : data[0].data;
-    setReserved(bl)
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  const generateTimes = (startHour, endHour, intervalInMinutes) => {
-    const times = [];
-    let currentMinute = startHour * 60;
-    const endMinute = endHour * 60;
-    while (currentMinute <= endMinute) {
-      const hour = Math.floor(currentMinute / 60);
-      const minute = currentMinute % 60;
-
-      const next = currentMinute + intervalInMinutes;
-      const nextH = Math.floor(next / 60);
-      const nextM = next % 60;
-
-      if (next > endMinute) break;
-      // Format hour and minute with leading zero if needed
-      let formattedHour = hour < 10 ? `0${hour}` : `${hour}`;
-      let formattedMinute = minute < 10 ? `0${minute}` : `${minute}`;
-      const startFormatted = `${formattedHour}:${formattedMinute}`;
-      formattedHour = nextH < 10 ? `0${nextH}` : `${nextH}`;
-      formattedMinute = nextM < 10 ? `0${nextM}` : `${nextM}`;
-
-      const endFormatted = `${formattedHour}:${formattedMinute}`;
-      // Push formatted time to times array
-      times.push(`${startFormatted} - ${endFormatted}`);
-
-      // Increment time by the interval
-      currentMinute = next;
-    }
-    return times;
-  };
+    filteredReserved?.map((f) => {
+      const curr = generateTimes(f?.time_start, f?.time_end, date);
+      timesReserved = timesReserved.concat(curr);
+    });
+    setCurrReserved(timesReserved);
+  }, [reserved, blacklist, date]);
 
   const alertDeleteFieldId = () => {
     Alert.alert("Confirmation", "Are you sure want to delete this field?", [
@@ -185,22 +105,22 @@ const Field = ({
   };
 
   const deleteFieldIdHandler = async () => {
-    const token =
-      "fOf042XZqrW*MPcz4/0yBa9jce9ySHlHSn.Fa8++HS+kBFDMbEViaEl2doRd-Wb=+5fVp3EEmA1G/Cr/5T4)5u4k614aBM1DW1e6m0MTDaw1hl<N)MZm82o-V0tYU17s";
-
+    setLoading(true)
     try {
       const { data } = await Admin.SportVenue.deleteFieldById(
-        TOKEN_TEMPORARY,
+        user.token,
         idVenue,
         id
       );
       console.log("DELETE FIELD HANDLER DATA", data);
       if (data) {
-        updateDataFromResponse(data);
+        // updateDataFromResponse(data);
+        setForceRefresh(true)
       }
     } catch (e) {
       console.log("Error occured in deleteFieldIdHandler, in Field", e);
     }
+    setLoading(false)
   };
 
   const navigateToBlacklist = () => {
@@ -251,19 +171,29 @@ const Field = ({
           </Text>
         </View>
       </View>
+
+      {/* ###### NEW VERSION ######### */}
       {timesData && (
         <SwipeableContent
           data={timesData}
           renderItem={({ item }) => {
+            const blacklisted = checkingIsBlacklisted(
+              item,
+              date,
+              filteredBlacklist
+            );
+
+            const isReserved = checkingIsReserved(item, date, filteredReserved);
+
             return (
               <TimeDisplay
                 id={id}
                 value={item}
                 key={item}
+                blacklisted={blacklisted}
                 selectedTimes={selected}
+                isReserved={isReserved}
                 onChangeSelected={onChangeSelected}
-                dataBlacklist={currBlacklist}
-                dataReserved= {currReserved}
               />
             );
           }}
@@ -289,3 +219,54 @@ const styles = StyleSheet.create({
     color: COLOR.second700,
   },
 });
+
+const checkingIsBlacklisted = (time, date, blacklist = []) => {
+  let blDisabled = false;
+  const arrTime = time.split("UNTIL");
+  const sTime = new Date(arrTime[0]);
+  const eTime = new Date(arrTime[1]);
+  if (blacklist.length !== 0) {
+    blacklist.map((b) => {
+      const sbTime = convertToDate(b.fromTime, date);
+      const ebTime = convertToDate(b.toTime, date);
+
+      blDisabled = sTime < ebTime && sbTime < eTime
+    });
+  }
+  return blDisabled;
+};
+
+const checkingIsReserved = (time, date, reserve = []) => {
+  let disabled = false;
+  const arrTime = time.split("UNTIL");
+  const sTime = new Date(arrTime[0]);
+  const eTime = new Date(arrTime[1]);
+  if (reserve.length !== 0) {
+    reserve.map((b) => {
+      const sbTime = convertToDate(b.time_start, date);
+      const ebTime = convertToDate(b.time_end, date);
+
+      disabled = sbTime <= sTime && eTime <= ebTime;
+    });
+  }
+  return disabled;
+};
+
+const convertToDate = (time, date) => {
+  const splitStart = time.split(":");
+  const sHour = parseInt(splitStart[0]);
+  const sMinute = parseInt(splitStart[1]);
+  const sDate = !!date ? new Date(date) : new Date();
+  sDate.setHours(sHour, sMinute, 0, 0);
+  return sDate;
+};
+
+const convertToFullDate = (date) => {
+  const convertDate = new Date(date);
+  const dayNumber = convertDate.getDate();
+  const year = convertDate.getFullYear();
+  const monthName = convertDate.toLocaleString("default", { month: "short" });
+
+  const fullDate = `${dayNumber} ${monthName} ${year}`;
+  return fullDate;
+};

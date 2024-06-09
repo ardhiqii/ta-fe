@@ -2,19 +2,30 @@ import CustomTopNavigation from "@components/CustomTopNavigation";
 import Category from "@components/HomeContent/Category";
 import Nearest from "@components/HomeContent/Nearest";
 
-import Recommend from "@components/HomeContent/Recommend";
+import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation } from "@react-navigation/native";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
-import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
+
 const HomeScreen = () => {
-  const { user } = useContext(UserContext);
-  const isAdmin = TEMPORARY_ROLE === "admin";
+  const nav = useNavigation()
+  const { user, logoutUser } = useContext(UserContext);
+  if (!user) {
+    return;
+  }
+  const isAdmin = user.role === "admin";
   console.log("#### HOME SCREEN ###");
   console.log(user);
+
+  const navigateTo = ()=>{
+    nav.navigate("MatchNavigation",{
+      screen: "MatchScreen"
+    })
+  }
 
   const PlayerHomeScreen = () => {
     return (
@@ -27,18 +38,25 @@ const HomeScreen = () => {
 
   const AdminHomeScreen = () => {
     return (
-      <View style={{marginTop:28,flexGrow:1,}}>
-        <Text style={{fontFamily:LEXEND.Bold,textAlign:'center'}}>Your Sport Venue</Text>
+      <View style={{ flexGrow: 1 }}>
         <ListSportVenuesScreen />
       </View>
     );
   };
+
   return (
     <>
-      <StatusBar translucent={true} />
+      <StatusBar
+        translucent={true}
+        backgroundColor={"transparent"}
+        barStyle="dark-content"
+      />
       {!isAdmin && <CustomTopNavigation />}
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
+
+        <Button onPress={navigateTo}>Navigate Match Screen</Button>
+        <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>
   );

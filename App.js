@@ -14,6 +14,7 @@ import { virtualId } from "util/virtual_id";
 import { Token } from "util/token";
 import { relogin } from "util/auth/auth";
 import Navigation from "navigation/Navigation";
+import { Role } from "util/role";
 
 const Root = () => {
   let [fontsloaded] = useFonts({
@@ -50,17 +51,28 @@ const Root = () => {
     return token;
   };
 
+  const checkingRole = async () => {
+    console.log("============================");
+    let role = await Role.getLocal();
+    console.log("Checking role is done");
+    console.log(role);
+    console.log("============================");
+    return role;
+  };
+
   const checkingUser = async (token, role) => {
     console.log("============================");
     try {
-      const { data } = await relogin(token, "player");
+      const { data } = await relogin(token, role);
       if (data) {
         data["token"] = token;
+        data["role"] = role
         updateUser(data);
       }
     } catch (e) {
       console.log("Failed relogin using token");
       Token.removeLocal();
+      Role.removeLocal();
     }
     console.log("Checking user is done");
     console.log("============================");
@@ -69,12 +81,13 @@ const Root = () => {
   useEffect(() => {
     setAppReady(false);
     const initializedApp = async () => {
-      const [id, token] = await Promise.all([
+      const [id, token, role] = await Promise.all([
         checkingVirtualId(),
         checkingToken(),
+        checkingRole(),
       ]);
 
-      await checkingUser(token, "player");
+      await checkingUser(token, role);
       if (token !== null) {
       }
       setAppReady(true);

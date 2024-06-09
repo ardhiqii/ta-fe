@@ -60,7 +60,7 @@ const EditInformationContent = ({
     const gettingAddress = async () => {
       if (route?.params?.pickedLat) {
         console.log("GETTING ADDRESS");
-        setAddress("Getting Address...")
+        setAddress("Getting Address...");
         const adrs = await Location.getAddress(
           route.params.pickedLat,
           route.params.pickedLng
@@ -213,16 +213,16 @@ const EditInformationContent = ({
       <Text style={styles.subText}>Parking</Text>
       <View style={{ flexDirection: "row", columnGap: 8 }}>
         <ButtonParking
-          name={"BIKE"}
-          icon={"bicycle"}
-          selected={!!is_bike_parking}
-          onPress={updateParkingHandler.bind(this, "bike")}
-        />
-        <ButtonParking
           name={"CAR"}
           icon={"car-outline"}
           selected={!!is_car_parking}
           onPress={updateParkingHandler.bind(this, "car")}
+        />
+        <ButtonParking
+          name={"BIKE"}
+          icon={"bicycle"}
+          selected={!!is_bike_parking}
+          onPress={updateParkingHandler.bind(this, "bike")}
         />
       </View>
 
@@ -263,7 +263,7 @@ const EditInformationContent = ({
                 ? oldData.time_closed.slice(0, -3)
                 : dataTime.init_close
                 ? "00:00"
-                : convertToHourMinute(dataTime.open)}
+                : convertToHourMinute(dataTime.close)}
             </Text>
           </Pressable>
         </View>

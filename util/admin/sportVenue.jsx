@@ -64,6 +64,7 @@ const addVenue = async (token, dataVenue) => {
     return data;
   } catch (e) {
     console.log(e);
+    console.log(e.response.data);
   }
 };
 
@@ -156,8 +157,8 @@ const getBlacklistFieldById = async (token, idField, month, year) => {
       return data;
     }
   } catch (e) {
-    console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
-    return []
+    // console.log("Error occured in util sportVenue, getBlackListFiedlById", e);
+    return [];
   }
 };
 
@@ -205,6 +206,83 @@ const deleteBlacklistScheduleByFieldId = async (token, idBlacklist) => {
     );
   }
 };
+
+const getReservedFieldById = async (token, idField, month, year) => {
+  const url =
+    process.env.BASE_URL +
+    `/admin/sportVenue/fields/schedule/reservation/${idField}/${month}/${year}`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) {
+      return data;
+    }
+  } catch (e) {
+    // console.log("Error occured in util sportVenue, getReservedFieldById", e);
+    return [];
+  }
+};
+
+const getAlbumVenuById = async (token, idVenue) => {
+  const url = process.env.BASE_URL + `/admin/sportVenue/${idVenue}/album`;
+  try {
+    const { data } = await axios.get(url, {
+      headers: {
+        token: token,
+      },
+    });
+    // console.log("util sport venue");
+    return data;
+  } catch (e) {
+    console.log("Error occured in util sportVenue getAlbumVenuById", e);
+    console.log(e.response.data);
+  }
+};
+
+const addImageAlbumByVenueId = async (token, idVenue, formData) => {
+  const url = process.env.BASE_URL + `/admin/sportVenue/${idVenue}/album`;
+  try {
+    const { data } = await axios.post(url, formData, {
+      headers: {
+        token: token,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    // console.log("util sport venue");
+    return data;
+  } catch (e) {
+    console.log("Error occured in util sportVenue addImageAlbumByVenueId", e);
+    console.log(e.response.data);
+  }
+};
+
+const deleteImageAlbumByVenueId = async (token, idVenue, filename) => {
+  const url =
+    process.env.BASE_URL + `/admin/sportVenue/${idVenue}/album/${filename}`;
+  try {
+    const { data } = await axios.delete(
+      url,
+
+      {
+        headers: {
+          token: token,
+        },
+      }
+    );
+    // console.log("util sport venue");
+    return data;
+  } catch (e) {
+    console.log(
+      "Error occured in util sportVenue deleteImageAlbumByVenueId",
+      e
+    );
+    console.log(e.response.data);
+  }
+};
+
 export const SportVenue = {
   getAllVenue,
   getById,
@@ -217,4 +295,8 @@ export const SportVenue = {
   getBlacklistFieldById,
   addBlacklistScheduleByFieldId,
   deleteBlacklistScheduleByFieldId,
+  getReservedFieldById,
+  getAlbumVenuById,
+  deleteImageAlbumByVenueId,
+  addImageAlbumByVenueId,
 };

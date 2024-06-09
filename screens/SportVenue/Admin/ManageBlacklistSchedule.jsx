@@ -1,6 +1,6 @@
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -16,6 +16,7 @@ import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import ModalAddBlacklistField from "@components/SportVenue/Blacklist/ModalAddBlacklistField";
+import { UserContext } from "store/user-contex";
 
 const TEMP_DATA = [
   {
@@ -34,6 +35,8 @@ const ManageBlacklistSchedule = () => {
   const [visibileModal, setVisibleModal] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
 
+  const { user } = useContext(UserContext);
+
   const nav = useNavigation();
   const route = useRoute();
   const idField = route?.params?.idField;
@@ -49,7 +52,7 @@ const ManageBlacklistSchedule = () => {
     setLoading(true);
     try {
       const { data } = await Admin.SportVenue.getBlacklistFieldById(
-        TOKEN_TEMPORARY,
+        user.token,
         idField,
         monthNumber,
         new Date().getFullYear()
@@ -83,7 +86,7 @@ const ManageBlacklistSchedule = () => {
   const deleteBlacklistHandler = async (idBlacklist) => {
     try {
       const { data } = await Admin.SportVenue.deleteBlacklistScheduleByFieldId(
-        TOKEN_TEMPORARY,
+        user.token,
         idBlacklist
       );
 

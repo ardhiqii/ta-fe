@@ -36,7 +36,7 @@ const SearchScreen = () => {
     }
     try {
       const { data } = await Player.SportVenue.getAllVenue(
-        TOKEN_TEMPORARY,
+        user.token,
         filters
       );
       setVenueData(data);

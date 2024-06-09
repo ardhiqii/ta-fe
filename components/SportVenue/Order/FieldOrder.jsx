@@ -2,21 +2,22 @@ import SwipeableContent from "@components/HomeContent/SwipeableContent";
 import Input from "@components/Input";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 const FieldOrder = ({
   id,
   number,
-  selected: times,
   updateFieldsData,
   match_type,
   howManyField,
   applyForAllFields,
   name,
+  mergeSelected,
 }) => {
   const isFriendly = match_type === "friendly";
   const isCompetitive = match_type === "competitive";
+
   return (
     <View style={styles.container}>
       <Text style={{ fontFamily: LEXEND.Regular }}>Field {number}</Text>
@@ -130,12 +131,12 @@ const FieldOrder = ({
             </Pressable>
           </View>
         </View>
-        <View style={{rowGap:8}}>
+        <View style={{ rowGap: 8 }}>
           <Text style={styles.subtext}>Ordered Time</Text>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <SwipeableContent
               customStyle={{ paddingHorizontal: 0 }}
-              data={mergeTime(times.sort(customSort))}
+              data={mergeSelected}
               renderItem={TimeDisplay}
             />
           </View>
@@ -227,4 +228,18 @@ const mergeTime = (times) => {
   }
 
   return mergedSlots;
+};
+
+const convertedTime = (date) => {
+  const fromDate = new Date(date);
+  let formattedHour =
+    fromDate.getHours() < 10
+      ? `0${fromDate.getHours()}`
+      : `${fromDate.getHours()}`;
+  let formattedMinute =
+    fromDate.getMinutes() < 10
+      ? `0${fromDate.getMinutes()}`
+      : `${fromDate.getMinutes()}`;
+  const formatted = `${formattedHour}:${formattedMinute}`;
+  return formatted;
 };

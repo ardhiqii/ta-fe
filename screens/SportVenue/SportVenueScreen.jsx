@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Alert,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import HeadContent from "@components/SportVenue/HeadContent";
@@ -22,10 +23,14 @@ import ReservationContent from "@components/SportVenue/ReservationContent";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import Button from "@components/UI/Button";
+import Carousel from "@components/Carousel";
+import AlbumContent from "./AlbumContent";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
+  const [albumData, setAlbumData] = useState([]);
   const [fieldsData, setFieldsData] = useState([]);
+  const [forceRefresh, setForceRefresh] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,15 +39,14 @@ const SportVenueScreen = () => {
   const editMode = route?.params?.editMode;
   const nav = useNavigation();
   const { user } = useContext(UserContext);
-  const isAdmin = TEMPORARY_ROLE == "admin";
+  const isAdmin = user.role == "admin";
 
   const fetchVenueData = async () => {
     try {
-      const coordinate = `${user.coordinate.lat}, ${user.coordinate.lng} `;
+      const coordinate = `${user?.coordinate?.lat}, ${user?.coordinate?.lng} `;
       const { data } = isAdmin
-        ? await Admin.SportVenue.getById(TOKEN_TEMPORARY, idVenue)
-        : await Player.SportVenue.getById(TOKEN_TEMPORARY, idVenue, coordinate);
-
+        ? await Admin.SportVenue.getById(user.token, idVenue)
+        : await Player.SportVenue.getById(user.token, idVenue, coordinate);
       return data;
     } catch (e) {
       console.log("Error Occured in fetch venue data, Sport Venue Screen");
@@ -54,8 +58,8 @@ const SportVenueScreen = () => {
   const fetchFieldsData = async () => {
     try {
       const { data } = isAdmin
-        ? await Admin.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue)
-        : await Player.SportVenue.getAllFields(TOKEN_TEMPORARY, idVenue);
+        ? await Admin.SportVenue.getAllFields(user.token, idVenue)
+        : await Player.SportVenue.getAllFields(user.token, idVenue);
 
       const sorted = data.sort((a, b) => a.number - b.number);
       return sorted;
@@ -65,32 +69,75 @@ const SportVenueScreen = () => {
       return null;
     }
   };
-  useEffect(() => {
-    const initData = async () => {
-      setLoading(true);
 
-      const [vd, fd] = await Promise.all([fetchVenueData(), fetchFieldsData()]);
-      setVenueData(vd);
-      setFieldsData(fd);
-      setLoading(false);
-    };
+  const fetchAlbum = async () => {
+    try {
+      const { data } = isAdmin ? await Admin.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      ) : await Player.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      )
+      return data;
+    } catch (e) {
+      console.log("Error occured fetchAlbum SportVenueScreen", e);
+      return null;
+    }
+  };
+
+  const initData = async () => {
+    setLoading(true);
+
+    const [vd, fd, ad] = await Promise.all([
+      fetchVenueData(),
+      fetchFieldsData(),
+      fetchAlbum(),
+    ]);
+    setVenueData(vd);
+    setFieldsData(fd);
+    setAlbumData(ad);
+    setLoading(false);
+  };
+  useEffect(() => {
     initData();
   }, []);
+
+  const updateAlbumData = async () => {
+    const ad = await fetchAlbum();
+    setAlbumData(ad);
+
+  };
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     initData();
+  //   }, [nav])
+  // );
+
+  const onRefresh = useCallback(() => {
+    initData();
+  }, []);
+
+  useEffect(() => {
+    if (forceRefresh) {
+      initData();
+      setForceRefresh(false);
+    }
+  }, [forceRefresh]);
 
   const NavigateToEdit = () => {
     nav.navigate("EditManageSportVenueAdmin", {
       idVenue: idVenue,
       dataVenue: venueData,
+      albumData: albumData,
       type: "EditVenue",
     });
   };
 
   const deleteHandler = async () => {
     try {
-      const response = await Admin.SportVenue.deleteVenue(
-        TOKEN_TEMPORARY,
-        idVenue
-      );
+      const response = await Admin.SportVenue.deleteVenue(user.token, idVenue);
     } catch (e) {
       console.log("Error occured in deleteHandler, SportVenueScreen");
       console.log(e);
@@ -165,6 +212,7 @@ const SportVenueScreen = () => {
     pricePerHour: venueData?.price_per_hour,
     orders: orders,
     setOrders: setOrders,
+    setForceRefresh: setForceRefresh,
   };
 
   const listButtons = [
@@ -182,15 +230,20 @@ const SportVenueScreen = () => {
 
   return (
     <>
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-            }}
-            style={styles.image}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
+        {
+          <AlbumContent
+            albumData={albumData}
+            editMode={isAdmin}
+            updateAlbumData={updateAlbumData}
+            idVenue={idVenue}
           />
-        </View>
+        }
         {editMode && (
           <>
             <ManageVenueButtons listButtons={listButtons} />
@@ -225,7 +278,7 @@ const SportVenueScreen = () => {
             bottom: 20,
           }}
         >
-          <Button onPress={navigateToOrderReview}>Order</Button>
+          {!isAdmin && <Button onPress={navigateToOrderReview}>Order</Button>}
         </View>
       )}
     </>
@@ -292,31 +345,3 @@ const manageStyles = StyleSheet.create({
   },
   iconContainer: {},
 });
-
-{
-  /* <View style={styles.editModeContainer}>
-      <View style={{ alignItems: "center" }}>
-        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
-          <Feather name="edit" size={24} color={"white"} />
-        </Pressable>
-        <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
-          Edit Venue
-        </Text>
-      </View>
-      <View style={{ alignItems: "center" }}>
-        <Pressable style={styles.editContainer} onPress={NavigateToEdit}>
-          <Feather name="edit" size={24} color={"white"} />
-        </Pressable>
-        <Text>Blacklist Schedule</Text>
-      </View>
-      <View style={{ alignItems: "center" }}>
-        <Pressable
-          onPress={alertDeleteConfirmation}
-          style={[styles.editContainer, { backgroundColor: "#fb5f5fb6" }]}
-        >
-          <Feather name="trash-2" size={24} color={"white"} />
-        </Pressable>
-        <Text>Delete</Text>
-      </View>
-    </View> */
-}

@@ -7,6 +7,7 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Currency } from "util/currency";
+import ImageVenue from "@components/SportVenue/ImageVenue";
 
 const Card = ({
   id: idVenue,
@@ -39,12 +40,7 @@ const Card = ({
   return (
     <Pressable onPress={NavigateToVenue} style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          source={{
-            uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-          }}
-          style={styles.image}
-        />
+        <ImageVenue idVenue={idVenue} />
       </View>
       <View style={styles.infoContainer}>
         <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }}>{name}</Text>

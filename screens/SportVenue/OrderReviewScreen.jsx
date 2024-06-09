@@ -7,33 +7,79 @@ import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { UserContext } from "store/user-contex";
 import { Currency } from "util/currency";
 import { Player } from "util/player/player";
 
 const OrderReviewScreen = () => {
   const route = useRoute();
   const nav = useNavigation();
-  const ordersRoute = route?.params?.orders;
+
   const nameVenue = route?.params?.nameVenue;
   const price = route?.params?.pricePerHour;
 
-  const [orders, setOrders] = useState(
-    ordersRoute?.length === 0 ? [] : ordersRoute
-  );
+  const [orders, setOrders] = useState([]);
+
   const [totalPrice, setTotalPrice] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    let totalHour = 0;
-    orders.map((o) => {
+  const { user } = useContext(UserContext);
+
+  const initData = async () => {
+    const ordersRoute = route?.params?.orders;
+    let totalMinutes = 0;
+    const newOrders = [];
+    ordersRoute.map((o) => {
+      const date = o.date;
+      let newFD = [];
       o.fieldsData.map((f) => {
-        totalHour = totalHour + f.selected.length;
+        let newSelected = [];
+        let totalMinutesEachField = 0;
+        f.selected.map((s) => {
+          const from = s.split("UNTIL")[0];
+          const to = s.split("UNTIL")[1];
+          const diffMinutes = getDifferenceInMinutes(
+            new Date(from),
+            new Date(to)
+          );
+          totalMinutesEachField += diffMinutes;
+
+          const startFormatted = convertedTime(from);
+          const endFormatted = convertedTime(to);
+          const value = `${startFormatted} - ${endFormatted}`;
+          newSelected.push(value);
+        });
+        newSelected = newSelected.sort(customSort);
+        totalMinutes += totalMinutesEachField;
+
+        const newValue = {
+          Sport_Field_id: f.Sport_Field_id,
+          id: f.id,
+          number: f.number,
+          selected: newSelected,
+          mergeSelected: mergeTime(newSelected),
+          totalMinutes: totalMinutesEachField,
+        };
+        newFD.push(newValue);
       });
+      const newValue = {
+        date: date,
+        fieldsData: newFD,
+      };
+      newOrders.push(newValue);
     });
-    setTotalPrice(totalHour * price);
+    const { hours, minutes } = convertMinutesToHoursAndMinutes(totalMinutes);
+    let tempPrice = hours * price;
+    tempPrice += (minutes / 60) * price;
+    setTotalPrice(tempPrice);
+    setOrders(newOrders);
+  };
+
+  useEffect(() => {
+    initData()
   }, []);
 
   useEffect(() => {
@@ -82,9 +128,7 @@ const OrderReviewScreen = () => {
     orders.map((o) => {
       const date = o.date;
       o.fieldsData.map((f) => {
-        let times = f.selected.sort(customSort);
-        times = mergeTime(times);
-        times.map((t) => {
+        f.mergeSelected.map((t) => {
           const split = t.split(" - ");
           const time_start = split[0] + ":00";
           const time_end = split[1] + ":00";
@@ -105,7 +149,7 @@ const OrderReviewScreen = () => {
     try {
       const arrayPomise = [];
       currentOrder.map((c) => {
-        arrayPomise.push(Player.Booking.newOrder(TOKEN_TEMPORARY, c));
+        arrayPomise.push(Player.Booking.newOrder(user.token, c));
       });
 
       const resp = await Promise.all(arrayPomise);
@@ -121,19 +165,25 @@ const OrderReviewScreen = () => {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        {orders.map((o, i) => (
-          <OrderContent
-            key={o.date + i}
-            {...o}
-            updateFieldsData={updateFieldsData}
-            nameVenue={nameVenue}
-            applyForAllFields={applyForAllFields}
-          />
-        ))}
+        {orders.map((o, i) => {
+          return (
+            <OrderContent
+              key={o.date + i}
+              {...o}
+              updateFieldsData={updateFieldsData}
+              nameVenue={nameVenue}
+              applyForAllFields={applyForAllFields}
+            />
+          );
+        })}
       </ScrollView>
       <View style={styles.button}>
         <Text style={{ fontFamily: LEXEND.Light }}>
-          Total Price:<Text style={{fontFamily:LEXEND.Regular}}> Rp.{Currency.format(totalPrice)}</Text>
+          Total Price:
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            {" "}
+            Rp.{Currency.format(totalPrice)}
+          </Text>
         </Text>
         <View style={{ width: "100%" }}>
           <Button onPress={confirmHandler}>Confirm</Button>
@@ -212,3 +262,29 @@ const customSort = (a, b) => {
   if (startTimeA > startTimeB) return 1;
   return 0;
 };
+
+const convertedTime = (date) => {
+  const fromDate = new Date(date);
+  let formattedHour =
+    fromDate.getHours() < 10
+      ? `0${fromDate.getHours()}`
+      : `${fromDate.getHours()}`;
+  let formattedMinute =
+    fromDate.getMinutes() < 10
+      ? `0${fromDate.getMinutes()}`
+      : `${fromDate.getMinutes()}`;
+  const formatted = `${formattedHour}:${formattedMinute}`;
+  return formatted;
+};
+
+function getDifferenceInMinutes(date1, date2) {
+  const differenceInMillis = Math.abs(date1 - date2); // Difference in milliseconds
+  const differenceInMinutes = Math.floor(differenceInMillis / (1000 * 60)); // Convert to minutes
+  return differenceInMinutes;
+}
+
+function convertMinutesToHoursAndMinutes(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60); // Calculate the total hours
+  const minutes = totalMinutes % 60; // Calculate the remaining minutes
+  return { hours, minutes };
+}
