@@ -201,6 +201,7 @@ const SportVenueScreen = () => {
     is_car_parking: venueData?.is_car_parking,
     is_public: venueData?.is_public,
     rules: venueData?.rules,
+    admin_username: venueData?.admin_username
   };
 
   const reservastionData = {

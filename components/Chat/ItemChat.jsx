@@ -12,10 +12,9 @@ const ItemChat = ({ chatId, toUsername, latestMessage }) => {
   const date = latestMessage?.createdAt?.toDate();
   const isOverDay = moment().diff(moment(date), "days") >= 1;
 
-
   const nav = useNavigation();
   const navigateToChat = () => {
-    nav.navigate("ChatScreen", { chatId: chatId,toUsername:toUsername });
+    nav.navigate("ChatScreen", { chatId: chatId, toUsername: toUsername });
   };
   return (
     <Pressable onPress={navigateToChat} style={styles.container}>
@@ -30,20 +29,35 @@ const ItemChat = ({ chatId, toUsername, latestMessage }) => {
             style={styles.image}
           />
         </View>
-        <View style={{width:'75%'}}>
-          <Text style={{ fontFamily: LEXEND.SemiBold, fontSize: 14 }}>
-            {toUsername}
-          </Text>
-          <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }} numberOfLines={1}>
-            {isUrMessage && "You: "}
-            {latestMessage.text}
-          </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "80%",
+          }}
+        >
+          <View style={{width:'90%'}}>
+            <Text style={{ fontFamily: LEXEND.SemiBold, fontSize: 14 }}>
+              {toUsername}
+            </Text>
+            <Text
+              style={{ fontFamily: LEXEND.Light, fontSize: 12 }}
+              numberOfLines={1}
+            >
+              {isUrMessage && "You: "}
+              {latestMessage.text}
+            </Text>
+          </View>
+          <View>
+            <Text
+              style={{ fontFamily: LEXEND.Light, fontSize: 12, marginTop: 4 }}
+            >
+              {isOverDay
+                ? moment(date).fromNow()
+                : moment(date).format("hh:mm")}
+            </Text>
+          </View>
         </View>
-      </View>
-      <View>
-        <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }}>
-          {isOverDay ? moment(date).fromNow() : moment(date).format("hh:mm")}
-        </Text>
       </View>
     </Pressable>
   );
@@ -59,8 +73,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     overflow: "hidden",
-    width: 45,
-    height: 45,
+    width: 60,
+    height: 60,
     borderRadius: 40,
   },
   image: {

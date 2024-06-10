@@ -28,6 +28,23 @@ const ListSportVenuesScreen = () => {
   const nav = useNavigation();
   const { user } = useContext(UserContext);
 
+  const navigateToChat = () => {
+    nav.navigate("ChatNavigation", {
+      screen: "ChatsScreen",
+    });
+  };
+
+  const IconRight = () => {
+    return (
+      <Pressable
+        onPress={navigateToChat}
+        style={{ marginRight: 20, marginTop: 4 }}
+      >
+        <Ionicons name="chatbox-ellipses-outline" size={24} color={"white"} />
+      </Pressable>
+    );
+  };
+
   useLayoutEffect(() => {
     nav.setOptions({
       headerShown: true,
@@ -46,6 +63,7 @@ const ListSportVenuesScreen = () => {
       contentStyle: {
         backgroundColor: "white",
       },
+      headerRight: () => <IconRight />,
     });
   }, []);
 

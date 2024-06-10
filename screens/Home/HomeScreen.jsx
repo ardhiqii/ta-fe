@@ -62,7 +62,7 @@ const HomeScreen = () => {
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
 
         <Button onPress={navigateTo}>Navigate Match Screen</Button>
-        <Button onPress={navigateToChat}>Navigate Chat</Button>
+
         <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>

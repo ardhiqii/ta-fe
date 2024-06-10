@@ -51,6 +51,11 @@ const CustomTopNavigation = () => {
   const navigateToSearch = () => {
     nav.navigate("Search");
   };
+  const navigateToChat = () => {
+    nav.navigate("ChatNavigation", {
+      screen: "ChatsScreen",
+    });
+  };
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
@@ -60,8 +65,8 @@ const CustomTopNavigation = () => {
         </Pressable>
         <View style={styles.menuContainer}>
           <Ionicons name="notifications-outline" size={24} color={"white"} />
-          <Pressable onPress={() => nav.navigate("MainMenu")}>
-            <Ionicons name="menu-sharp" size={24} color={"white"} />
+          <Pressable onPress={navigateToChat}>
+            <Ionicons name="chatbox-ellipses-outline" size={24} color={"white"} />
           </Pressable>
         </View>
       </View>

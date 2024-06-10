@@ -16,6 +16,8 @@ import Input from "@components/Input";
 import EditInformationContent from "./EditMode/EditInformationContent";
 import { Location } from "util/location";
 import { Currency } from "util/currency";
+import useChat from "hooks/useChat";
+import { useNavigation } from "@react-navigation/native";
 
 const InformationContent = ({
   description,
@@ -25,9 +27,13 @@ const InformationContent = ({
   is_public,
   rules,
   price_per_hour,
+  admin_username,
 }) => {
   const [modal, setModal] = useState(false);
   const [address, setAddress] = useState("Getting Address...");
+  const { createNewChatWithOtherUser } = useChat();
+  const nav = useNavigation();
+
   useEffect(() => {
     const gettingAddress = async () => {
       try {
@@ -35,7 +41,7 @@ const InformationContent = ({
         const adrs = await Location.getAddress(coor[0], coor[1]);
         setAddress(adrs);
       } catch (e) {
-        console.log("InformationContent getting address",e);
+        console.log("InformationContent getting address", e);
       }
     };
     gettingAddress();
@@ -59,6 +65,15 @@ const InformationContent = ({
       onPress: () => {},
     },
   ];
+
+  const chatAdmin = async () => {
+    const chatId = await createNewChatWithOtherUser(admin_username);
+    
+    nav.navigate("ChatNavigation", {
+      screen: "ChatScreen",
+      params: { chatId: chatId, toUsername: admin_username },
+    });
+  };
   return (
     <View>
       <View style={styles.darkerContainer} />
@@ -71,6 +86,31 @@ const InformationContent = ({
               {is_public ? "public" : "private"}
             </Text>
           </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View>
+            <Text style={styles.subText}>Admin</Text>
+            <View style={{ flexDirection: "row" }}>
+              <Text style={styles.text}>{admin_username}</Text>
+            </View>
+          </View>
+          <Pressable onPress={chatAdmin} style={styles.buttonContainer}>
+            <Text
+              style={{
+                fontFamily: LEXEND.Regular,
+                fontSize: 10,
+                color: COLOR.base700,
+              }}
+            >
+              Chat
+            </Text>
+          </Pressable>
         </View>
 
         {INFO_BUTTON.map((info, i) => (

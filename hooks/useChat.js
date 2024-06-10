@@ -1,6 +1,7 @@
 import { firestore } from "config/firebaseConfig";
 import {
   addDoc,
+  and,
   collection,
   doc,
   getDoc,
@@ -26,7 +27,9 @@ const useChat = () => {
     try {
       const q = query(
         chatsCollectionRef,
-        where("participants", "array-contains", currUsername)
+
+        where("participants", "array-contains", currUsername),
+        where("latestMessage", "!=", false)
       );
       const querySnapshot = await getDocs(q);
 
@@ -49,6 +52,33 @@ const useChat = () => {
 
   const createNewChatWithOtherUser = async (toUsername) => {
     try {
+      const q1 = query(
+        chatsCollectionRef,
+        where("participants", "==", [currUsername, toUsername])
+      );
+      const q2 = query(
+        chatsCollectionRef,
+        where("participants", "==", [toUsername, currUsername])
+      );
+
+      const [querySnapshot1, querySnapshot2] = await Promise.all([
+        getDocs(q1),
+        getDocs(q2),
+      ]);
+
+      if (!querySnapshot1.empty) {
+        const chatId = querySnapshot1.docs.map((doc) => {
+          return doc.id;
+        })[0];
+        return chatId;
+      }
+      if (!querySnapshot2.empty) {
+        const chatId = querySnapshot2.docs.map((doc) => {
+          return doc.id;
+        })[0];
+        return chatId;
+      }
+
       const participants = [currUsername, toUsername];
       const newChatRef = await addDoc(chatsCollectionRef, {
         participants: participants,
@@ -109,13 +139,13 @@ const useChat = () => {
       };
 
       const newMessageRef = await addDoc(messagesCollectionRef, dataMessage);
-      
+
       const latestMessage = {
         messageId: newMessageRef.id,
-        ...dataMessage
-      }
+        ...dataMessage,
+      };
 
-      updateLatestMessage(chatId,latestMessage)
+      updateLatestMessage(chatId, latestMessage);
 
       return newMessageRef.id;
     } catch (error) {
@@ -130,7 +160,7 @@ const useChat = () => {
     createNewChatWithOtherUser,
     sendNewMessage,
     updateLatestMessage,
-    setChats
+    setChats,
   };
 };
 
