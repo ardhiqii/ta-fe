@@ -21,6 +21,7 @@ const Input = ({
   multiline,
   inputContainerStyle,
   textInputStyle,
+  onFocus
 }) => {
   const [secure, setSecure] = useState(true);
 
@@ -30,6 +31,7 @@ const Input = ({
         {label && <Text style={styles.label}>{label}</Text>}
         <View style={[styles.inputContainer, !multiline && {height:40},inputContainerStyle]}>
           <TextInput
+          onFocus={onFocus}
             style={[styles.textInput,textInputStyle]}
             keyboardType={keyboardType}
             autoCapitalize="sentences"

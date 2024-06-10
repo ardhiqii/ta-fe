@@ -19,6 +19,7 @@ import FindReservationScreen from "@screens/FindReservation/FindReservationScree
 import ReservationAdminScreen from "@screens/ReservationAdmin/ReservationAdminScreen";
 import ReservationAdminNavigation from "./ReservationAdminNavigation";
 import MatchNavigation from "./MatchNavigation";
+import ChatNavigation from "./ChatNavigation";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -95,7 +96,11 @@ const AuthenticatedNavigation = () => {
         component={MatchNavigation}
         options={{ headerShown: false }}
       />
-
+      <Stack.Screen
+        name="ChatNavigation"
+        component={ChatNavigation}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="Map"
         component={MapScreen}

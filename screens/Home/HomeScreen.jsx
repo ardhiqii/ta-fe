@@ -12,7 +12,7 @@ import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
 
 const HomeScreen = () => {
-  const nav = useNavigation()
+  const nav = useNavigation();
   const { user, logoutUser } = useContext(UserContext);
   if (!user) {
     return;
@@ -21,11 +21,17 @@ const HomeScreen = () => {
   console.log("#### HOME SCREEN ###");
   console.log(user);
 
-  const navigateTo = ()=>{
-    nav.navigate("MatchNavigation",{
-      screen: "MatchScreen"
-    })
-  }
+  const navigateTo = () => {
+    nav.navigate("MatchNavigation", {
+      screen: "MatchScreen",
+    });
+  };
+
+  const navigateToChat = () => {
+    nav.navigate("ChatNavigation", {
+      screen: "ChatsScreen",
+    });
+  };
 
   const PlayerHomeScreen = () => {
     return (
@@ -56,6 +62,7 @@ const HomeScreen = () => {
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
 
         <Button onPress={navigateTo}>Navigate Match Screen</Button>
+        <Button onPress={navigateToChat}>Navigate Chat</Button>
         <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>
