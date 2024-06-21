@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Button, Image, StyleSheet, Text, View } from "react-native";
 import {
   useFonts,
   LexendDeca_300Light,
@@ -31,6 +31,7 @@ const Root = () => {
   const [appReady, setAppReady] = useState(false);
   const { updateUser, user } = useContext(UserContext);
   const [virtual, setVirtual] = useState("");
+  const [ready, setReady] = useState(false);
   const [checking, setChecking] = useState({
     virtual: false,
     token: false,
@@ -129,9 +130,29 @@ const Root = () => {
   }, [appReady, fontsloaded]);
 
   if (!fontsloaded || !appReady) {
-    return null
+    return null;
   }
 
+  if (!ready) {
+    const objectEntries = Object.entries(user);
+    return (
+      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={require("./assets/vector_login.png")}
+            style={styles.image}
+          />
+        </View>
+        <Text style={{ fontFamily: LEXEND.Bold }}>its ready</Text>
+        <Button onPress={() => setReady(true)} title="to Navigation" />
+        {objectEntries.map(([key, value]) => (
+          <Text style={{ fontFamily: LEXEND.Regular }}>
+            {key}: {value}
+          </Text>
+        ))}
+      </View>
+    );
+  }
 
   return <Navigation />;
 };
@@ -156,9 +177,19 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: LEXEND.Black,
   },
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    // backgroundColor: "red",
+    marginBottom: 12,
+    width: 100,
+    height: 100,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
 });
-
-
 
 // if (!fontsloaded || !appReady) {
 //   const objectEntries = Object.entries(checking);
