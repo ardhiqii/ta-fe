@@ -1,54 +1,55 @@
-import { firestore } from "config/firebaseConfig";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
-  addDoc,
-  and,
   collection,
-  doc,
-  getDoc,
   getDocs,
   onSnapshot,
-  orderBy,
   query,
+  where,
+  addDoc,
+  doc,
   serverTimestamp,
   updateDoc,
-  where,
+  arrayUnion,
 } from "firebase/firestore";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "store/user-contex";
+import { UserContext } from "./user-contex";
+import { firestore } from "config/firebaseConfig";
 
-const useChat = () => {
+export const ChatsContext = createContext({
+  chats: [],
+  createNewChatWithOtherUser: () => {},
+  sendNewMessage: () => {},
+  getMessagesByChatId: () => {},
+  updateLatestMessage: () => {},
+  upadateUnreadtoRead: () => {},
+});
+
+const ChatsContextProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
-
   const { user } = useContext(UserContext);
-  const currUsername = user?.username;
   const chatsCollectionRef = collection(firestore, "chats");
+  const currUsername = user?.username;
 
-  const getAllChats = async () => {
-    try {
-      const q = query(
-        chatsCollectionRef,
+  useEffect(() => {
+    if (!currUsername) return;
 
-        where("participants", "array-contains", currUsername),
-        where("latestMessage", "!=", false)
-      );
-      const querySnapshot = await getDocs(q);
+    const q = query(
+      chatsCollectionRef,
+      where("participants", "array-contains", currUsername),
+      where("latestMessage", "!=", false)
+    );
 
-      if (querySnapshot.empty) {
-        setChats([]);
-        return [];
-      }
-      const chatsArray = querySnapshot.docs.map((doc) => {
-        return {
-          chatId: doc.id,
-          ...doc.data(),
-        };
-      });
-      setChats(chatsArray);
-      return chatsArray;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const updatedChats = snapshot.docs.map((doc) => ({
+        chatId: doc.id,
+        ...doc.data(),
+      }));
+      setChats(updatedChats);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user?.username]);
 
   const createNewChatWithOtherUser = async (toUsername) => {
     try {
@@ -90,9 +91,13 @@ const useChat = () => {
     }
   };
 
-  const updateLatestMessage = async (chatId, message) => {
+  const updateLatestMessage = async (chatId, message, toUsername) => {
     try {
+      const unreadUsername = "unread_" + toUsername;
       const docRef = doc(firestore, "chats", chatId);
+      const updateUnread = await updateDoc(docRef, {
+        [unreadUsername]: arrayUnion(message.text),
+      });
       const updateLatest = await updateDoc(docRef, {
         latestMessage: message,
       });
@@ -121,7 +126,7 @@ const useChat = () => {
     });
   };
 
-  const sendNewMessage = async (chatId, message) => {
+  const sendNewMessage = async (chatId, message, toUsername) => {
     try {
       const messagesCollectionRef = collection(
         firestore,
@@ -145,7 +150,7 @@ const useChat = () => {
         ...dataMessage,
       };
 
-      updateLatestMessage(chatId, latestMessage);
+      updateLatestMessage(chatId, latestMessage, toUsername);
 
       return newMessageRef.id;
     } catch (error) {
@@ -153,15 +158,29 @@ const useChat = () => {
     }
   };
 
-  return {
-    getAllChats,
-    chats,
+  const upadateUnreadtoRead = async (chatId) => {
+    const unreadUsername = "unread_" + currUsername;
+    const docRef = doc(firestore, "chats", chatId);
+    try {
+      const updateRead = await updateDoc(docRef, {
+        [unreadUsername]: [],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const value = {
+    chats: chats,
     getMessagesByChatId,
     createNewChatWithOtherUser,
     sendNewMessage,
     updateLatestMessage,
-    setChats,
+    upadateUnreadtoRead,
   };
+  return (
+    <ChatsContext.Provider value={value}>{children}</ChatsContext.Provider>
+  );
 };
 
-export default useChat;
+export default ChatsContextProvider;

@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios"
+import axios from "axios" 
 const getLocal = async () => {
   try {
     const virtualId = await AsyncStorage.getItem("virtual-id");
@@ -17,14 +17,6 @@ const storeLocal = async (virtualId) => {
   }
 };
 
-const removeLocal = async () => {
-  try {
-    await AsyncStorage.removeItem("virtual-id");
-  } catch (e) {
-    console.log("Error occured on removeLocal virtual id", e);
-  }
-};
-
 const getVirtualId = async () => {
   try {
     url = process.env.BASE_URL + "/device/register";
@@ -35,6 +27,16 @@ const getVirtualId = async () => {
     console.log(e);
   }
 };
+
+const removeLocal = async () => {
+  try {
+    await AsyncStorage.removeItem("virtual-id");
+  } catch (e) {
+    console.log("Error occured on removeLocal virtual id", e);
+  }
+};
+
+
 
 export const virtualId = {
   getLocal,

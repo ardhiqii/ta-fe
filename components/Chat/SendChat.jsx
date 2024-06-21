@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Input from "@components/Input";
 import { COLOR } from "COLOR";
-import useChat from "hooks/useChat";
+import { ChatsContext } from "store/chats-context";
 
-const SendChat = ({ chatId, scrollToBottom }) => {
-  const { sendNewMessage } = useChat();
+const SendChat = ({ chatId, scrollToBottom,toUsername }) => {
+  const { sendNewMessage } = useContext(ChatsContext);
   const [message, setMessage] = useState("");
 
   const handleSendMessage = () => {
-    sendNewMessage(chatId, message);
+    sendNewMessage(chatId, message,toUsername);
     setMessage("");
   };
   return (

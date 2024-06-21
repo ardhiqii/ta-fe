@@ -7,8 +7,9 @@ import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { ChatsContext } from "store/chats-context";
 import { UserContext } from "store/user-contex";
 
 const HomeScreen = () => {
@@ -27,13 +28,8 @@ const HomeScreen = () => {
     });
   };
 
-  const navigateToChat = () => {
-    nav.navigate("ChatNavigation", {
-      screen: "ChatsScreen",
-    });
-  };
-
   const PlayerHomeScreen = () => {
+    
     return (
       <>
         <Category />

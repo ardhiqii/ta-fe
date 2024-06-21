@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Linking,
-  Modal,
   Pressable,
-  StatusBar,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
-import CustomModal from "@components/CustomModal";
-import Input from "@components/Input";
-import EditInformationContent from "./EditMode/EditInformationContent";
 import { Location } from "util/location";
-import { Currency } from "util/currency";
-import useChat from "hooks/useChat";
 import { useNavigation } from "@react-navigation/native";
+import { ChatsContext } from "store/chats-context";
 
 const InformationContent = ({
   description,
@@ -31,7 +25,7 @@ const InformationContent = ({
 }) => {
   const [modal, setModal] = useState(false);
   const [address, setAddress] = useState("Getting Address...");
-  const { createNewChatWithOtherUser } = useChat();
+  const { createNewChatWithOtherUser } = useContext(ChatsContext);
   const nav = useNavigation();
 
   useEffect(() => {
@@ -68,7 +62,7 @@ const InformationContent = ({
 
   const chatAdmin = async () => {
     const chatId = await createNewChatWithOtherUser(admin_username);
-    
+
     nav.navigate("ChatNavigation", {
       screen: "ChatScreen",
       params: { chatId: chatId, toUsername: admin_username },

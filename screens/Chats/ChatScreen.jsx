@@ -14,12 +14,14 @@ import React, {
   useState,
 } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import ChatBubble from "react-native-chat-bubble";
 import { UserContext } from "store/user-contex";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ChatsContext } from "store/chats-context";
+import ChatBubble from "@components/Chat/ChatBubble";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
+  const { upadateUnreadtoRead } = useContext(ChatsContext);
   const { user } = useContext(UserContext);
   const route = useRoute();
   const nav = useNavigation();
@@ -53,6 +55,7 @@ const ChatScreen = () => {
     });
 
     return () => {
+      upadateUnreadtoRead(chatId);
       unsubscribe();
     };
   }, []);
@@ -103,13 +106,9 @@ const ChatScreen = () => {
                   <Text style={styles.dateText}>{isOverDay}</Text>
                 </View>
               )}
-              <ChatBubble
-                isOwnMessage={ownMessage}
-                withTail={false}
-                bubbleColor={bubbleColor}
-                style={styles.bubbleChat}
-              >
-                <Text style={styles.text}>{message.text}</Text>
+
+              <ChatBubble isOwnMessage={ownMessage} bubbleColor={bubbleColor}>
+                <Text>{message.text}</Text>
                 <View style={timeStyle}>
                   <Text style={styles.timeSendText}>{timeSent}</Text>
                 </View>
@@ -119,7 +118,11 @@ const ChatScreen = () => {
         })}
       </KeyboardAwareScrollView>
       <View>
-        <SendChat chatId={chatId} scrollToBottom={scrollToBottom} />
+        <SendChat
+          chatId={chatId}
+          scrollToBottom={scrollToBottom}
+          toUsername={toUsername}
+        />
       </View>
     </>
   );
@@ -130,7 +133,7 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     marginTop: 12,
-    paddingBottom: 40,
+    paddingBottom: 30,
     flexGrow: 1,
   },
   text: {

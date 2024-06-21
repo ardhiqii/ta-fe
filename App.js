@@ -9,12 +9,16 @@ import {
 } from "@expo-google-fonts/lexend-deca";
 import { LEXEND } from "@fonts/LEXEND";
 import UserContextProvider, { UserContext } from "store/user-contex";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { virtualId } from "util/virtual_id";
 import { Token } from "util/token";
 import { relogin } from "util/auth/auth";
 import Navigation from "navigation/Navigation";
 import { Role } from "util/role";
+import ChatsContextProvider from "store/chats-context";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 const Root = () => {
   let [fontsloaded] = useFonts({
@@ -25,7 +29,14 @@ const Root = () => {
     LexendDeca_900Black,
   });
   const [appReady, setAppReady] = useState(false);
-  const { updateUser } = useContext(UserContext);
+  const { updateUser, user } = useContext(UserContext);
+  const [virtual, setVirtual] = useState("");
+  const [checking, setChecking] = useState({
+    virtual: false,
+    token: false,
+    role: false,
+    user: false,
+  });
 
   const checkingVirtualId = async () => {
     console.log("============================");
@@ -37,6 +48,10 @@ const Root = () => {
       await virtualId.storeLocal(newId);
     }
     console.log("Checking Virtual ID is done");
+    setVirtual(id);
+    setChecking((prev) => {
+      return { ...prev, virtual: true };
+    });
     console.log(id);
     console.log("============================");
     return id;
@@ -47,6 +62,9 @@ const Root = () => {
     let token = await Token.getLocal();
     console.log("Checking Token is done");
     console.log(token);
+    setChecking((prev) => {
+      return { ...prev, token: true };
+    });
     console.log("============================");
     return token;
   };
@@ -56,6 +74,9 @@ const Root = () => {
     let role = await Role.getLocal();
     console.log("Checking role is done");
     console.log(role);
+    setChecking((prev) => {
+      return { ...prev, role: true };
+    });
     console.log("============================");
     return role;
   };
@@ -66,7 +87,7 @@ const Root = () => {
       const { data } = await relogin(token, role);
       if (data) {
         data["token"] = token;
-        data["role"] = role
+        data["role"] = role;
         updateUser(data);
       }
     } catch (e) {
@@ -75,6 +96,9 @@ const Root = () => {
       Role.removeLocal();
     }
     console.log("Checking user is done");
+    setChecking((prev) => {
+      return { ...prev, user: true };
+    });
     console.log("============================");
   };
 
@@ -95,13 +119,19 @@ const Root = () => {
     initializedApp();
   }, []);
 
+  useEffect(() => {
+    const hideSplashScreen = async () => {
+      if (appReady && fontsloaded) {
+        await SplashScreen.hideAsync();
+      }
+    };
+    hideSplashScreen();
+  }, [appReady, fontsloaded]);
+
   if (!fontsloaded || !appReady) {
-    return (
-      <View>
-        <Text>LOADING APP</Text>
-      </View>
-    );
+    return null
   }
+
 
   return <Navigation />;
 };
@@ -109,7 +139,9 @@ const Root = () => {
 export default function App() {
   return (
     <UserContextProvider>
-      <Root />
+      <ChatsContextProvider>
+        <Root />
+      </ChatsContextProvider>
     </UserContextProvider>
   );
 }
@@ -125,3 +157,37 @@ const styles = StyleSheet.create({
     fontFamily: LEXEND.Black,
   },
 });
+
+
+
+// if (!fontsloaded || !appReady) {
+//   const objectEntries = Object.entries(checking);
+//   return (
+//     <View>
+//       <Text>Loading app</Text>
+//       <Text>FONT READY: {fontsloaded ? "ready" : "not ready"}</Text>
+//       <Text>appReady: {appReady ? "ready" : "not ready"}</Text>
+//       {objectEntries.map(([key, value]) => {
+//         return (
+//           <Text style={{ fontFamily: LEXEND.Regular }} key={key}>
+//             {key}: {String(value)}
+//           </Text>
+//         );
+//       })}
+//       <Text>ENV BASE_URL : {process.env.BASE_URL}</Text>
+//       <Text>ENV FIREBASE_API_KEY : {process.env.FIREBASE_API_KEY}</Text>
+//       <Text>
+//         ENV FIREBASE_AUTH_DOMAIN : {process.env.FIREBASE_AUTH_DOMAIN}
+//       </Text>
+//       <Text>ENV FIREBASE_PROJECT_ID : {process.env.FIREBASE_PROJECT_ID}</Text>
+//       <Text>
+//         ENV FIREBASE_STORAGE_BUCKET : {process.env.FIREBASE_STORAGE_BUCKET}
+//       </Text>
+//       <Text>
+//         ENV FIREBASE_MESSAGING_SENDER_ID :{" "}
+//         {process.env.FIREBASE_MESSAGING_SENDER_ID}
+//       </Text>
+//       <Text>ENV FIREBASE_APP_ID : {process.env.FIREBASE_APP_ID}</Text>
+//     </View>
+//   );
+// }

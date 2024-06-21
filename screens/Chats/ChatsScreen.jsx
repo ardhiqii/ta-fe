@@ -1,72 +1,18 @@
 import ItemChat from "@components/Chat/ItemChat";
-import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 import { COLOR } from "COLOR";
-import { firestore } from "config/firebaseConfig";
-import {
-  and,
-  collection,
-  collectionGroup,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
-import useChat from "hooks/useChat";
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useState } from "react";
+import { ScrollView, StyleSheet, Text } from "react-native";
+import { ChatsContext } from "store/chats-context";
 import { UserContext } from "store/user-contex";
 
 const ChatsScreen = () => {
-  const {
-    getAllChats,
-    chats,
-    createNewChatWithOtherUser,
-    updateLatestMessage,
-    setChats,
-  } = useChat();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigation();
   const { user } = useContext(UserContext);
+  const { chats } = useContext(ChatsContext);
   const currUsername = user?.username;
-
-  const initData = async () => {
-    try {
-      setIsLoading(true);
-      await getAllChats();
-    } catch (error) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    initData();
-  }, []);
-  useEffect(() => {
-    const chatsCollectionRef = collection(firestore, "chats");
-    const q = query(
-      chatsCollectionRef,
-      where("participants", "array-contains", currUsername),
-      where("latestMessage", "!=", false)
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const updatedChats = snapshot.docs.map((doc) => ({
-        chatId: doc.id,
-        ...doc.data(),
-      }));
-      setChats(updatedChats);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -100,12 +46,15 @@ const ChatsScreen = () => {
         const toUsername = c?.participants?.filter(
           (name) => name !== currUsername
         )[0];
+
+        const unreadUsername = "unread_"+currUsername
         return (
           <ItemChat
             key={c.chatId + currUsername}
             chatId={c.chatId}
             toUsername={toUsername}
             latestMessage={c.latestMessage}
+            unread={c[unreadUsername]}
           />
         );
       })}
@@ -118,6 +67,6 @@ export default ChatsScreen;
 const styles = StyleSheet.create({
   container: {
     marginTop: 12,
-    rowGap:20,
+    rowGap: 20,
   },
 });
