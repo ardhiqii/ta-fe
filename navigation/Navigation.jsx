@@ -1,6 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "@screens/LoginScreen";
-import RegisterScreen from "@screens/RegisterScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "store/user-contex";
@@ -20,6 +19,7 @@ import ReservationAdminScreen from "@screens/ReservationAdmin/ReservationAdminSc
 import ReservationAdminNavigation from "./ReservationAdminNavigation";
 import MatchNavigation from "./MatchNavigation";
 import ChatNavigation from "./ChatNavigation";
+import RegisterScreen from "@screens/RegisterScreen";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
