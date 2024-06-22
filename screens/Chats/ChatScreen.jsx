@@ -21,6 +21,7 @@ import ChatBubble from "@components/Chat/ChatBubble";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
+  const [toUsernameData, setToUsernameData]=useState(route?.params?.toUserData)
   const { upadateUnreadtoRead } = useContext(ChatsContext);
   const { user } = useContext(UserContext);
   const route = useRoute();
@@ -33,9 +34,14 @@ const ChatScreen = () => {
 
   useLayoutEffect(() => {
     nav.setOptions({
-      title: toUsername,
+      title: toUsernameData?.name,
     });
-  }, []);
+  }, [toUsernameData]);
+
+
+  useEffect(()=>{
+    setToUsernameData(route?.params?.toUserData)
+  },[route?.params?.toUserData])
 
   useEffect(() => {
     const messagesCollectionRef = collection(

@@ -2,11 +2,13 @@ import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 import { COLOR } from "COLOR";
 import moment from "moment";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
+import { Player } from "util/player/player";
 
 const ItemChat = ({ chatId, toUsername, latestMessage, unread }) => {
+  const [toUsernameData, setToUsernameData] = useState();
   const { user } = useContext(UserContext);
   const isUrMessage = user.username === latestMessage.sentBy;
 
@@ -15,10 +17,30 @@ const ItemChat = ({ chatId, toUsername, latestMessage, unread }) => {
 
   const nav = useNavigation();
   const navigateToChat = () => {
-    nav.navigate("ChatScreen", { chatId: chatId, toUsername: toUsername });
+    nav.navigate("ChatScreen", {
+      chatId: chatId,
+      toUsername: toUsername,
+      toUserData: toUsernameData,
+    });
   };
 
   const isThereUnread = unread?.length > 0;
+
+  const getInfoToUsername = async () => {
+    try {
+      const { data } = await Player.Profile.getInfoOtherUsername(
+        user.token,
+        toUsername
+      );
+      setToUsernameData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getInfoToUsername();
+  }, []);
 
   return (
     <Pressable onPress={navigateToChat} style={styles.container}>
@@ -28,7 +50,7 @@ const ItemChat = ({ chatId, toUsername, latestMessage, unread }) => {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: "https://upload.wikimedia.org/wikipedia/commons/8/87/Haerin_%28NewJeans%29_220813.jpg",
+              uri: toUsernameData?.ava_url,
             }}
             style={styles.image}
           />
@@ -43,10 +65,13 @@ const ItemChat = ({ chatId, toUsername, latestMessage, unread }) => {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <Text style={{ fontFamily: LEXEND.SemiBold, fontSize: 14 }}>
-              {toUsername}
+              {toUsernameData?.name} - {toUsername}
             </Text>
             <Text
-              style={[{ fontFamily: LEXEND.Light, fontSize: 12, marginTop: 4 },isThereUnread && {color:COLOR.base900}]}
+              style={[
+                { fontFamily: LEXEND.Light, fontSize: 12, marginTop: 4 },
+                isThereUnread && { color: COLOR.base900 },
+              ]}
             >
               {isOverDay
                 ? moment(date).fromNow()

@@ -133,26 +133,26 @@ const Root = () => {
     return null;
   }
 
-  if (!ready) {
-    const objectEntries = Object.entries(user);
-    return (
-      <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={require("./assets/vector_login.png")}
-            style={styles.image}
-          />
-        </View>
-        <Text style={{ fontFamily: LEXEND.Bold }}>its ready</Text>
-        <Button onPress={() => setReady(true)} title="to Navigation" />
-        {objectEntries.map(([key, value]) => (
-          <Text style={{ fontFamily: LEXEND.Regular }}>
-            {key}: {value}
-          </Text>
-        ))}
-      </View>
-    );
-  }
+  // if (!ready) {
+  //   const objectEntries = Object.entries(user);
+  //   return (
+  //     <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+  //       <View style={styles.imageContainer}>
+  //         <Image
+  //           source={require("./assets/vector_login.png")}
+  //           style={styles.image}
+  //         />
+  //       </View>
+  //       <Text style={{ fontFamily: LEXEND.Bold }}>its ready</Text>
+  //       <Button onPress={() => setReady(true)} title="to Navigation" />
+  //       {objectEntries.map(([key, value]) => (
+  //         <Text style={{ fontFamily: LEXEND.Regular }}>
+  //           {key}: {value}
+  //         </Text>
+  //       ))}
+  //     </View>
+  //   );
+  // }
 
   return <Navigation />;
 };
