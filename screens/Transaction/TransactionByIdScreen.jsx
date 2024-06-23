@@ -2,7 +2,7 @@ import LoadingOverlay from "@components/LoadingOverlay";
 import HeadContent from "@components/SportVenue/HeadContent";
 import InformationContent from "@components/SportVenue/InformationContent";
 import BottomAction from "@components/Transaction/BottomAction";
-import DisplayQRModal from "@components/Transaction/DisplayQRModal";
+import ListMatch from "@components/Transaction/ListMatch";
 
 import ListMembers from "@components/Transaction/ListMembers";
 import MatchInformation from "@components/Transaction/MatchInformation";
@@ -13,34 +13,10 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
-  Text,
   View,
 } from "react-native";
 import { UserContext } from "store/user-contex";
 import { Player } from "util/player/player";
-
-const temp = {
-  info: {
-    booking_status: "waiting_approval",
-    created_at: "2024-05-14 15:14:50",
-    field_id: "8566b135-d791-4da4-a86d-3a8ddb147f7e",
-    field_number: 6,
-    host_name: "wakacipuyp",
-    is_open_member: 1,
-    is_public: 1,
-    mabar_name: "TEST",
-    playing_date: "2024-05-16",
-    reservation_id: "33237c46-d455-4600-8092-2b1a45828507",
-    sport_kind_id: "2b607252-3c94-432f-9275-a86304363cf3",
-    sport_kind_name: "Badminton",
-    time_end: "10:00:00",
-    time_start: "9:00:00",
-    total_price: 37500,
-    venue_id: "d28aa20b-d982-4b53-b56d-7307a4410339",
-    venue_name: "Gor Gokil",
-  },
-  role: "host",
-};
 
 const TransactionByIdScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -129,7 +105,7 @@ const TransactionByIdScreen = () => {
 
   useEffect(() => {
     if (forceRefresh) {
-      forceRefreshData()
+      forceRefreshData();
     }
   }, [forceRefresh]);
 
@@ -153,6 +129,7 @@ const TransactionByIdScreen = () => {
     is_bike_parking: venueData?.is_bike_parking,
     is_car_parking: venueData?.is_car_parking,
     is_public: venueData?.is_public,
+    admin_username: venueData?.admin_username,
     rules: venueData?.rules,
   };
 
@@ -171,6 +148,11 @@ const TransactionByIdScreen = () => {
     roleReviewer: transactionData?.role,
     membersData: members,
     setForceRefresh: setForceRefresh,
+  };
+
+  const listMatchData = {
+    membersData: members,
+    roleReviewer: transactionData?.role,
   };
 
   const bottomActionData = {
@@ -206,9 +188,11 @@ const TransactionByIdScreen = () => {
         <InformationContent {...infoData} />
         <BorderLine />
         <ListMembers {...listMembersData} />
+        <BorderLine />
+        <ListMatch {...listMatchData} />
       </ScrollView>
       <BottomAction {...bottomActionData} />
-      {forceRefresh && <LoadingOverlay/>}
+      {forceRefresh && <LoadingOverlay />}
     </>
   );
 };

@@ -21,7 +21,7 @@ const ItemMember = ({
         index % 2 != 0 && { backgroundColor: "#c8eef0" },
       ]}
     >
-      <Text style={[{ fontFamily: LEXEND.Light, fontSize: 12 }, included && {fontFamily:LEXEND.Bold}]}>{username} {included && "(You)"}</Text>
+      <Text style={[{ fontFamily: LEXEND.Light, fontSize: 11 }, included && {fontFamily:LEXEND.Bold}]}>{username} {included && "(You)"}</Text>
       <View
         style={{ flexDirection: "row", columnGap: 10, alignItems: "center" }}
       >

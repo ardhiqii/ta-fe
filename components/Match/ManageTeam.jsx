@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons, Entypo } from "@expo/vector-icons";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import Input from "@components/Input";
+import { useMatch } from "hooks/use-match";
+import { useRoute } from "@react-navigation/native";
+import { Player } from "util/player/player";
+import { UserContext } from "store/user-contex";
 
-export const ManagePlayer = ({ type, setStatus, status }) => {
+export const ManageTeam = ({ type, setStatus, status }) => {
   const [editName, setEditName] = useState(false);
-
-  const player = "player" + type;
-  const currScore = status?.[player].score;
-  const currName = status?.[player].name;
-  const isDefaultName = currName === "Player " + type;
+  const { updateMatchFB } = useMatch();
+  const route = useRoute();
+  const { user } = useContext(UserContext);
+  const idReservation = route?.params?.idReservation;
+  const idMatchHistory = route?.params?.idMatchHistory;
+  const team = "team" + type;
+  const currScore = status?.[team].score;
+  const currName = status?.[team].name;
+  const isDefaultName = currName === "Team " + type;
   const changeScoreValue = parseInt(status?.changeScoreValue, 10);
 
   const changeName = (name) => {
@@ -20,21 +28,61 @@ export const ManagePlayer = ({ type, setStatus, status }) => {
       score: currScore,
     };
     setStatus((prev) => {
-      return { ...prev, [player]: newValue };
+      return { ...prev, [team]: newValue };
     });
   };
 
-  const changeScore = (score) => {
-    if (score < 0) {
+  const changeNameFB = (name) => {
+    const teamNameFB = `${team}.name`;
+    updateMatchFB(idMatchHistory, {
+      [teamNameFB]: name,
+    });
+  };
+
+  const doneChangeName = () => {
+    const newName = status[team].name;
+    changeNameFB(newName);
+    setEditName(false);
+  };
+
+  const changeScore = async (score) => {
+    let newScore = parseInt(score);
+    if (isNaN(newScore)) {
+      newScore = 0;
+    }
+    if (newScore < 0) {
       return;
     }
     const newValue = {
       name: currName,
-      score: score,
+      score: newScore,
     };
     setStatus((prev) => {
-      return { ...prev, [player]: newValue };
+      return { ...prev, [team]: newValue };
     });
+    try {
+      const teamScoreFB = `${team}.score`;
+      updateMatchFB(idMatchHistory, {
+        [teamScoreFB]: newScore,
+      });
+      let scoreA = status.teamA.score;
+      let scoreB = status.teamB.score;
+    
+      if (team === "teamA") {
+        scoreA = newScore;
+      } else {
+        scoreB = newScore;
+      }
+      const { data } = await Player.Match.updateScore(
+        user.token,
+        idReservation,
+        idMatchHistory,
+        scoreA,
+        scoreB
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const alertResetScore = () => {
@@ -53,19 +101,19 @@ export const ManagePlayer = ({ type, setStatus, status }) => {
   };
 
   const alertResetName = () => {
-    const defaultName = "Player " + type;
+    const defaultName = "Team " + type;
     const mssg = `Are you sure want to reset name of ${currName}?`;
     Alert.alert("Confirmation", mssg, [
       {
         text: "Yes",
         onPress: () => {
-          changeName(defaultName);
+          changeNameFB(defaultName);
           setEditName(false);
         },
       },
       {
-        text:'No'
-      }
+        text: "No",
+      },
     ]);
   };
 
@@ -86,7 +134,7 @@ export const ManagePlayer = ({ type, setStatus, status }) => {
             </View>
             <View style={{ flexDirection: "row", columnGap: 4 }}>
               <Pressable
-                onPress={() => setEditName(false)}
+                onPress={doneChangeName}
                 style={[styles.buttonRetangle, { borderColor: "#3e82f5" }]}
               >
                 <Text
@@ -100,7 +148,7 @@ export const ManagePlayer = ({ type, setStatus, status }) => {
                 </Text>
               </Pressable>
               <Pressable
-               onPress={alertResetName}
+                onPress={alertResetName}
                 style={[styles.buttonRetangle, { borderColor: COLOR.base900 }]}
               >
                 <Text
@@ -126,7 +174,7 @@ export const ManagePlayer = ({ type, setStatus, status }) => {
               {!isDefaultName && (
                 <Text style={{ fontFamily: LEXEND.Light, fontSize: 10 }}>
                   {" "}
-                  - Player {type}
+                  - Team {type}
                 </Text>
               )}
             </Text>

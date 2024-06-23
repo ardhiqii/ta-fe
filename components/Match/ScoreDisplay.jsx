@@ -5,15 +5,15 @@ import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import PlayerCard from "./PlayerCard";
+import TeamCard from "./TeamCard";
 const ScoreDisplay = ({status}) => {
   const configGradient = {
     colors: [COLOR.base700,COLOR.base900],
     start: [0.2, 0.1],
   };
 
-  const scoreA = status?.playerA.score
-  const scoreB = status?.playerB.score
+  const scoreA = status?.teamA.score
+  const scoreB = status?.teamB.score
   // const configGradient = {
   //   colors: ["#37474f", "#cfd8dc"],
   //   start: [0.4, 0.9],
@@ -45,11 +45,11 @@ const ScoreDisplay = ({status}) => {
         </View>
         {/* Main Content */}
         <View style={styles.scoreContainer}>
-          <PlayerCard status={status} type={"A"} />
+          <TeamCard status={status} type={"A"} />
           <View>
             <Text style={styles.scoreText}>{scoreA} : {scoreB}</Text>
           </View>
-          <PlayerCard status={status} type={"B"} />
+          <TeamCard status={status} type={"B"} />
         </View>
         <View style={{ alignItems: "center" }}>
           <Text

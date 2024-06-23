@@ -1,10 +1,27 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { ManagePlayer } from "./ManagePlayer";
+import { ManageTeam } from "./ManageTeam";
 import Input from "@components/Input";
 import { LEXEND } from "@fonts/LEXEND";
+import { Player } from "util/player/player";
+import { UserContext } from "store/user-contex";
+import { useMatch } from "hooks/use-match";
+import { useRoute } from "@react-navigation/native";
 
 const ManageMatch = ({ status, setStatus }) => {
+  const { user } = useContext(UserContext);
+  const { updateMatchFB } = useMatch();
+  const route = useRoute();
+
+  const idMatchHistory = route?.params?.idMatchHistory;
+  const fethingMembers = async () => {
+    try {
+      const { data } = await Player.Booking.getMembersById(user.token);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const configGradient = {
     colors: ["#3e82f5", "#bcdcfc"],
     start: [0.3, 0],
@@ -12,17 +29,25 @@ const ManageMatch = ({ status, setStatus }) => {
   };
 
   const changeScoreValueHandler = (value) => {
-    if (value < 1) {
+    let newValue = parseInt(value);
+    if (isNaN(newValue)) {
+      newValue = 1;
+    }
+    if (newValue < 1) {
       return;
     }
     setStatus((prev) => {
-      return { ...prev, changeScoreValue: value };
+      return { ...prev, changeScoreValue: newValue };
+    });
+    updateMatchFB(idMatchHistory, {
+      changeScoreValue: newValue,
     });
   };
   return (
     <View style={styles.container}>
-      <ManagePlayer type={"A"} setStatus={setStatus} status={status} />
-      <ManagePlayer type={"B"} setStatus={setStatus} status={status} />
+      <ManageTeam type={"A"} setStatus={setStatus} status={status} />
+      <ManageTeam type={"B"} setStatus={setStatus} status={status} />
+
       <View style={{ flexDirection: "row", columnGap: 4 }}>
         <Text style={{ fontFamily: LEXEND.Light, fontSize: 12 }}>
           Change Score Value:{" "}
