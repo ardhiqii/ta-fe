@@ -4,17 +4,29 @@ import { useMatch } from "hooks/use-match";
 import React, { useContext } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
+import { Player } from "util/player/player";
 
 const ItemPlayer = ({ username, index, team }) => {
   const { user } = useContext(UserContext);
   const { removePlayerTeamFB } = useMatch();
   const route = useRoute();
   const idMatchHistory = route?.params?.idMatchHistory;
+  const idReservation = route?.params?.idReservation;
 
   const isItYou = user?.username === username;
 
   const removeHandler = async () => {
     removePlayerTeamFB(idMatchHistory, team, username);
+    try {
+      await Player.Match.removePlayerFromTeam(
+        user.token,
+        idReservation,
+        idMatchHistory,
+        username
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Pressable
@@ -23,14 +35,12 @@ const ItemPlayer = ({ username, index, team }) => {
         index % 2 == 0 && { backgroundColor: "#c8eef0" },
       ]}
     >
-      <View style={{ flexDirection: "row",alignItems:'center' }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
         <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
-          {index + 1} {username} {' '}
+          {index + 1} {username}{" "}
         </Text>
         {isItYou && (
-          <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
-            (You)
-          </Text>
+          <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>(You)</Text>
         )}
       </View>
       <View>

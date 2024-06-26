@@ -85,10 +85,86 @@ const updateScore = async (
   }
 };
 
+const addPlayerToTeam = async (
+  token,
+  idReservation,
+  idMatchHistory,
+  username,
+  team
+) => {
+  try {
+    const reqBody = {
+      reservation_id: idReservation,
+      match_history_id: idMatchHistory,
+      username,
+      team,
+    };
+    const { data } = await x.post("/player", reqBody, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) return data;
+  } catch (error) {
+    console.log("ERROR addPlayerToTeam", error);
+  }
+};
+
+const removePlayerFromTeam = async (
+  token,
+  idReservation,
+  idMatchHistory,
+  username
+) => {
+  try {
+    const reqBody = {
+      reservation_id: idReservation,
+      match_history_id: idMatchHistory,
+      username,
+    };
+    const { data } = await x.delete("/player", {
+      data: reqBody,
+      headers: {
+        token: token,
+      },
+    });
+    if (data) return data;
+  } catch (error) {
+    console.log("ERROR removePlayerFromTeam", error);
+    console.log(error.response.data);
+  }
+};
+
+const updateStatusDoneMatch = async (
+  token,
+  idReservation,
+  idMatchHistory,
+  done
+) => {
+  try {
+    const reqBody = {
+      reservation_id: idReservation,
+      match_history_id: idMatchHistory,
+      is_done: done,
+    };
+    const { data } = await x.put("/is_done", reqBody, {
+      headers: {
+        token: token,
+      },
+    });
+    if (data) return data;
+  } catch (error) {
+    console.log("ERROR updateStatusDoneMatch", error);
+  }
+};
+
 export const Match = {
   getAllMatchHistories,
   createMatch,
   getMatchHistory,
   updateScore,
   deleteMatch,
+  addPlayerToTeam,
+  removePlayerFromTeam,
+  updateStatusDoneMatch,
 };

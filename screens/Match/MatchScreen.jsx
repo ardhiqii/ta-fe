@@ -6,6 +6,7 @@ import TeamMembers from "@components/Match/TeamMembers";
 import Button from "@components/UI/Button";
 import { LEXEND } from "@fonts/LEXEND";
 import { useRoute } from "@react-navigation/native";
+import { COLOR } from "COLOR";
 import { useMatch } from "hooks/use-match";
 import React, { useContext, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
@@ -87,6 +88,21 @@ const MatchScreen = () => {
       unsubscribe();
     };
   }, []);
+  const doneHandler = async () => {
+    setLoading(true);
+    try {
+      const { data } = await Player.Match.updateStatusDoneMatch(
+        user.token,
+        idReservation,
+        idMatchHistory,
+        !matchData?.is_done
+      );
+      await fetchMatchData();
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -95,8 +111,9 @@ const MatchScreen = () => {
         <BorderLine />
         <ManageMatch status={status} setStatus={setStatus} />
         <BorderLine />
-        <TeamMembers status={status} listPlayers={members} type={"A"}/>
-        <TeamMembers status={status} listPlayers={members} type={"B"}/>
+        <TeamMembers status={status} listPlayers={members} type={"A"} />
+        <BorderLine />
+        <TeamMembers status={status} listPlayers={members} type={"B"} />
       </ScrollView>
       <BottomActionLayout>
         <View style={{ flexDirection: "row" }}>
@@ -105,8 +122,8 @@ const MatchScreen = () => {
             {matchData?.is_done ? "Done" : "Not Done"}
           </Text>
         </View>
-        <Button>
-          <Text>Start</Text>
+        <Button onPress={doneHandler} customStyle={matchData?.is_done && {backgroundColor:COLOR.accent1}}>
+          <Text>{matchData?.is_done ? "Stop" : "Start"}</Text>
         </Button>
       </BottomActionLayout>
       {loading && <LoadingOverlay />}
