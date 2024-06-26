@@ -1,5 +1,7 @@
 import { firestore } from "config/firebaseConfig";
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -66,11 +68,39 @@ export const useMatch = () => {
     }
   };
 
+  const updatePlayersTeamFB = async (idMatchHistory, team, players) => {
+    if (!players) return;
+    try {
+      const docRef = doc(matchHistoryCollectionRef, idMatchHistory);
+      const updatePlayers = await updateDoc(docRef, {
+        [team]: arrayUnion(...players),
+      });
+      return updatePlayers
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const removePlayerTeamFB = async (idMatchHistory,team,player)=>{
+    if(!player) return
+    try {
+      const docRef = doc(matchHistoryCollectionRef, idMatchHistory);
+      const updatePlayers = await updateDoc(docRef, {
+        [team]: arrayRemove(player),
+      });
+      return updatePlayers
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return {
     createMatchFB,
     subscribeToMatch,
     fetchMatchOnce,
     updateMatchFB,
     deleteMatchFB,
+    updatePlayersTeamFB,
+    removePlayerTeamFB
   };
 };

@@ -1,30 +1,26 @@
 {
   "expo": {
-    "name": "fe",
+    "name": "Sportify",
     "slug": "fe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/custom-icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/custom-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/custom-adaptive.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "LOCATION"
-      ],
+      "permissions": ["LOCATION"],
       "package": "com.ardhiqii.fe"
     },
     "web": {

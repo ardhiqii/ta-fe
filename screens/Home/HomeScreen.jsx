@@ -22,12 +22,6 @@ const HomeScreen = () => {
   console.log("#### HOME SCREEN ###");
   console.log(user);
 
-  const navigateTo = () => {
-    nav.navigate("MatchNavigation", {
-      screen: "MatchScreen",
-    });
-  };
-
   const PlayerHomeScreen = () => {
     
     return (
@@ -56,8 +50,6 @@ const HomeScreen = () => {
       {!isAdmin && <CustomTopNavigation />}
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
-
-        <Button onPress={navigateTo}>Navigate Match Screen</Button>
 
         <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>

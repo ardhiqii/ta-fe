@@ -26,7 +26,7 @@ const Button = ({ customStyle, customStyleText,configGradient, onPress, children
     );
   }
   return (
-    <Pressable onPress={onPress} style={[styles.container,customStyle]}>
+    <Pressable onPress={onPress} style={({pressed})=>[styles.container,customStyle, pressed && {opacity:0.7}]}>
       <Text style={[styles.buttonText,customStyleText]}>{children}</Text>
     </Pressable>
   );

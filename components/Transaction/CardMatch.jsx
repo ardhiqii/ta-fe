@@ -97,9 +97,11 @@ const CardMatch = ({
   return (
     <Pressable
       onPress={navigateToMatch}
-      style={[
+      style={({ pressed }) => [
         styles.container,
-        index % 2 != 0 && { backgroundColor: "#c8eef0" },
+        index % 2 != 0
+          ? { backgroundColor: "#c8eef0" }
+          : { borderColor: "#c8eef0" }, pressed && {backgroundColor:'#cccccc49'}
       ]}
     >
       <Text style={[styles.text, { fontFamily: LEXEND.Bold }]}>{number}</Text>
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 4,
+    borderWidth: 1,
   },
   match: {
     flexDirection: "row",

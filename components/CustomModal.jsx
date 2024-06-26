@@ -19,7 +19,12 @@ const CustomModal = ({
   return (
     <>
       <OuterModal visible={visible} />
-      <Modal transparent={true} animationType={animationType} visible={visible}>
+      <Modal
+        transparent={true}
+        animationType={animationType}
+        visible={visible}
+        onRequestClose={() => closeModal()}
+      >
         <Pressable
           onPress={closeModal}
           style={[

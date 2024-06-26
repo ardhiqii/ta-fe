@@ -1,19 +1,46 @@
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
-import { MaterialIcons } from "@expo/vector-icons";
 import TeamCard from "./TeamCard";
-const ScoreDisplay = ({status}) => {
+import { UserContext } from "store/user-contex";
+import { Player } from "util/player/player";
+import { useRoute } from "@react-navigation/native";
+const ScoreDisplay = ({ status }) => {
+  const [reservationData, setReservationData] = useState();
+  const { user } = useContext(UserContext);
+  const route = useRoute();
+  const idReservation = route?.params?.idReservation;
+  const fetchReservationData = async () => {
+    if (idReservation) {
+      try {
+        const { data } = await Player.Booking.getOrderById(
+          user.token,
+          idReservation
+        );
+        setReservationData(data);
+      } catch (e) {
+        return null;
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchReservationData();
+  }, []);
+
+  const timeStart = reservationData?.info?.time_start;
+  const timeEnd = reservationData?.info?.time_end;
+  const mabarName = reservationData?.info?.mabar_name;
   const configGradient = {
-    colors: [COLOR.base700,COLOR.base900],
+    colors: [COLOR.base700, COLOR.base900],
     start: [0.2, 0.1],
   };
 
-  const scoreA = status?.teamA.score
-  const scoreB = status?.teamB.score
+  const scoreA = status?.teamA.score;
+  const scoreB = status?.teamB.score;
   // const configGradient = {
   //   colors: ["#37474f", "#cfd8dc"],
   //   start: [0.4, 0.9],
@@ -30,8 +57,9 @@ const ScoreDisplay = ({status}) => {
               color: "white",
               fontSize: 16,
             }}
+            numberOfLines={1}
           >
-            Mabar Anak Kece HMIF
+            {mabarName}
           </Text>
           <Text
             style={{
@@ -47,7 +75,9 @@ const ScoreDisplay = ({status}) => {
         <View style={styles.scoreContainer}>
           <TeamCard status={status} type={"A"} />
           <View>
-            <Text style={styles.scoreText}>{scoreA} : {scoreB}</Text>
+            <Text style={styles.scoreText}>
+              {scoreA} : {scoreB}
+            </Text>
           </View>
           <TeamCard status={status} type={"B"} />
         </View>
@@ -60,7 +90,7 @@ const ScoreDisplay = ({status}) => {
           <Text
             style={{ fontFamily: LEXEND.Light, fontSize: 12, color: "white" }}
           >
-            10:00 - 11:00
+            {timeStart?.slice(0, -3)} : {timeEnd?.slice(0, -3)}
           </Text>
         </View>
       </LinearGradient>
