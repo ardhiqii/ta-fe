@@ -16,17 +16,19 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
-import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { LEXEND } from "@fonts/LEXEND";
 import { UserContext } from "store/user-contex";
+import { ChatsContext } from "store/chats-context";
+import LoadingOverlay from "@components/LoadingOverlay";
 
 const ListSportVenuesScreen = () => {
   const [venuesData, setVenuesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const nav = useNavigation();
   const { user } = useContext(UserContext);
+  const { allUnreads } = useContext(ChatsContext);
 
   const navigateToChat = () => {
     nav.navigate("ChatNavigation", {
@@ -40,6 +42,19 @@ const ListSportVenuesScreen = () => {
         onPress={navigateToChat}
         style={{ marginRight: 20, marginTop: 4 }}
       >
+        {allUnreads > 0 && (
+          <View style={styles.unread}>
+            <Text
+              style={{
+                fontFamily: LEXEND.SemiBold,
+                fontSize: 11,
+                color: "white",
+              }}
+            >
+              {allUnreads}
+            </Text>
+          </View>
+        )}
         <Ionicons name="chatbox-ellipses-outline" size={24} color={"white"} />
       </Pressable>
     );
@@ -65,7 +80,7 @@ const ListSportVenuesScreen = () => {
       },
       headerRight: () => <IconRight />,
     });
-  }, []);
+  }, [allUnreads]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -99,12 +114,7 @@ const ListSportVenuesScreen = () => {
     });
   };
 
-  if (loading)
-    return (
-      <View>
-        <Text>LOADING</Text>
-      </View>
-    );
+  if (loading) return <LoadingOverlay />;
   return (
     <>
       {venuesData.length === 0 && (
@@ -155,5 +165,17 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: COLOR.base900,
     padding: 5,
+  },
+  unread: {
+    position: "absolute",
+    top: -8,
+    right: -5,
+    zIndex: 99,
+    backgroundColor: COLOR.accent2,
+    width: 18,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
   },
 });

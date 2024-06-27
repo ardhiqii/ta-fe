@@ -1,9 +1,34 @@
 import { LEXEND } from "@fonts/LEXEND";
+import { useNavigation } from "@react-navigation/native";
 import { COLOR } from "COLOR";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useContext } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ChatsContext } from "store/chats-context";
 
-const MatchReservation = ({hostName,mabarName,date,timeStart,timeEnd,idReservation}) => {
+const MatchReservation = ({
+  hostName,
+  mabarName,
+  date,
+  timeStart,
+  timeEnd,
+  idReservation,
+}) => {
+  const { createNewChatWithOtherUser } = useContext(ChatsContext);
+  const nav = useNavigation();
+
+  const chatUser = async () => {
+    try {
+      const chatId = await createNewChatWithOtherUser(hostName);
+
+      nav.navigate("ChatNavigation", {
+        screen: "ChatScreen",
+        params: { chatId: chatId, toUsername: hostName },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -15,9 +40,35 @@ const MatchReservation = ({hostName,mabarName,date,timeStart,timeEnd,idReservati
           <Text style={styles.subText}>Match Name</Text>
           <Text style={styles.text}>{mabarName}</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.subText}>Host</Text>
-          <Text style={styles.text}>{hostName}</Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            columnGap: 12,
+          }}
+        >
+          <View>
+            <Text style={styles.subText}>Host</Text>
+            <Text style={styles.text}>{hostName}</Text>
+          </View>
+          <Pressable
+            onPress={chatUser}
+            style={({ pressed }) => [
+              styles.buttonContainer,
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <Text
+              style={{
+                fontFamily: LEXEND.Regular,
+                fontSize: 10,
+                color: COLOR.base700,
+              }}
+            >
+              Chat
+            </Text>
+          </Pressable>
         </View>
       </View>
       <View style={styles.layout}>
@@ -27,7 +78,9 @@ const MatchReservation = ({hostName,mabarName,date,timeStart,timeEnd,idReservati
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.subText}>Time</Text>
-          <Text style={styles.text}>{timeStart.slice(0, -3)} - {timeEnd.slice(0, -3)}</Text>
+          <Text style={styles.text}>
+            {timeStart.slice(0, -3)} - {timeEnd.slice(0, -3)}
+          </Text>
         </View>
       </View>
     </View>
@@ -49,5 +102,14 @@ const styles = StyleSheet.create({
   },
   layout: {
     flexDirection: "row",
+  },
+  buttonContainer: {
+    borderWidth: 2,
+    borderColor: COLOR.base700,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 40,
+    paddingVertical: 5,
+    borderRadius: 5,
   },
 });

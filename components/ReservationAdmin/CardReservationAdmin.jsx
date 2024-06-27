@@ -2,7 +2,14 @@ import TagCategory from "@components/TagCategory";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import React, { useContext, useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Currency } from "util/currency";
 import { Ionicons } from "@expo/vector-icons";
 import { Admin } from "util/admin/admin";
@@ -68,14 +75,14 @@ const CardReservationAdmin = ({
       params: {
         ordersData: orders,
         idVenue: id,
-        imageUri:imageUri,
+        imageUri: imageUri,
       },
     });
   };
   if (loading) {
     return (
       <View>
-        <Text>Loading</Text>
+        <ActivityIndicator size={"large"} />
       </View>
     );
   }
@@ -133,6 +140,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     columnGap: 10,
     justifyContent: "space-between",
+    height: 100,
   },
   imageContainer: {
     borderWidth: 1,

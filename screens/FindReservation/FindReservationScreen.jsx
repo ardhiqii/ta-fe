@@ -4,7 +4,14 @@ import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import { CATEGORY_ID } from "constant/CATEGORY_ID";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { UserContext } from "store/user-contex";
 import { Player } from "util/player/player";
 
@@ -21,7 +28,9 @@ const FindReservationScreen = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    const coor = user?.coordinate ? `${user.coordinate.lat}, ${user.coordinate.lng}` : "";
+    const coor = user?.coordinate
+      ? `${user.coordinate.lat}, ${user.coordinate.lng}`
+      : "";
     const categoryFilter =
       filters.category !== null && filters.category !== undefined
         ? CATEGORY_ID[filters.category]
@@ -46,9 +55,9 @@ const FindReservationScreen = () => {
     }
     setLoading(false);
   };
-  const onRefresh = useCallback(()=>{
+  const onRefresh = useCallback(() => {
     fetchData();
-  },[filters])
+  }, [filters]);
 
   useEffect(() => {
     fetchData();
@@ -59,7 +68,7 @@ const FindReservationScreen = () => {
       <View style={styles.filtersContainer}>
         <FiltersFindReservation filters={filters} setFilters={setFilters} />
       </View>
-      {loading && <Text>Loading</Text>}
+      {loading && <ActivityIndicator size={"large"} />}
       {!loading && reservationData?.length === 0 && (
         <Text
           style={{

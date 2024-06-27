@@ -1,3 +1,4 @@
+import LoadingOverlay from "@components/LoadingOverlay";
 import BottomActionAdmin from "@components/ReservationAdmin/BottomActionAdmin";
 import MatchReservation from "@components/ReservationAdmin/MatchReservation";
 import PaymentContent from "@components/ReservationAdmin/PaymentContent";
@@ -72,9 +73,7 @@ const ReservationAdminByIdScreen = () => {
 
   if (loading) {
     return (
-      <View>
-        <Text>Loading</Text>
-      </View>
+      <LoadingOverlay/>
     );
   }
 
@@ -107,7 +106,7 @@ const ReservationAdminByIdScreen = () => {
         <BorderLine />
         <MatchReservation {...matchData} />
         <BorderLine />
-        <PaymentContent payment_credential_url={temp.payment_credential_url} />
+        <PaymentContent payment_credential_url={orderData?.payment_credential_url} />
       </ScrollView>
       <BottomActionAdmin {...bottomActionData} />
     </>

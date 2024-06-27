@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Alert,
-  Image,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -9,21 +8,18 @@ import {
   Text,
   View,
 } from "react-native";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import HeadContent from "@components/SportVenue/HeadContent";
 import InformationContent from "@components/SportVenue/InformationContent";
 import { useNavigation } from "@react-navigation/native";
-import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
-import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 import { Player } from "util/player/player";
 import { UserContext } from "store/user-contex";
 import ReservationContent from "@components/SportVenue/ReservationContent";
 import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import Button from "@components/UI/Button";
-import Carousel from "@components/Carousel";
 import AlbumContent from "./AlbumContent";
 
 const SportVenueScreen = () => {
@@ -39,7 +35,7 @@ const SportVenueScreen = () => {
   const editMode = route?.params?.editMode;
   const nav = useNavigation();
   const { user } = useContext(UserContext);
-  const isAdmin = user.role == "admin";
+  const isAdmin = user?.role == "admin";
 
   const fetchVenueData = async () => {
     try {

@@ -7,6 +7,7 @@ import ListMatch from "@components/Transaction/ListMatch";
 import ListMembers from "@components/Transaction/ListMembers";
 import MatchInformation from "@components/Transaction/MatchInformation";
 import { useRoute } from "@react-navigation/native";
+import AlbumContent from "@screens/SportVenue/AlbumContent";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Image,
@@ -16,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { UserContext } from "store/user-contex";
+import { Admin } from "util/admin/admin";
 import { Player } from "util/player/player";
 
 const TransactionByIdScreen = () => {
@@ -26,10 +28,12 @@ const TransactionByIdScreen = () => {
   const [transactionData, setTransactionData] = useState();
   const [venueData, setVenueData] = useState();
   const [members, setMembers] = useState([]);
+  const [albumData,setAlbumData] = useState([])
 
   const [forceRefresh, setForceRefresh] = useState(false);
 
   const { user } = useContext(UserContext);
+  const isAdmin = user?.role == "admin";
 
   const fetchData = async () => {
     if (idReservation) {
@@ -76,15 +80,33 @@ const TransactionByIdScreen = () => {
 
   const fetchAllData = async () => {
     setLoading(true);
-    const [td, vd, md] = await Promise.all([
+    const [td, vd, md,ad] = await Promise.all([
       fetchData(),
       fetchVenueData(),
       fetchMemberData(),
+      fetchAlbum(),
     ]);
     setTransactionData(td);
     setVenueData(vd);
     setMembers(md);
+    setAlbumData(ad)
     setLoading(false);
+  };
+
+  const fetchAlbum = async () => {
+    try {
+      const { data } = isAdmin ? await Admin.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      ) : await Player.SportVenue.getAlbumVenuById(
+        user.token,
+        idVenue
+      )
+      return data;
+    } catch (e) {
+      console.log("Error occured fetchAlbum SportVenueScreen", e);
+      return null;
+    }
   };
 
   const forceRefreshData = async () => {
@@ -92,6 +114,7 @@ const TransactionByIdScreen = () => {
       fetchData(),
       fetchVenueData(),
       fetchMemberData(),
+
     ]);
     setTransactionData(td);
     setVenueData(vd);
@@ -173,14 +196,7 @@ const TransactionByIdScreen = () => {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       >
-        <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: "https://www.datra.id/uploads/project/50/gor-citra-bandung-c915x455px.png",
-            }}
-            style={styles.image}
-          />
-        </View>
+      <AlbumContent albumData={albumData} idVenue={idVenue}/>
         <HeadContent {...headData} />
         <BorderLine />
         <MatchInformation {...matchData} />

@@ -5,7 +5,7 @@ import { Player } from "util/player/player";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import CardVeneu from "@components/CardVeneu";
 import SwipeableContent from "./SwipeableContent";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 const Nearest = () => {
   const [nearestData, setNearestData] = useState([]);
@@ -49,9 +49,7 @@ const Nearest = () => {
   if (loading) {
     return (
       <GroupContentLayout title={"Nearest"}>
-        <View>
-          <Text>LOADING</Text>
-        </View>
+        <ActivityIndicator size={"large"}/>
       </GroupContentLayout>
     );
   }

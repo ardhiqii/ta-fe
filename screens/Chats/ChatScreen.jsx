@@ -29,13 +29,16 @@ const ChatScreen = () => {
   const chatId = route?.params?.chatId;
   const toUsername = route?.params?.toUsername;
   const chatDate = [];
-
   const scrollViewRef = useRef(null);
-
   useLayoutEffect(() => {
     nav.setOptions({
       title: toUsernameData?.name,
     });
+    if(!toUsernameData){
+      nav.setOptions({
+        title: toUsername,
+      });
+    }
   }, [toUsernameData]);
 
 

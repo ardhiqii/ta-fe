@@ -7,6 +7,7 @@ import { COLOR } from "COLOR";
 import { CATEGORY_ID } from "constant/CATEGORY_ID";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -76,7 +77,6 @@ const TransactionScreen = () => {
       if (data) {
         setTransactionData(data);
       }
-
     } catch (e) {
       console.log(e);
       if (e.data === null) {
@@ -126,7 +126,11 @@ const TransactionScreen = () => {
           />
         </View>
       </View>
-      {loading && <Text>LOADING</Text>}
+      {loading && (
+        <View>
+          <ActivityIndicator size={"large"} />
+        </View>
+      )}
       {!loading && transactionData?.length === 0 && (
         <Text
           style={{

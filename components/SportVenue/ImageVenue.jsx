@@ -11,12 +11,13 @@ const ImageVenue = ({ idVenue }) => {
   const [loading, setLoading] = useState(false);
 
   const { user } = useContext(UserContext);
-  const isAdmin = user.role === "admin";
+  const isAdmin = user?.role === "admin";
 
   const fetchAlbumData = async () => {
     setLoading(true);
     let resp = [];
     try {
+      if(!user) return;
       if (isAdmin) {
         const { data } = await Admin.SportVenue.getAlbumVenuById(
           user.token,

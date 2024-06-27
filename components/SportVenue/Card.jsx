@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     columnGap: 10,
     justifyContent: "space-between",
+    height: 100,
   },
   imageContainer: {
     borderWidth: 1,

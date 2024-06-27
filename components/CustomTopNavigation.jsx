@@ -7,13 +7,14 @@ import { useNavigation } from "@react-navigation/native";
 import { Location } from "util/location";
 
 import { UserContext } from "store/user-contex";
+import { ChatsContext } from "store/chats-context";
 
 const CustomTopNavigation = () => {
   const [address, setAddress] = useState("");
   const { updateCoordinate, user, getCurrentCoorUser } =
     useContext(UserContext);
+  const { allUnreads } = useContext(ChatsContext);
   const nav = useNavigation();
-
   const getCurrentAddress = async () => {
     try {
       setAddress("Getting your address...");
@@ -66,7 +67,24 @@ const CustomTopNavigation = () => {
         <View style={styles.menuContainer}>
           <Ionicons name="notifications-outline" size={24} color={"white"} />
           <Pressable onPress={navigateToChat}>
-            <Ionicons name="chatbox-ellipses-outline" size={24} color={"white"} />
+            {allUnreads > 0 && (
+              <View style={styles.unread}>
+                <Text
+                  style={{
+                    fontFamily: LEXEND.SemiBold,
+                    fontSize: 11,
+                    color: "white",
+                  }}
+                >
+                  {allUnreads}
+                </Text>
+              </View>
+            )}
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              size={24}
+              color={"white"}
+            />
           </Pressable>
         </View>
       </View>
@@ -130,5 +148,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     columnGap: 3,
     overflow: "hidden",
+  },
+  unread: {
+    position: "absolute",
+    top: -8,
+    right: -5,
+    zIndex: 99,
+    backgroundColor: COLOR.accent2,
+    width: 18,
+    height: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 100,
   },
 });

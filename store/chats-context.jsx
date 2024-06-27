@@ -16,22 +16,24 @@ import { firestore } from "config/firebaseConfig";
 
 export const ChatsContext = createContext({
   chats: [],
+  allUnreads: 0,
   createNewChatWithOtherUser: () => {},
   sendNewMessage: () => {},
   getMessagesByChatId: () => {},
   updateLatestMessage: () => {},
   upadateUnreadtoRead: () => {},
+  getAllUnReadMessages: () => {},
 });
 
 const ChatsContextProvider = ({ children }) => {
   const [chats, setChats] = useState([]);
+  const [allUnreads, setAllUnreads] = useState(0);
   const { user } = useContext(UserContext);
   const chatsCollectionRef = collection(firestore, "chats");
   const currUsername = user?.username;
 
   useEffect(() => {
     if (!currUsername) return;
-
     const q = query(
       chatsCollectionRef,
       where("participants", "array-contains", currUsername),
@@ -43,6 +45,7 @@ const ChatsContextProvider = ({ children }) => {
         chatId: doc.id,
         ...doc.data(),
       }));
+      getAllUnReadMessages(updatedChats);
       setChats(updatedChats);
     });
 
@@ -170,13 +173,29 @@ const ChatsContextProvider = ({ children }) => {
     }
   };
 
+  const getAllUnReadMessages = async (updatedChats) => {
+    if (!updatedChats) return;
+    let unreads = 0;
+    try {
+      updatedChats.map((c) => {
+        const unread = `unread_` + currUsername;
+        unreads += c[unread].length;
+      });
+      setAllUnreads(unreads);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const value = {
     chats: chats,
+    allUnreads: allUnreads,
     getMessagesByChatId,
     createNewChatWithOtherUser,
     sendNewMessage,
     updateLatestMessage,
     upadateUnreadtoRead,
+    getAllUnReadMessages,
   };
   return (
     <ChatsContext.Provider value={value}>{children}</ChatsContext.Provider>

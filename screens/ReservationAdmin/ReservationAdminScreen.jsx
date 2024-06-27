@@ -1,6 +1,20 @@
+import LoadingOverlay from "@components/LoadingOverlay";
 import CardReservationAdmin from "@components/ReservationAdmin/CardReservationAdmin";
-import React, { Fragment, useCallback, useContext, useEffect, useState } from "react";
-import {  RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, {
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { UserContext } from "store/user-contex";
 import { Admin } from "util/admin/admin";
@@ -31,20 +45,24 @@ const ReservationAdminScreen = () => {
     fetchVenueData();
   }, []);
 
-
   if (loading) {
     return (
-      <View>
-        <Text>Loading</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={"large"} />
       </View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container} refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh}/>}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+      }
+    >
       {allVenueData?.map((v, i) => (
         <Fragment key={i}>
-          <CardReservationAdmin {...v} key={v.id} />
+          <CardReservationAdmin {...v} key={v.id + v.name} />
           <View
             key={i + v.id + v.name}
             style={{ height: 2, backgroundColor: "#cfd8dc" }}
