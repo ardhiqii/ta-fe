@@ -32,7 +32,7 @@ const SportVenueNavigation = () => {
       <Stack.Screen
         name="ListSportVenueAdmin"
         component={ListSportVenuesScreen}
-        options={{ headerTitle: "Your Sport Venue" }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="SportVenueScreen"

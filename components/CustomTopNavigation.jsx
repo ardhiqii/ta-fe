@@ -8,6 +8,7 @@ import { Location } from "util/location";
 
 import { UserContext } from "store/user-contex";
 import { ChatsContext } from "store/chats-context";
+import ProfileButton from "./ProfileButton";
 
 const CustomTopNavigation = () => {
   const [address, setAddress] = useState("");
@@ -15,6 +16,9 @@ const CustomTopNavigation = () => {
     useContext(UserContext);
   const { allUnreads } = useContext(ChatsContext);
   const nav = useNavigation();
+
+  const isAdmin = user?.role === "admin";
+
   const getCurrentAddress = async () => {
     try {
       setAddress("Getting your address...");
@@ -57,15 +61,23 @@ const CustomTopNavigation = () => {
       screen: "ChatsScreen",
     });
   };
+
+  const navigateToMenu = () => {
+    nav.navigate("MenuProfile");
+  };
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
-        <Pressable onPress={navigateToSearch} style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={COLOR.border} />
-          <Text style={styles.text}>Cari tempat olahraga terbaik untukmu</Text>
-        </Pressable>
-        <View style={styles.menuContainer}>
-          <Ionicons name="notifications-outline" size={24} color={"white"} />
+        {!isAdmin && (
+          <Pressable onPress={navigateToSearch} style={styles.searchContainer}>
+            <Ionicons name="search" size={20} color={COLOR.border} />
+            <Text style={styles.text}>
+              Cari tempat olahraga terbaik untukmu
+            </Text>
+          </Pressable>
+        )}
+        {isAdmin && <Text style={styles.header}>Your Sport Venue</Text>}
+        <View style={[styles.menuContainer, isAdmin && { marginTop: 8 }]}>
           <Pressable onPress={navigateToChat}>
             {allUnreads > 0 && (
               <View style={styles.unread}>
@@ -86,24 +98,27 @@ const CustomTopNavigation = () => {
               color={"white"}
             />
           </Pressable>
+          <ProfileButton onPress={navigateToMenu} />
         </View>
       </View>
-      <Pressable onPress={getCurrentAddress} style={styles.locContainer}>
-        <Ionicons name="location-outline" size={18} color={"white"} />
+      {!isAdmin && (
+        <Pressable onPress={getCurrentAddress} style={styles.locContainer}>
+          <Ionicons name="location-outline" size={18} color={"white"} />
 
-        <Text
-          style={[styles.text, { color: "white", fontFamily: LEXEND.Bold }]}
-        >
-          Your Location:{" "}
-        </Text>
-        <Text
-          style={[styles.text, { color: "white" }]}
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {address}
-        </Text>
-      </Pressable>
+          <Text
+            style={[styles.text, { color: "white", fontFamily: LEXEND.Bold }]}
+          >
+            Your Location:{" "}
+          </Text>
+          <Text
+            style={[styles.text, { color: "white" }]}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {address}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
@@ -114,7 +129,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOR.base900,
     paddingHorizontal: 25,
-    paddingTop: 50,
+    paddingTop: 40,
     paddingBottom: 10,
     rowGap: 15,
   },
@@ -142,6 +157,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     flexDirection: "row",
     columnGap: 10,
+    alignItems: "center",
   },
   locContainer: {
     flexDirection: "row",
@@ -160,5 +176,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 100,
+  },
+  header: {
+    fontFamily: LEXEND.SemiBold,
+    fontSize: 28,
+    color: "white",
   },
 });

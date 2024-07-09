@@ -36,51 +36,8 @@ const ListSportVenuesScreen = () => {
     });
   };
 
-  const IconRight = () => {
-    return (
-      <Pressable
-        onPress={navigateToChat}
-        style={{ marginRight: 20, marginTop: 4 }}
-      >
-        {allUnreads > 0 && (
-          <View style={styles.unread}>
-            <Text
-              style={{
-                fontFamily: LEXEND.SemiBold,
-                fontSize: 11,
-                color: "white",
-              }}
-            >
-              {allUnreads}
-            </Text>
-          </View>
-        )}
-        <Ionicons name="chatbox-ellipses-outline" size={24} color={"white"} />
-      </Pressable>
-    );
-  };
 
-  useLayoutEffect(() => {
-    nav.setOptions({
-      headerShown: true,
-      title: "Your Sport Venue",
-      headerBackTitleVisible: false,
-      headerStyle: {
-        backgroundColor: COLOR.base900,
-      },
-      headerTitleStyle: {
-        fontFamily: LEXEND.SemiBold,
-        fontSize: 28,
-        color: "white",
-      },
-      headerTintColor: "white",
-      headerShadowVisible: false,
-      contentStyle: {
-        backgroundColor: "white",
-      },
-      headerRight: () => <IconRight />,
-    });
-  }, [allUnreads]);
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -91,11 +48,6 @@ const ListSportVenuesScreen = () => {
     setLoading(false);
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchData();
-  //   }, [nav])
-  // );
 
   useEffect(() => {
     fetchData();
@@ -140,7 +92,6 @@ const ListSportVenuesScreen = () => {
         {venuesData.map((venue, i) => (
           <View key={i} style={{ rowGap: 16 }}>
             <Card {...venue} />
-            <View style={{ height: 2, backgroundColor: "#cfd8dc" }} />
           </View>
         ))}
       </ScrollView>
@@ -160,7 +111,7 @@ const styles = StyleSheet.create({
   },
   addContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: 10,
     right: 30,
     borderRadius: 100,
     backgroundColor: COLOR.base900,

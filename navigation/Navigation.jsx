@@ -20,6 +20,8 @@ import ReservationAdminNavigation from "./ReservationAdminNavigation";
 import MatchNavigation from "./MatchNavigation";
 import ChatNavigation from "./ChatNavigation";
 import RegisterScreen from "@screens/RegisterScreen";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import MenuProfile from "@screens/Profile/MenuProfile";
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -49,6 +51,7 @@ const AuthenticatedNavigation = () => {
           headerShown: false,
         }}
       />
+
       <Stack.Screen
         name="MainMenu"
         component={MainMenu}
@@ -73,6 +76,27 @@ const AuthenticatedNavigation = () => {
         name="Search"
         component={SearchScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="MenuProfile"
+        component={MenuProfile}
+        options={{
+          title: "Profile",
+          headerBackTitleVisible: false,
+          headerStyle: {
+            backgroundColor: COLOR.base900,
+          },
+          headerTitleStyle: {
+            fontFamily: LEXEND.SemiBold,
+            fontSize: 28,
+            color: "white",
+          },
+          headerTintColor: "white",
+          headerShadowVisible: false,
+          contentStyle: {
+            backgroundColor: "white",
+          },
+        }}
       />
       <Stack.Screen
         name="SportVenueNavigation"
@@ -136,29 +160,6 @@ const BottomTabNavigator = () => {
           component={HomeScreen}
           options={{ headerShown: false }}
         />
-        {isUserAdmin && <>
-        <BottomTab.Screen
-          name="Reservation"
-          component={ReservationAdminScreen}
-          options={{
-            title: "Reservation",
-            headerBackTitleVisible: false,
-            headerStyle: {
-              backgroundColor: COLOR.base900,
-            },
-            headerTitleStyle: {
-              fontFamily: LEXEND.SemiBold,
-              fontSize: 28,
-              color: "white",
-            },
-            headerTintColor: "white",
-            headerShadowVisible: false,
-            contentStyle: {
-              backgroundColor: "white",
-            },
-          }}
-        />
-        </>}
         {!isUserAdmin && (
           <>
             <BottomTab.Screen

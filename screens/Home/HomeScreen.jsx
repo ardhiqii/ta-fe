@@ -2,14 +2,11 @@ import CustomTopNavigation from "@components/CustomTopNavigation";
 import Category from "@components/HomeContent/Category";
 import Nearest from "@components/HomeContent/Nearest";
 
-import Button from "@components/UI/Button";
-import { LEXEND } from "@fonts/LEXEND";
 import { useNavigation } from "@react-navigation/native";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 
-import React, { memo, useContext, useEffect, useState } from "react";
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
-import { ChatsContext } from "store/chats-context";
+import React, { useContext } from "react";
+import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { UserContext } from "store/user-contex";
 
 const HomeScreen = () => {
@@ -23,7 +20,6 @@ const HomeScreen = () => {
   console.log(user);
 
   const PlayerHomeScreen = () => {
-    
     return (
       <>
         <Category />
@@ -47,11 +43,9 @@ const HomeScreen = () => {
         backgroundColor={"transparent"}
         barStyle="dark-content"
       />
-      {!isAdmin && <CustomTopNavigation />}
+      <CustomTopNavigation />
       <ScrollView contentContainerStyle={styles.container}>
         {isAdmin ? <AdminHomeScreen /> : <PlayerHomeScreen />}
-
-        <Button onPress={logoutUser}>Logout</Button>
       </ScrollView>
     </>
   );
