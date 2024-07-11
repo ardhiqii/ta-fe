@@ -14,8 +14,12 @@ const ProfileButton = ({ style, sizeIcon = 24, onPress, imageSize }) => {
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,
-        imageSize && { width: imageSize, height: imageSize, borderRadius:imageSize },
-        pressed && { opacity: 0.7 },
+        imageSize && {
+          width: imageSize,
+          height: imageSize,
+          borderRadius: imageSize,
+        },
+        pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
       ]}
     >
       {!imageUri && (

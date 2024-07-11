@@ -14,6 +14,7 @@ const EditInfoItem = ({ label, data, updateValue, editable = true }) => {
         text: "Yes",
         onPress: () => {
           updateValue(value);
+          setValue("");
           setEditMode(false);
         },
       },
@@ -31,12 +32,41 @@ const EditInfoItem = ({ label, data, updateValue, editable = true }) => {
         {!editMode && <Text style={[styles.text]}>{data}</Text>}
         {editMode && (
           <Input
+            keyboardType={label === "Phone Number" ? "number-pad" : "default"}
             inputContainerStyle={styles.input}
             textInputStyle={styles.textInput}
             placeholder={data}
             value={value}
             onUpdateValue={setValue}
           />
+        )}
+        {editMode && (
+          <View style={{ flexDirection: "row", columnGap: 8 }}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.button,
+                { borderColor: COLOR.base900 },
+                pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
+              ]}
+              onPress={alertConfirm}
+            >
+              <Text style={[styles.buttonText, { color: COLOR.base900 }]}>
+                Done
+              </Text>
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.button,
+                { borderColor: COLOR.accent1 },
+                pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
+              ]}
+              onPress={() => setEditMode(!editMode)}
+            >
+              <Text style={[styles.buttonText, { color: COLOR.accent1 }]}>
+                Cancel
+              </Text>
+            </Pressable>
+          </View>
         )}
       </View>
       {editable && (
@@ -45,21 +75,6 @@ const EditInfoItem = ({ label, data, updateValue, editable = true }) => {
             <Pressable onPress={() => setEditMode(!editMode)}>
               <Octicons name="pencil" size={18} color={COLOR.border} />
             </Pressable>
-          )}
-          {editMode && (
-            <>
-              <Pressable onPress={alertConfirm}>
-                <Octicons name="check" size={18} color={COLOR.border} />
-              </Pressable>
-              <Pressable>
-                <Octicons
-                  onPress={() => setEditMode(!editMode)}
-                  name="x"
-                  size={18}
-                  color={COLOR.border}
-                />
-              </Pressable>
-            </>
           )}
         </View>
       )}
@@ -80,6 +95,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 2,
     marginRight: 8,
+    rowGap: 10,
   },
   editContainer: {
     flexDirection: "row",
@@ -96,6 +112,17 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: LEXEND.Light,
+    fontSize: 12,
+  },
+  button: {
+    borderWidth: 1,
+    width: 60,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignItems: "center",
+  },
+  buttonText: {
+    fontFamily: LEXEND.Regular,
     fontSize: 12,
   },
 });

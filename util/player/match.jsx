@@ -42,6 +42,7 @@ const createMatch = async (token, reqBody) => {
     if (data) return data;
   } catch (error) {
     console.log("ERROR createMatch", error);
+    // console.log(error.response.data);
   }
 };
 

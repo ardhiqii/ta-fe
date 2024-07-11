@@ -23,7 +23,7 @@ const EditHeadContent = ({ name, setNewData, oldData }) => {
   };
   const updateCategory = (value) => {
     updateInputHandler("category", value);
-    updateInputHandler("Sport_Kind_id", CATEGORY_ID[value])
+    updateInputHandler("Sport_Kind_id", CATEGORY_ID[value]);
     setCurrentCategory(value);
   };
   return (
@@ -46,7 +46,7 @@ const EditHeadContent = ({ name, setNewData, oldData }) => {
                   color: COLOR.second300,
                 }}
               >
-                Add your category
+                Choose your category
               </Text>
             </View>
           )}
@@ -55,15 +55,10 @@ const EditHeadContent = ({ name, setNewData, oldData }) => {
         </View>
         <View>
           <Pressable
-            style={{
-              borderWidth: 2,
-              borderRadius: 5,
-              width: 70,
-              paddingVertical: 3,
-              justifyContent: "center",
-              alignItems: "center",
-              borderColor: COLOR.base900,
-            }}
+            style={({ pressed }) => [
+              styles.button,
+              pressed && { opacity: 0.7, backgroundColor: "#7676762e" },
+            ]}
             onPress={() => setShowModal(true)}
           >
             <Text
@@ -73,7 +68,7 @@ const EditHeadContent = ({ name, setNewData, oldData }) => {
                 color: COLOR.base900,
               }}
             >
-              {!!currCategory ? "Change" : "Add"}
+              {!!currCategory ? "Change" : "Choose"}
             </Text>
           </Pressable>
         </View>
@@ -110,5 +105,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: 300,
     borderRadius: 5,
+  },
+  button: {
+    borderWidth: 2,
+    borderRadius: 5,
+    width: 70,
+    paddingVertical: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: COLOR.base900,
   },
 });

@@ -18,16 +18,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import ModalAddBlacklistField from "@components/SportVenue/Blacklist/ModalAddBlacklistField";
 import { UserContext } from "store/user-contex";
 
-const TEMP_DATA = [
-  {
-    blacklist_id: "bb658096-d5d8-46fb-b823-00513c412111",
-    date: "2024-04-05",
-    fromTime: "8:00:00",
-    reason: "Jadwal Sholat Jumat",
-    toTime: "13:00:00",
-  },
-];
-
 const ManageBlacklistSchedule = () => {
   const [loading, setLoading] = useState(false);
   const [blacklistData, setBlacklistData] = useState([]);
@@ -107,7 +97,13 @@ const ManageBlacklistSchedule = () => {
           onPress={() => setVisibleModal(true)}
           style={stlyes.addButton}
         >
-          <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
+          <Text
+            style={{
+              fontFamily: LEXEND.Regular,
+              fontSize: 12,
+              color: COLOR.accent2,
+            }}
+          >
             Add Blacklist
           </Text>
         </Pressable>
@@ -186,8 +182,13 @@ const stlyes = StyleSheet.create({
 
   addButton: {
     borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 2,
+    paddingVertical: 1,
+    borderRadius: 4,
+    width: 90,
+    borderColor: COLOR.accent2,
+    alignItems: "center",
+    justifyContent: "center",
   },
   sortContainer: {
     marginBottom: 15,
@@ -216,11 +217,11 @@ const CardBlacklist = ({
   const alertDeleteBlacklist = () => {
     Alert.alert("Confirmation", "Are you sure want to delete?", [
       {
-        text: "Yes",
-        onPress: () => onDelete(blacklist_id),
+        text: "Cancel",
       },
       {
-        text: "Cancel",
+        text: "Yes",
+        onPress: () => onDelete(blacklist_id),
       },
     ]);
   };

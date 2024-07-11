@@ -37,7 +37,7 @@ const TimeDisplay = ({
       <Pressable
         disabled={disabled}
         onPress={handleSelected}
-        style={[
+        style={({ pressed }) => [
           timeStyles.container,
           selected && timeStyles.selectedContainer,
           disabled && { backgroundColor: "#e5e3e3" },

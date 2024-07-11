@@ -105,7 +105,7 @@ const Field = ({
   };
 
   const deleteFieldIdHandler = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const { data } = await Admin.SportVenue.deleteFieldById(
         user.token,
@@ -115,12 +115,12 @@ const Field = ({
       console.log("DELETE FIELD HANDLER DATA", data);
       if (data) {
         // updateDataFromResponse(data);
-        setForceRefresh(true)
+        setForceRefresh(true);
       }
     } catch (e) {
       console.log("Error occured in deleteFieldIdHandler, in Field", e);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const navigateToBlacklist = () => {
@@ -155,8 +155,27 @@ const Field = ({
           </View>
           {editMode && (
             <View style={{ flexDirection: "row", columnGap: 12 }}>
-              <Text onPress={navigateToBlacklist}>Schedule</Text>
-              <Text onPress={alertDeleteFieldId}>Delete</Text>
+              <Pressable
+                onPress={navigateToBlacklist}
+                style={({ pressed }) => [
+                  styles.button,
+                  pressed && { opacity: 0.4 },
+                ]}
+              >
+                <Text style={[styles.buttonText]}>Schedule</Text>
+              </Pressable>
+              <Pressable
+                onPress={alertDeleteFieldId}
+                style={({ pressed }) => [
+                  styles.button,
+                  { borderColor: COLOR.accent1 },
+                  pressed && { opacity: 0.4 },
+                ]}
+              >
+                <Text style={[styles.buttonText, { color: COLOR.accent1 }]}>
+                  Delete
+                </Text>
+              </Pressable>
             </View>
           )}
         </View>
@@ -218,6 +237,21 @@ const styles = StyleSheet.create({
     fontFamily: LEXEND.Light,
     color: COLOR.second700,
   },
+  button: {
+    borderWidth: 1,
+    paddingHorizontal: 2,
+    paddingVertical: 1,
+    borderRadius: 4,
+    width: 70,
+    borderColor: COLOR.accent2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    fontFamily: LEXEND.Regular,
+    fontSize: 11,
+    color: COLOR.accent2,
+  },
 });
 
 const checkingIsBlacklisted = (time, date, blacklist = []) => {
@@ -230,7 +264,7 @@ const checkingIsBlacklisted = (time, date, blacklist = []) => {
       const sbTime = convertToDate(b.fromTime, date);
       const ebTime = convertToDate(b.toTime, date);
 
-      blDisabled = sTime < ebTime && sbTime < eTime
+      blDisabled = sTime < ebTime && sbTime < eTime;
     });
   }
   return blDisabled;

@@ -12,11 +12,11 @@ const MenuProfile = () => {
   const alertLogout = () => {
     Alert.alert("Confirmation", "Are you sure want to logout?", [
       {
-        text: "Yes",
-        onPress: logoutUser,
+        text: "No",
       },
       {
-        text: "No",
+        text: "Yes",
+        onPress: logoutUser,
       },
     ]);
   };
@@ -26,7 +26,10 @@ const MenuProfile = () => {
       <EditInfoProfile />
       <Pressable
         onPress={alertLogout}
-        style={({ pressed }) => [styles.logout, pressed && { opacity: 0.7 }]}
+        style={({ pressed }) => [
+          styles.logout,
+          pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
+        ]}
       >
         <Text style={{ fontFamily: LEXEND.SemiBold, color: COLOR.accent1 }}>
           Logout

@@ -13,8 +13,9 @@ export const UserContext = createContext({
   user: {},
   updateUser: () => {},
   updateCoordinate: () => {},
+  updateWithCertainType: (type,value) => {},
   getCurrentCoorUser: () => string,
-  logoutUser: ()=>{},
+  logoutUser: () => {},
 });
 
 const defaultData = {
@@ -41,6 +42,15 @@ const UserContextProvider = ({ children }) => {
       return {
         ...prev,
         coordinate: coor,
+      };
+    });
+  };
+
+  const updateWithCertainType = async (type, value) => {
+    setDataUser((prev) => {
+      return {
+        ...prev,
+        [type]: value,
       };
     });
   };
@@ -103,8 +113,9 @@ const UserContextProvider = ({ children }) => {
     user: dataUser,
     updateUser: updateUser,
     updateCoordinate: updateCoordinate,
+    updateWithCertainType: updateWithCertainType,
     getCurrentCoorUser: getCurrentCoorUser,
-    logoutUser:logoutUser
+    logoutUser: logoutUser,
   };
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

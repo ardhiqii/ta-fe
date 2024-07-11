@@ -59,14 +59,15 @@ const EditInformationContent = ({
   useEffect(() => {
     const gettingAddress = async () => {
       if (route?.params?.pickedLat) {
+        const geo = `${route.params.pickedLat}, ${route.params.pickedLng}`;
+        updateInputHandler("geo_coordinate", geo);
         console.log("GETTING ADDRESS");
         setAddress("Getting Address...");
         const adrs = await Location.getAddress(
           route.params.pickedLat,
           route.params.pickedLng
         );
-        const geo = `${route.params.pickedLat}, ${route.params.pickedLng}`;
-        updateInputHandler("geo_coordinate", geo);
+
         setAddress(adrs);
       }
     };
@@ -135,15 +136,18 @@ const EditInformationContent = ({
             </Text>
           </Text>
           <Pressable
-            style={{
-              borderWidth: 2,
-              borderRadius: 5,
-              width: 70,
-              paddingVertical: 3,
-              justifyContent: "center",
-              alignItems: "center",
-              borderColor: COLOR.base900,
-            }}
+            style={({ pressed }) => [
+              {
+                borderWidth: 2,
+                borderRadius: 5,
+                width: 70,
+                paddingVertical: 3,
+                justifyContent: "center",
+                alignItems: "center",
+                borderColor: COLOR.base900,
+              },
+              pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
+            ]}
           >
             <Text
               onPress={updateVisibilityVenue}

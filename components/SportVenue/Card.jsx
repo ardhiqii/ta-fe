@@ -68,52 +68,50 @@ const Card = ({ id, name, price_per_hour, Sport_Kind_Name, is_public }) => {
     });
   };
   return (
-    <Pressable onPress={navigateHandler}>
-      <View style={styles.container}>
-        <View style={{ flexDirection: "row", columnGap: 8 }}>
-          <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: imageUri,
-              }}
-              style={styles.image}
-            />
+    <Pressable style={styles.container} onPress={navigateHandler}>
+      <View style={{ flexDirection: "row", columnGap: 8 }}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{
+              uri: imageUri,
+            }}
+            style={styles.image}
+          />
+        </View>
+        <View style={styles.infoContainer}>
+          <View>
+            <Text style={[styles.text]}>{name}</Text>
+            <Text
+              style={[
+                styles.text,
+                { fontFamily: LEXEND.SemiBold, color: COLOR.base900 },
+              ]}
+            >
+              Rp.{Currency.format(price_per_hour)}
+            </Text>
           </View>
-          <View style={styles.infoContainer}>
-            <View>
-              <Text style={[styles.text]}>{name}</Text>
-              <Text
-                style={[
-                  styles.text,
-                  { fontFamily: LEXEND.SemiBold, color: COLOR.base900 },
-                ]}
-              >
-                Rp.{Currency.format(price_per_hour)}
-              </Text>
-            </View>
-            <View style={{ flexDirection: "row", marginBottom: 4 }}>
-              <TagCategory category={Sport_Kind_Name.toLowerCase()} />
-            </View>
-            <View style={styles.ordersContainer}>
-              <Text style={styles.text}>Order : {orders?.length}</Text>
-              <Pressable
+          <View style={{ flexDirection: "row", marginBottom: 4 }}>
+            <TagCategory category={Sport_Kind_Name.toLowerCase()} />
+          </View>
+          <View style={styles.ordersContainer}>
+            <Text style={styles.text}>Order : {orders?.length}</Text>
+            <Pressable
               onPress={navigatetoById}
-                style={({ pressed }) => [
-                  styles.button,
-                  pressed && { opacity: 0.7 },
-                ]}
+              style={({ pressed }) => [
+                styles.button,
+                pressed && { opacity: 0.7, backgroundColor: "#7676764e" },
+              ]}
+            >
+              <Text
+                style={{
+                  fontFamily: LEXEND.Regular,
+                  fontSize: 12,
+                  color: COLOR.base900,
+                }}
               >
-                <Text
-                  style={{
-                    fontFamily: LEXEND.Regular,
-                    fontSize: 12,
-                    color: COLOR.base900,
-                  }}
-                >
-                  Check Order
-                </Text>
-              </Pressable>
-            </View>
+                Check Order
+              </Text>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     justifyContent: "center",
     rowGap: 6,
-    width: "68%",
+    width: "65%",
   },
   text: {
     fontFamily: LEXEND.Light,

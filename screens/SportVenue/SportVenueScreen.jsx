@@ -21,6 +21,7 @@ import { LEXEND } from "@fonts/LEXEND";
 import { COLOR } from "COLOR";
 import Button from "@components/UI/Button";
 import AlbumContent from "./AlbumContent";
+import LoadingOverlay from "@components/LoadingOverlay";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
@@ -68,13 +69,9 @@ const SportVenueScreen = () => {
 
   const fetchAlbum = async () => {
     try {
-      const { data } = isAdmin ? await Admin.SportVenue.getAlbumVenuById(
-        user.token,
-        idVenue
-      ) : await Player.SportVenue.getAlbumVenuById(
-        user.token,
-        idVenue
-      )
+      const { data } = isAdmin
+        ? await Admin.SportVenue.getAlbumVenuById(user.token, idVenue)
+        : await Player.SportVenue.getAlbumVenuById(user.token, idVenue);
       return data;
     } catch (e) {
       console.log("Error occured fetchAlbum SportVenueScreen", e);
@@ -102,7 +99,6 @@ const SportVenueScreen = () => {
   const updateAlbumData = async () => {
     const ad = await fetchAlbum();
     setAlbumData(ad);
-
   };
 
   // useFocusEffect(
@@ -134,6 +130,10 @@ const SportVenueScreen = () => {
   const deleteHandler = async () => {
     try {
       const response = await Admin.SportVenue.deleteVenue(user.token, idVenue);
+      if(response){
+        Alert.alert("Delete Venue Successfully")
+        nav.goBack()
+      }
     } catch (e) {
       console.log("Error occured in deleteHandler, SportVenueScreen");
       console.log(e);
@@ -143,11 +143,11 @@ const SportVenueScreen = () => {
   const alertDeleteConfirmation = () => {
     Alert.alert("Confirmation", "Are you sure want to delete this venue?", [
       {
-        text: "Yes",
-        onPress: deleteHandler,
+        text: "Cancel",
       },
       {
-        text: "Cancel",
+        text: "Yes",
+        onPress: deleteHandler,
       },
     ]);
   };
@@ -160,12 +160,7 @@ const SportVenueScreen = () => {
     });
   };
 
-  if (loading)
-    return (
-      <View>
-        <Text>LOADING</Text>
-      </View>
-    );
+  if (loading) return <LoadingOverlay />;
 
   if (venueData === "not public") {
     return (
@@ -183,7 +178,6 @@ const SportVenueScreen = () => {
       </View>
     );
   }
-
   const headData = {
     name: venueData?.name,
     category: venueData?.Sport_Kind_Name.toLowerCase(),
@@ -197,7 +191,7 @@ const SportVenueScreen = () => {
     is_car_parking: venueData?.is_car_parking,
     is_public: venueData?.is_public,
     rules: venueData?.rules,
-    admin_username: venueData?.admin_username
+    admin_username: venueData?.admin_username,
   };
 
   const reservastionData = {

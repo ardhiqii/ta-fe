@@ -10,26 +10,32 @@ import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import LoadingOverlay from "@components/LoadingOverlay";
 import { UserContext } from "store/user-contex";
 
+const currDate = new Date();
+const nextDate = new Date();
+nextDate.setHours(23, 59, 59, 999);
+
+const defaultData = {
+  reason: "",
+  date: currDate,
+  from: currDate,
+  to: nextDate,
+  isEveryWeek: false,
+  modal_date: false,
+  modal_from: false,
+  modal_to: false,
+  init_from: true,
+  init_to: true,
+};
+
 const ModalAddBlacklistField = ({
   visible,
   setVisible,
   idField,
   setIsAdded,
 }) => {
-  const [schedule, setSchedule] = useState({
-    reason: "",
-    date: new Date(),
-    from: new Date(),
-    to: new Date(),
-    isEveryWeek: false,
-    modal_date: false,
-    modal_from: false,
-    modal_to: false,
-    init_from: true,
-    init_to: true,
-  });
+  const [schedule, setSchedule] = useState(defaultData);
   const [loading, setLoading] = useState(false);
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext);
 
   const onChangeHandler = (identifier, value) => {
     setSchedule((prev) => {
@@ -70,20 +76,18 @@ const ModalAddBlacklistField = ({
   const aletConfirmation = () => {
     Alert.alert("Confirmation", "Are you sure you have set correctly?", [
       {
-        text: "Yes",
-        onPress: doneHandler,
+        text: "Cancel",
       },
       {
-        text: "Cancel",
+        text: "Yes",
+        onPress: doneHandler,
       },
     ]);
   };
 
   const doneHandler = async () => {
-    const fromTime = schedule.init_from
-      ? null
-      : convertTime(schedule.from) + ":00";
-    const toTime = schedule.init_to ? null : convertTime(schedule.to) + ":00";
+    const fromTime = convertTime(schedule.from) + ":00";
+    const toTime = convertTime(schedule.to) + ":00";
     const date = convertDate(schedule.date);
     const dataBlacklist = {
       Field_id: idField,
@@ -93,6 +97,7 @@ const ModalAddBlacklistField = ({
       is_every_week: schedule.isEveryWeek,
       reason: schedule.reason,
     };
+    console.log(dataBlacklist);
 
     try {
       setLoading(true);
@@ -168,7 +173,7 @@ const ModalAddBlacklistField = ({
                   schedule.init_from && { color: COLOR.second900 },
                 ]}
               >
-                {schedule.init_from ? "00:00" : convertTime(schedule.from)}
+                {convertTime(schedule.from)}
               </Text>
             </Pressable>
           </View>
@@ -184,7 +189,7 @@ const ModalAddBlacklistField = ({
                   schedule.init_to && { color: COLOR.second900 },
                 ]}
               >
-                {schedule.init_to ? "00:00" : convertTime(schedule.to)}
+                {convertTime(schedule.to)}
               </Text>
             </Pressable>
           </View>
@@ -217,15 +222,16 @@ const ModalAddBlacklistField = ({
 
         <View style={styles.buttons}>
           <Pressable
+            onPress={() => setVisible(false)}
+            style={[styles.confirm, { backgroundColor: COLOR.accent1 }]}
+          >
+            <Text style={{ fontFamily: LEXEND.Bold }}>Cancel</Text>
+          </Pressable>
+          <Pressable
             onPress={aletConfirmation}
             style={[styles.confirm, { backgroundColor: "#67f66b" }]}
           >
             <Text style={{ fontFamily: LEXEND.Bold }}>Done</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.confirm, { backgroundColor: COLOR.accent1 }]}
-          >
-            <Text style={{ fontFamily: LEXEND.Bold }}>Cancel</Text>
           </Pressable>
         </View>
       </View>

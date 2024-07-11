@@ -59,7 +59,7 @@ const LoginScreen = () => {
       } else {
         const userData = data.data;
         userData["role"] = formValue.role;
-        await Role.storeLocal(formValue.role)
+        await Role.storeLocal(formValue.role);
         updateUser(userData);
       }
     }

@@ -1,17 +1,23 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useState,
+} from "react";
 import { Alert, Pressable, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
+import { UserContext } from "store/user-contex";
 const MapScreen = () => {
+  const { user } = useContext(UserContext);
   const [selectedLocation, setSelectedLocation] = useState();
   const nav = useNavigation();
   const route = useRoute();
-  const type = route.params?.type
-  console.log(type);
+  const type = route.params?.type;
   const region = {
-    latitude: -6.882773,
-    longitude: 107.612015,
+    latitude: user?.coordinate.lat ? user?.coordinate.lat : -6.882773,
+    longitude: user?.coordinate.lng ? user?.coordinate.lng : 107.612015,
     latitudeDelta: 0.0091,
     longitudeDelta: 0.0092,
   };
@@ -37,7 +43,7 @@ const MapScreen = () => {
       params: {
         pickedLat: selectedLocation.lat,
         pickedLng: selectedLocation.lng,
-        type: type
+        type: type,
       },
     });
   }, [nav, selectedLocation]);

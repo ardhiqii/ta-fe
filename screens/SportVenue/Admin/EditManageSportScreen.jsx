@@ -22,6 +22,7 @@ import { Admin } from "util/admin/admin";
 import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { UserContext } from "store/user-contex";
 import AlbumContent from "../AlbumContent";
+import Button from "@components/UI/Button";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
@@ -52,6 +53,10 @@ const EditManageSportScreen = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  // useEffect(() => {
+  //   console.log(newData);
+  // }, [newData]);
+
   const headData = {
     name: dataVenue?.name,
     category: dataVenue?.Sport_Kind_Name?.toLowerCase(),
@@ -70,19 +75,17 @@ const EditManageSportScreen = () => {
     time_closed: dataVenue?.time_closed,
   };
 
-
-
   const alertConfirmation = () => {
     const alertMessage = `Are you sure want to ${
       type == TYPEMANAGE.Add ? "add venue" : "save"
     }?`;
     Alert.alert("Confirmation", alertMessage, [
       {
-        text: "Ok",
-        onPress: saveHandler,
+        text: "cancel",
       },
       {
-        text: "cancel",
+        text: "Ok",
+        onPress: saveHandler,
       },
     ]);
   };
@@ -94,7 +97,11 @@ const EditManageSportScreen = () => {
       const isValid = isValidNewData(newData);
       if (isValid) {
         const data = await Admin.SportVenue.addVenue(user.token, newData);
-        console.log(data);
+        if (data) {
+          setLoading(false);
+
+          nav.goBack();
+        }
       } else {
         console.log("YES WRONG");
         Alert.alert(
@@ -104,9 +111,13 @@ const EditManageSportScreen = () => {
       }
     } else {
       const data = await Admin.SportVenue.editVenue(user.token, newData);
+      if (data) {
+        setLoading(false);
+
+        nav.goBack();
+      }
     }
     setLoading(false);
-    nav.goBack();
   };
 
   const isValidNewData = (data) => {
@@ -115,7 +126,8 @@ const EditManageSportScreen = () => {
       if (
         key !== "id" &&
         key !== "is_car_parking" &&
-        key !== "is_bike_parking"
+        key !== "is_bike_parking" &&
+        key !== "is_public"
       ) {
         if (value == null || value === "" || value === 0) {
           console.log(key, value);
@@ -126,12 +138,10 @@ const EditManageSportScreen = () => {
     }
     return valid;
   };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <AlbumContent albumData={albumData} />
-
-      <View style={styles.editContainer}>
+      {/* <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
           <Feather name="save" size={24} color={"black"} />
           <Text style={{ fontFamily: LEXEND.Regular }}>
@@ -147,7 +157,7 @@ const EditManageSportScreen = () => {
           />
           <Text style={{ fontFamily: LEXEND.Regular }}>Cancel</Text>
         </Pressable>
-      </View>
+      </View> */}
       <EditHeadContent
         name={newData.name}
         setNewData={setNewData}
@@ -171,6 +181,9 @@ const EditManageSportScreen = () => {
         }}
       />
       <ListFieldsContent /> */}
+      <View style={{ marginTop: 20, paddingHorizontal: 25 }}>
+        <Button onPress={alertConfirmation}>{type ? type : "Save"}</Button>
+      </View>
       {loading && <LoadingOverlay />}
     </ScrollView>
   );

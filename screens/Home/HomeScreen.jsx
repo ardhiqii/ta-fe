@@ -5,7 +5,7 @@ import Nearest from "@components/HomeContent/Nearest";
 import { useNavigation } from "@react-navigation/native";
 import ListSportVenuesScreen from "@screens/SportVenue/Admin/ListSportVenuesScreen";
 
-import React, { useContext } from "react";
+import React, { useContext, useLayoutEffect } from "react";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { UserContext } from "store/user-contex";
 
@@ -29,6 +29,11 @@ const HomeScreen = () => {
   };
 
   const AdminHomeScreen = () => {
+    useLayoutEffect(()=>{
+      nav.setOptions({
+        tabBarStyle: { display:'none' }
+      })
+    },[])
     return (
       <View style={{ flexGrow: 1 }}>
         <ListSportVenuesScreen />

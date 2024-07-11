@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Field from "./Field";
@@ -12,6 +19,7 @@ import ModalAddBlacklistField from "./Blacklist/ModalAddBlacklistField";
 import { TEMPORARY_ROLE } from "constant/DUMMY_ROLE";
 import { Player } from "util/player/player";
 import { UserContext } from "store/user-contex";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const ListFieldsContent = ({
   defaultData = [],
@@ -110,44 +118,48 @@ const ListFieldsContent = ({
     }
   };
 
-  if (loading)
-    return (
-      <View>
-        <Text>Loading</Text>
-      </View>
-    );
   return (
     <View style={styles.container}>
-      {editMode && (
-        <View style={{}}>
-          <View style={styles.addContainer}>
-            <Pressable style={styles.addButton}>
-              <Text onPress={alertAddNewField}>Add New Field</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
-      {fieldsData?.map((field, i) => {
-        const filtered = blacklistData[field.id];
-        const reservedFilter = reservedData[field.id];
+      <View style={styles.addContainer}>
+        <Text style={{ fontFamily: LEXEND.SemiBold, color: COLOR.base900 }}>
+          List Fields
+        </Text>
+        {editMode && (
+          <Pressable
+            onPress={alertAddNewField}
+            style={({ pressed }) => [
+              styles.addButton,
+              pressed && { opacity: 0.2 },
+            ]}
+          >
+            <MaterialIcons name="add-circle-outline" color={COLOR.second800} size={24} />
+          </Pressable>
+        )}
+      </View>
 
-        return (
-          <Field
-            {...field}
-            category={category}
-            time_open={time_open}
-            time_closed={time_closed}
-            key={i}
-            onChangeSelected={handleSelectedFields}
-            updateDataFromResponse={updateDataFromResponse}
-            setForceRefresh={setForceRefresh}
-            blacklistData={filtered}
-            reservedData={reservedFilter}
-            date={date}
-          />
-        );
-      })}
-      {fieldsData?.length === 0 && (
+      {loading && <ActivityIndicator size={"large"} />}
+      {!loading &&
+        fieldsData?.map((field, i) => {
+          const filtered = blacklistData[field.id];
+          const reservedFilter = reservedData[field.id];
+
+          return (
+            <Field
+              {...field}
+              category={category}
+              time_open={time_open}
+              time_closed={time_closed}
+              key={i}
+              onChangeSelected={handleSelectedFields}
+              updateDataFromResponse={updateDataFromResponse}
+              setForceRefresh={setForceRefresh}
+              blacklistData={filtered}
+              reservedData={reservedFilter}
+              date={date}
+            />
+          );
+        })}
+      {!loading && fieldsData?.length === 0 && (
         <Text
           style={{
             fontFamily: LEXEND.SemiBold,
@@ -156,9 +168,7 @@ const ListFieldsContent = ({
             color: COLOR.border,
           }}
         >
-          {editMode
-            ? "Add your field by pressing Add New Field"
-            : "Owner venue not adding the field"}
+          {editMode ? "Add your field" : "Owner venue not adding the field"}
         </Text>
       )}
     </View>
@@ -175,9 +185,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     flexDirection: "row",
     marginTop: 10,
+    justifyContent: "space-between",
   },
   addButton: {
-    borderWidth: 2,
     paddingHorizontal: 5,
   },
 });

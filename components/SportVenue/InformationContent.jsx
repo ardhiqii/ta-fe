@@ -1,11 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Linking,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
 import { LEXEND } from "@fonts/LEXEND";
@@ -27,7 +21,6 @@ const InformationContent = ({
   const [address, setAddress] = useState("Getting Address...");
   const { createNewChatWithOtherUser } = useContext(ChatsContext);
   const nav = useNavigation();
-
   useEffect(() => {
     const gettingAddress = async () => {
       try {
@@ -81,31 +74,33 @@ const InformationContent = ({
             </Text>
           </View>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View>
-            <Text style={styles.subText}>Admin</Text>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.text}>{admin_username}</Text>
+        {admin_username && (
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <View>
+              <Text style={styles.subText}>Admin</Text>
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.text}>{admin_username}</Text>
+              </View>
             </View>
+            <Pressable onPress={chatAdmin} style={styles.buttonContainer}>
+              <Text
+                style={{
+                  fontFamily: LEXEND.Regular,
+                  fontSize: 10,
+                  color: COLOR.base700,
+                }}
+              >
+                Chat
+              </Text>
+            </Pressable>
           </View>
-          <Pressable onPress={chatAdmin} style={styles.buttonContainer}>
-            <Text
-              style={{
-                fontFamily: LEXEND.Regular,
-                fontSize: 10,
-                color: COLOR.base700,
-              }}
-            >
-              Chat
-            </Text>
-          </Pressable>
-        </View>
+        )}
 
         {INFO_BUTTON.map((info, i) => (
           <InfoWithButton key={i} {...info} />

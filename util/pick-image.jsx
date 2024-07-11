@@ -28,11 +28,11 @@ const blobToBase64 = (blob) => {
   });
 };
 
-const pick = async () => {
+const pick = async (allowsEditing=true) => {
   // No permissions request is necessary for launching the image library
   let result = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsEditing: true, // Set to true if you want to allow image editing
+    allowsEditing: allowsEditing, // Set to true if you want to allow image editing
     quality: 1,
   });
 

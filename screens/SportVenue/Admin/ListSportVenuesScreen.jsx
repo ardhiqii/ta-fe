@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import {
+  ActivityIndicator,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -16,7 +17,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { COLOR } from "COLOR";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { LEXEND } from "@fonts/LEXEND";
 import { UserContext } from "store/user-contex";
@@ -36,22 +37,26 @@ const ListSportVenuesScreen = () => {
     });
   };
 
-
-
-
   const fetchData = async () => {
     setLoading(true);
     const { data } = await Admin.SportVenue.getAllVenue(user.token);
     if (data) {
       setVenuesData(data);
+    } else {
+      setVenuesData([]);
     }
     setLoading(false);
   };
 
-
   useEffect(() => {
     fetchData();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   const onRefresh = useCallback(() => {
     fetchData();
@@ -66,10 +71,11 @@ const ListSportVenuesScreen = () => {
     });
   };
 
-  if (loading) return <LoadingOverlay />;
   return (
     <>
-      {venuesData.length === 0 && (
+      {loading && <ActivityIndicator size={"large"} />}
+
+      {!loading && venuesData.length === 0 && (
         <View style={{ top: 40 }}>
           <Text
             style={{
@@ -79,7 +85,7 @@ const ListSportVenuesScreen = () => {
               color: COLOR.border,
             }}
           >
-            There is not any registered venue
+            There is no any registered venue
           </Text>
         </View>
       )}
@@ -89,13 +95,20 @@ const ListSportVenuesScreen = () => {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       >
-        {venuesData.map((venue, i) => (
-          <View key={i} style={{ rowGap: 16 }}>
-            <Card {...venue} />
-          </View>
-        ))}
+        {!loading &&
+          venuesData.map((venue, i) => (
+            <View key={i} style={{ rowGap: 16 }}>
+              <Card {...venue} />
+            </View>
+          ))}
       </ScrollView>
-      <Pressable style={styles.addContainer} onPress={NavigateAddHandler}>
+      <Pressable
+        style={({ pressed }) => [
+          styles.addContainer,
+          pressed && { opacity: 0.7 },
+        ]}
+        onPress={NavigateAddHandler}
+      >
         <Ionicons name="add" size={35} color={COLOR.gold} />
       </Pressable>
     </>

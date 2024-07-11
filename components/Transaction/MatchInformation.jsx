@@ -50,32 +50,20 @@ const MatchInformation = ({
       <View>
         <Text style={styles.subText}>Match</Text>
         <View style={[{ rowGap: 12 }, !isReviewerHost && { rowGap: 0 }]}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={styles.text}>
-              This reservation is currently{" "}
-              <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
-                {openMember ? "open member" : "not open member"}
+          <View style={styles.infoContainer}>
+            <View style={styles.label}>
+              <Text style={styles.text}>
+                This reservation is currently{" "}
+                <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
+                  {openMember ? "open member" : "close member"}
+                </Text>
               </Text>
-            </Text>
+            </View>
 
             {isReviewerHost && (
               <Pressable
                 onPress={changeOpenMemberHandler}
-                style={{
-                  borderWidth: 2,
-                  borderRadius: 5,
-                  width: 80,
-                  paddingVertical: 5,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderColor: COLOR.base900,
-                }}
+                style={styles.changeContainer}
               >
                 <Text
                   style={{
@@ -90,32 +78,20 @@ const MatchInformation = ({
             )}
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={styles.text}>
-              This reservation is currently{" "}
-              <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
-                {isPublic ? "public" : "private"}
+          <View style={styles.infoContainer}>
+            <View style={styles.label}>
+              <Text style={styles.text}>
+                This reservation is currently{" "}
+                <Text style={{ fontFamily: LEXEND.Bold, fontSize: 12 }}>
+                  {isPublic ? "public" : "private"}
+                </Text>
               </Text>
-            </Text>
+            </View>
 
             {isReviewerHost && (
               <Pressable
                 onPress={changePublicReservationHandler}
-                style={{
-                  borderWidth: 2,
-                  borderRadius: 5,
-                  width: 80,
-                  paddingVertical: 5,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderColor: COLOR.base900,
-                }}
+                style={styles.changeContainer}
               >
                 <Text
                   style={{
@@ -144,6 +120,19 @@ const MatchInformation = ({
           </Text>
         </View>
       </View>
+
+      {/* ### LAMP ### */}
+      <View>
+        <Text style={styles.subText}>Lamp</Text>
+        <View>
+          <View>
+            <Text>Lampu 1</Text>
+            <Pressable>
+
+            </Pressable>
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
@@ -159,6 +148,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  label: {
+    flex: 1,
+  },
+  changeContainer: {
+    borderWidth: 2,
+    borderRadius: 5,
+    width: 80,
+    paddingVertical: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: COLOR.base900,
   },
   text: {
     fontFamily: LEXEND.Regular,

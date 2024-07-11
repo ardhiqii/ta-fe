@@ -16,15 +16,24 @@ const ALL_CATEGORY = [
   "tennis",
 ];
 
-const ModifyCategoryVenue = ({visible, closeModal,setCategory,category}) => {
+const ModifyCategoryVenue = ({
+  visible,
+  closeModal,
+  setCategory,
+  category,
+}) => {
   const [cat, setCat] = useState(category);
 
-  const doneHandler = ()=>{
+  const doneHandler = () => {
     setCategory(cat);
     closeModal();
-  }
+  };
   return (
-    <CustomModal style={styles.outerModal} visible={visible} closeModal={closeModal} >
+    <CustomModal
+      style={styles.outerModal}
+      visible={visible}
+      closeModal={closeModal}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.navContainer}>
           <Text style={{ fontFamily: LEXEND.SemiBold, fontSize: 18 }}>
@@ -41,11 +50,12 @@ const ModifyCategoryVenue = ({visible, closeModal,setCategory,category}) => {
               flexWrap: "wrap",
             }}
           >
-
-            { !!category &&<TagCategory
+            {!!category && (
+              <TagCategory
                 category={cat}
                 customText={{ fontSize: 14, fontFamily: LEXEND.Regular }}
-              />}
+              />
+            )}
           </View>
           <BorderLine />
           <View style={{ rowGap: 12, paddingVertical: 10 }}>
@@ -72,11 +82,17 @@ const ModifyCategoryVenue = ({visible, closeModal,setCategory,category}) => {
             columnGap: 10,
           }}
         >
-          <Pressable onPress={doneHandler} style={[styles.button, { backgroundColor: COLOR.base700 }]}>
-            <Text style={styles.buttonText}>DONE</Text>
-          </Pressable>
-          <Pressable onPress={closeModal} style={[styles.button, { backgroundColor: "#f98b8b" }]}>
+          <Pressable
+            onPress={closeModal}
+            style={[styles.button, { backgroundColor: "#f98b8b" }]}
+          >
             <Text style={styles.buttonText}>CANCEL</Text>
+          </Pressable>
+          <Pressable
+            onPress={doneHandler}
+            style={[styles.button, { backgroundColor: COLOR.base700 }]}
+          >
+            <Text style={styles.buttonText}>DONE</Text>
           </Pressable>
         </View>
       </View>
@@ -119,7 +135,7 @@ const styles = StyleSheet.create({
 
 const SelectLabel = ({ value, selected, onChange, cat }) => {
   const changeHandler = () => {
-    onChange(value)
+    onChange(value);
   };
 
   const name = value.charAt(0).toUpperCase() + value.slice(1);
