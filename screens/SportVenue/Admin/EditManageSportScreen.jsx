@@ -23,6 +23,7 @@ import { TOKEN_TEMPORARY } from "constant/DUMMY_TOKEN";
 import { UserContext } from "store/user-contex";
 import AlbumContent from "../AlbumContent";
 import Button from "@components/UI/Button";
+import BottomActionLayout from "@components/BottomActionLayout";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
@@ -74,6 +75,8 @@ const EditManageSportScreen = () => {
     time_open: dataVenue?.time_open,
     time_closed: dataVenue?.time_closed,
   };
+
+  
 
   const alertConfirmation = () => {
     const alertMessage = `Are you sure want to ${
@@ -139,9 +142,10 @@ const EditManageSportScreen = () => {
     return valid;
   };
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <AlbumContent albumData={albumData} />
-      {/* <View style={styles.editContainer}>
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
+        <AlbumContent albumData={albumData} />
+        {/* <View style={styles.editContainer}>
         <Pressable style={{ alignItems: "center" }} onPress={alertConfirmation}>
           <Feather name="save" size={24} color={"black"} />
           <Text style={{ fontFamily: LEXEND.Regular }}>
@@ -158,20 +162,20 @@ const EditManageSportScreen = () => {
           <Text style={{ fontFamily: LEXEND.Regular }}>Cancel</Text>
         </Pressable>
       </View> */}
-      <EditHeadContent
-        name={newData.name}
-        setNewData={setNewData}
-        oldData={headData}
-      />
-      {/* <BorderLine />
+        <EditHeadContent
+          name={newData.name}
+          setNewData={setNewData}
+          oldData={headData}
+        />
+        {/* <BorderLine />
       <HighlightContent />
       <BorderLine /> */}
-      <EditInformationContent
-        {...newData}
-        setNewData={setNewData}
-        oldData={infoData}
-      />
-      {/* <BorderLine />
+        <EditInformationContent
+          {...newData}
+          setNewData={setNewData}
+          oldData={infoData}
+        />
+        {/* <BorderLine />
       <ScheduleContent />
       <BorderLine
         customStyle={{
@@ -181,11 +185,15 @@ const EditManageSportScreen = () => {
         }}
       />
       <ListFieldsContent /> */}
-      <View style={{ marginTop: 20, paddingHorizontal: 25 }}>
-        <Button onPress={alertConfirmation}>{type ? type : "Save"}</Button>
-      </View>
-      {loading && <LoadingOverlay />}
-    </ScrollView>
+
+        {loading && <LoadingOverlay />}
+      </ScrollView>
+      <BottomActionLayout>
+        <View style={{  paddingHorizontal: 25 }}>
+          <Button onPress={alertConfirmation}>{type ? type : "Save"}</Button>
+        </View>
+      </BottomActionLayout>
+    </>
   );
 };
 

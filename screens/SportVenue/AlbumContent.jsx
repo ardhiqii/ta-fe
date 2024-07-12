@@ -17,7 +17,12 @@ import LoadingOverlay from "@components/LoadingOverlay";
 
 const { width, height } = Dimensions.get("window");
 
-const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData }) => {
+const AlbumContent = ({
+  idVenue,
+  albumData = [],
+  editMode = false,
+  updateAlbumData,
+}) => {
   const [loading, setLoading] = useState(false);
   const { user } = useContext(UserContext);
   const data =
@@ -37,8 +42,8 @@ const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData 
         idVenue,
         filename
       );
-      if(resp){
-        await updateAlbumData()
+      if (resp) {
+        await updateAlbumData();
       }
     } catch (e) {
       console.log("error occured deleteImage", e);
@@ -49,22 +54,22 @@ const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData 
   const alertDeleteImage = (filename) => {
     Alert.alert("Confirmation", "Are you sure want to delete this image?", [
       {
-        text: "Yes",
-        onPress: () => deleteImage(filename),
+        text: "No",
       },
       {
-        text: "No",
+        text: "Yes",
+        onPress: () => deleteImage(filename),
       },
     ]);
   };
 
   const addImage = async () => {
     setLoading(true);
-    const image = await PickImage.pick();
-    if (!image){
-      setLoading(false)
+    const image = await PickImage.pick(false);
+    if (!image) {
+      setLoading(false);
       return;
-    };
+    }
     const formData = await PickImage.imageToFormData(image);
 
     try {
@@ -73,18 +78,19 @@ const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData 
         idVenue,
         formData
       );
-      if(resp){
-        await updateAlbumData()
+      if (resp) {
+        await updateAlbumData();
       }
     } catch (e) {
       console.log("error occured in addImage", e);
+      Alert.alert("Failed to add image!", "Try with lower size image");
     }
     setLoading(false);
   };
   const renderItem = ({ item }) => {
     return (
       <>
-        <View style={styles.imageContainer}>
+        <Pressable style={styles.imageContainer}>
           <Image source={{ uri: item.url }} style={styles.image} />
           {editMode && (
             <View style={styles.buttonsContainer}>
@@ -101,7 +107,7 @@ const AlbumContent = ({ idVenue, albumData=[], editMode = false,updateAlbumData 
               </Pressable>
             </View>
           )}
-        </View>
+        </Pressable>
       </>
     );
   };

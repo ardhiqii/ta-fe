@@ -256,6 +256,7 @@ const addImageAlbumByVenueId = async (token, idVenue, formData) => {
   } catch (e) {
     console.log("Error occured in util sportVenue addImageAlbumByVenueId", e);
     console.log(e.response.data);
+    throw new Error(e);
   }
 };
 

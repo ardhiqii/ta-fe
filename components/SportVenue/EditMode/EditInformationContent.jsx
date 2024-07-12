@@ -136,6 +136,7 @@ const EditInformationContent = ({
             </Text>
           </Text>
           <Pressable
+            onPress={updateVisibilityVenue}
             style={({ pressed }) => [
               {
                 borderWidth: 2,
@@ -150,7 +151,6 @@ const EditInformationContent = ({
             ]}
           >
             <Text
-              onPress={updateVisibilityVenue}
               style={{
                 fontFamily: LEXEND.Light,
                 fontSize: 12,
@@ -176,10 +176,16 @@ const EditInformationContent = ({
             {address}
           </Text>
           <View style={{ flexDirection: "row", columnGap: 5 }}>
-            <Pressable style={styles.locButton} onPress={navigateToMap}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.locButton,
+                pressed && { opacity: 0.7, backgroundColor: "#7676762e" },
+              ]}
+              onPress={navigateToMap}
+            >
               <Text
                 style={{
-                  fontFamily: LEXEND.Light,
+                  fontFamily: LEXEND.Regular,
                   color: COLOR.base900,
                   fontSize: 12,
                 }}
@@ -307,6 +313,7 @@ const styles = StyleSheet.create({
   },
   locButton: {
     borderWidth: 2,
+    paddingVertical:4,
     paddingHorizontal: 8,
     borderColor: COLOR.base900,
     borderRadius: 4,

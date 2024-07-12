@@ -51,7 +51,6 @@ const Field = ({
 
     return currDate == fullDate;
   });
-
   const initData = async () => {
     setLoading(true);
     try {
@@ -276,12 +275,14 @@ const checkingIsReserved = (time, date, reserve = []) => {
   const sTime = new Date(arrTime[0]);
   const eTime = new Date(arrTime[1]);
   if (reserve.length !== 0) {
-    reserve.map((b) => {
-      const sbTime = convertToDate(b.time_start, date);
-      const ebTime = convertToDate(b.time_end, date);
-
+    for (let i = 0; i < reserve.length; i++) {
+      const sbTime = convertToDate(reserve[i].time_start, date);
+      const ebTime = convertToDate(reserve[i].time_end, date);
       disabled = sbTime <= sTime && eTime <= ebTime;
-    });
+      if (disabled) {
+        break;
+      }
+    }
   }
   return disabled;
 };

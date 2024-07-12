@@ -36,7 +36,6 @@ const ListFieldsContent = ({
   const [fieldsData, setFieldsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const route = useRoute();
-
   const { user } = useContext(UserContext);
   const idVenue = route?.params?.idVenue;
   const editMode = route?.params?.editMode;
@@ -91,11 +90,11 @@ const ListFieldsContent = ({
   const alertAddNewField = () => {
     Alert.alert("Confirmation", "Are you really want to add new field?", [
       {
-        text: "Ok",
-        onPress: addNewFieldHandler,
+        text: "Cancel",
       },
       {
-        text: "Cancel",
+        text: "Ok",
+        onPress: addNewFieldHandler,
       },
     ]);
   };
@@ -132,7 +131,11 @@ const ListFieldsContent = ({
               pressed && { opacity: 0.2 },
             ]}
           >
-            <MaterialIcons name="add-circle-outline" color={COLOR.second800} size={24} />
+            <MaterialIcons
+              name="add-circle-outline"
+              color={COLOR.second800}
+              size={24}
+            />
           </Pressable>
         )}
       </View>

@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from "react";
-import { Alert, Pressable, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { UserContext } from "store/user-contex";
@@ -51,13 +51,11 @@ const MapScreen = () => {
   useLayoutEffect(() => {
     nav.setOptions({
       headerRight: ({ tintColor }) => (
-        <Pressable>
-          <Ionicons
-            name="save"
-            size={24}
-            color={tintColor}
-            onPress={savePickedLocationHandler}
-          />
+        <Pressable
+          onPress={savePickedLocationHandler}
+          style={({ pressed }) => [styles.save,pressed && { opacity: 0.7 }]}
+        >
+          <Ionicons name="save" size={24} color={tintColor} />
         </Pressable>
       ),
     });
@@ -85,3 +83,9 @@ const MapScreen = () => {
 };
 
 export default MapScreen;
+
+const styles = StyleSheet.create({
+  save:{
+    padding:4,
+  }
+})

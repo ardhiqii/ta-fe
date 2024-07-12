@@ -39,6 +39,7 @@ export const register = async (name, username, password, phone, role) => {
     return data;
   } catch (e) {
     console.log("Error Message: ", e);
+    console.log(e.response.data);
   }
 };
 

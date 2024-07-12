@@ -60,6 +60,7 @@ const OrderReviewScreen = () => {
           id: f.id,
           number: f.number,
           selected: newSelected,
+          match_type: "friendly",
           mergeSelected: mergeTime(newSelected),
           totalMinutes: totalMinutesEachField,
         };
@@ -79,7 +80,7 @@ const OrderReviewScreen = () => {
   };
 
   useEffect(() => {
-    initData()
+    initData();
   }, []);
 
   useEffect(() => {
@@ -153,9 +154,11 @@ const OrderReviewScreen = () => {
       });
 
       const resp = await Promise.all(arrayPomise);
-      nav.navigate("BottomTabNavigator", {
-        screen: "HomeScreen",
-      });
+      console.log(resp);
+      if (resp) {
+        nav.goBack()
+        Alert.alert("Order success");
+      }
     } catch (e) {
       console.log(e);
     }

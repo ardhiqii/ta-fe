@@ -20,7 +20,6 @@ const TimeDisplay = ({
   const to = value.split("UNTIL")[1];
   const startFormatted = convertedTime(from);
   const endFormatted = convertedTime(to);
-
   const selected = selectedTimes?.includes(value);
   const disabled = blacklisted || isReserved;
   const handleSelected = () => {

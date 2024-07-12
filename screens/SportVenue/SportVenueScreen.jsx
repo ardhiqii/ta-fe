@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { Admin } from "util/admin/admin";
 import { Feather } from "@expo/vector-icons";
 import HeadContent from "@components/SportVenue/HeadContent";
@@ -22,6 +22,7 @@ import { COLOR } from "COLOR";
 import Button from "@components/UI/Button";
 import AlbumContent from "./AlbumContent";
 import LoadingOverlay from "@components/LoadingOverlay";
+import BottomActionLayout from "@components/BottomActionLayout";
 
 const SportVenueScreen = () => {
   const [venueData, setVenueData] = useState();
@@ -96,6 +97,12 @@ const SportVenueScreen = () => {
     initData();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      initData();
+    }, [])
+  );
+
   const updateAlbumData = async () => {
     const ad = await fetchAlbum();
     setAlbumData(ad);
@@ -130,9 +137,9 @@ const SportVenueScreen = () => {
   const deleteHandler = async () => {
     try {
       const response = await Admin.SportVenue.deleteVenue(user.token, idVenue);
-      if(response){
-        Alert.alert("Delete Venue Successfully")
-        nav.goBack()
+      if (response) {
+        Alert.alert("Delete Venue Successfully");
+        nav.goBack();
       }
     } catch (e) {
       console.log("Error occured in deleteHandler, SportVenueScreen");
@@ -235,12 +242,7 @@ const SportVenueScreen = () => {
             idVenue={idVenue}
           />
         }
-        {editMode && (
-          <>
-            <ManageVenueButtons listButtons={listButtons} />
-            <BorderLine />
-          </>
-        )}
+
         <HeadContent {...headData} />
         {/* <BorderLine />
       <HighlightContent />
@@ -272,6 +274,32 @@ const SportVenueScreen = () => {
           {!isAdmin && <Button onPress={navigateToOrderReview}>Order</Button>}
         </View>
       )}
+      {editMode && (
+        <BottomActionLayout>
+          <View style={manageStyles.container}>
+            <Pressable
+            onPress={NavigateToEdit}
+              style={({ pressed }) => [
+                manageStyles.button,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text style={manageStyles.buttonText}>Edit</Text>
+            </Pressable>
+
+            <Pressable
+            onPress={alertDeleteConfirmation}
+              style={({ pressed }) => [
+                manageStyles.button,
+                { backgroundColor: COLOR.accent1 },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text style={manageStyles.buttonText}>Delete</Text>
+            </Pressable>
+          </View>
+        </BottomActionLayout>
+      )}
     </>
   );
 };
@@ -280,7 +308,7 @@ export default SportVenueScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 80,
+    paddingBottom: 50,
     rowGap: 12,
   },
   imageContainer: {
@@ -311,22 +339,6 @@ const BorderLine = ({ customStyle }) => {
   );
 };
 
-const ManageVenueButtons = ({ listButtons }) => {
-  return (
-    <View style={manageStyles.container}>
-      {listButtons.map((item) => (
-        <View key={item.name} style={{ alignItems: "center" }}>
-          <Pressable onPress={item.onPress} style={manageStyles.iconContainer}>
-            {item.icon}
-          </Pressable>
-          <Text style={{ fontFamily: LEXEND.Regular, fontSize: 12 }}>
-            {item.name}
-          </Text>
-        </View>
-      ))}
-    </View>
-  );
-};
 
 const manageStyles = StyleSheet.create({
   container: {
@@ -334,5 +346,17 @@ const manageStyles = StyleSheet.create({
     flexDirection: "row",
     columnGap: 14,
   },
-  iconContainer: {},
+  button: {
+    backgroundColor: COLOR.accent2,
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 4,
+  },
+  buttonText: {
+    fontFamily: LEXEND.SemiBold,
+    fontSize: 18,
+    color: "white",
+  },
 });

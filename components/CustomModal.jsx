@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   container: {
-    zIndex: 2,
+    
   },
 });
 

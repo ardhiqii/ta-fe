@@ -99,8 +99,8 @@ const ManageBlacklistSchedule = () => {
         >
           <Text
             style={{
-              fontFamily: LEXEND.Regular,
-              fontSize: 12,
+              fontFamily: LEXEND.SemiBold,
+              fontSize: 14,
               color: COLOR.accent2,
             }}
           >
@@ -181,11 +181,11 @@ const stlyes = StyleSheet.create({
   },
 
   addButton: {
-    borderWidth: 1,
+    borderWidth: 2,
     paddingHorizontal: 2,
     paddingVertical: 1,
     borderRadius: 4,
-    width: 90,
+    width: 100,
     borderColor: COLOR.accent2,
     alignItems: "center",
     justifyContent: "center",

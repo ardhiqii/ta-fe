@@ -1,10 +1,10 @@
 import Filter from "@components/Search/Filter";
 import CardOrder from "@components/Transaction/CardOrder";
 import { LEXEND } from "@fonts/LEXEND";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { COLOR } from "COLOR";
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import { UserContext } from "store/user-contex";
 import { Admin } from "util/admin/admin";
 
@@ -36,6 +36,16 @@ const ListReservationAdminByIdScreen = () => {
     fetchData()
   },[status])
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+  const onRefresh = useCallback(() => {
+    fetchData()
+  }, []);
+
   const fetchData = async () => {
     const stat = status !== null ? status : "all";
     setLoading(true);
@@ -66,7 +76,7 @@ const ListReservationAdminByIdScreen = () => {
       >
         <Filter {...STATUS_FILTER} onUpdate={setStatus} value={status} />
       </View>
-      {loading && <Text>LOADING</Text>}
+      {loading && <ActivityIndicator size={"large"}/>}
       {!loading && ordersData?.length === 0 && (
         <Text
           style={{
@@ -79,7 +89,9 @@ const ListReservationAdminByIdScreen = () => {
           There is no reservation
         </Text>
       )}
-      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <ScrollView contentContainerStyle={styles.contentContainer}
+      refreshControl={<RefreshControl refreshing={loading} onRefresh={onRefresh}/>}
+      >
         {!loading && ordersData.map((o) => {
           return <CardOrder data={o} key={o.reservation_id} role={"admin"} imageUri={imageUri} />;
         })}

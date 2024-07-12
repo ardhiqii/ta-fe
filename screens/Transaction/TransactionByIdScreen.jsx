@@ -6,6 +6,7 @@ import ListMatch from "@components/Transaction/ListMatch";
 
 import ListMembers from "@components/Transaction/ListMembers";
 import MatchInformation from "@components/Transaction/MatchInformation";
+import PaymentStatus from "@components/Transaction/PaymentStatus";
 import { useRoute } from "@react-navigation/native";
 import AlbumContent from "@screens/SportVenue/AlbumContent";
 import React, { useCallback, useContext, useEffect, useState } from "react";
@@ -14,6 +15,7 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
+  Text,
   View,
 } from "react-native";
 import { UserContext } from "store/user-contex";
@@ -28,7 +30,7 @@ const TransactionByIdScreen = () => {
   const [transactionData, setTransactionData] = useState();
   const [venueData, setVenueData] = useState();
   const [members, setMembers] = useState([]);
-  const [albumData,setAlbumData] = useState([])
+  const [albumData, setAlbumData] = useState([]);
 
   const [forceRefresh, setForceRefresh] = useState(false);
 
@@ -80,7 +82,7 @@ const TransactionByIdScreen = () => {
 
   const fetchAllData = async () => {
     setLoading(true);
-    const [td, vd, md,ad] = await Promise.all([
+    const [td, vd, md, ad] = await Promise.all([
       fetchData(),
       fetchVenueData(),
       fetchMemberData(),
@@ -89,19 +91,15 @@ const TransactionByIdScreen = () => {
     setTransactionData(td);
     setVenueData(vd);
     setMembers(md);
-    setAlbumData(ad)
+    setAlbumData(ad);
     setLoading(false);
   };
 
   const fetchAlbum = async () => {
     try {
-      const { data } = isAdmin ? await Admin.SportVenue.getAlbumVenuById(
-        user.token,
-        idVenue
-      ) : await Player.SportVenue.getAlbumVenuById(
-        user.token,
-        idVenue
-      )
+      const { data } = isAdmin
+        ? await Admin.SportVenue.getAlbumVenuById(user.token, idVenue)
+        : await Player.SportVenue.getAlbumVenuById(user.token, idVenue);
       return data;
     } catch (e) {
       console.log("Error occured fetchAlbum SportVenueScreen", e);
@@ -114,7 +112,6 @@ const TransactionByIdScreen = () => {
       fetchData(),
       fetchVenueData(),
       fetchMemberData(),
-
     ]);
     setTransactionData(td);
     setVenueData(vd);
@@ -178,6 +175,11 @@ const TransactionByIdScreen = () => {
     roleReviewer: transactionData?.role,
   };
 
+  const paymentData = {
+    imageUrl: transactionData?.info?.payment_credential_url,
+    roleReviewer: transactionData?.role,
+  };
+
   const bottomActionData = {
     isOpenMember: transactionData?.info?.is_open_member,
     bookingStatus: transactionData?.info?.booking_status,
@@ -196,12 +198,14 @@ const TransactionByIdScreen = () => {
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
       >
-      <AlbumContent albumData={albumData} idVenue={idVenue}/>
+        <AlbumContent albumData={albumData} idVenue={idVenue} />
         <HeadContent {...headData} />
         <BorderLine />
         <MatchInformation {...matchData} />
         <BorderLine />
         <InformationContent {...infoData} />
+        <BorderLine />
+        <PaymentStatus {...paymentData} />
         <BorderLine />
         <ListMembers {...listMembersData} />
         <BorderLine />

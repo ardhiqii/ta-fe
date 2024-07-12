@@ -2,8 +2,7 @@ import axios, { Axios } from "axios";
 
 const x = axios.create({
   baseURL: "",
-  
-})
+});
 
 const newOrder = async (token, reqBody) => {
   const url = process.env.BASE_URL + "/player/reservation";
@@ -47,14 +46,21 @@ const getAllOrdersByStatus = async (token, status) => {
   }
 };
 
-
-const getAllPublicReservations = async (token, coordinate,sportKindId,mabarType,sortBy) => {
-  const url = process.env.BASE_URL + `/player/reservation/public/${sportKindId}/${mabarType}/${sortBy}` ;
+const getAllPublicReservations = async (
+  token,
+  coordinate,
+  sportKindId,
+  mabarType,
+  sortBy
+) => {
+  const url =
+    process.env.BASE_URL +
+    `/player/reservation/public/${sportKindId}/${mabarType}/${sortBy}`;
   try {
     const { data } = await axios.get(url, {
       headers: {
         token: token,
-        geo_coordinate: coordinate
+        geo_coordinate: coordinate,
       },
     });
     if (data) {
@@ -277,12 +283,8 @@ const uploadPayment = async (token, idReservation, formData) => {
     return data;
   } catch (e) {
     // DOING THIS BECAUSE NOT GETTING RESPONSE BODY IN 404 STATUS
-    if (e.response && e.response.data) {
-      throw e.response.data;
-    } else {
-      console.log("Error occured in util Booking, uploadPayment", e);
-    }
-    console.log(e.response);
+    console.log(e.response.data);
+    throw new Error(e);
   }
 };
 
@@ -311,7 +313,6 @@ const cancelReservation = async (token, idReservation) => {
   }
 };
 
-
 const joinReservation = async (token, idReservation) => {
   const url =
     process.env.BASE_URL + `/player/reservation/join/${idReservation}`;
@@ -338,8 +339,7 @@ const joinReservation = async (token, idReservation) => {
 };
 
 const getReservationQR = async (token, idReservation) => {
-  const url =
-    process.env.BASE_URL + `/player/reservation/QR/${idReservation}`;
+  const url = process.env.BASE_URL + `/player/reservation/QR/${idReservation}`;
   try {
     const { data } = await axios.post(
       url,
@@ -362,7 +362,6 @@ const getReservationQR = async (token, idReservation) => {
   }
 };
 
-
 export const Booking = {
   newOrder,
   getAllOrdersByStatus,
@@ -378,5 +377,5 @@ export const Booking = {
   leaveReservation,
   changeStatusPublicReservation,
   getAllPublicReservations,
-  getReservationQR
+  getReservationQR,
 };

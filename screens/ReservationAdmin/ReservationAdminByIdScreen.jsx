@@ -6,8 +6,14 @@ import HeadContent from "@components/SportVenue/HeadContent";
 import { LEXEND } from "@fonts/LEXEND";
 import { useRoute } from "@react-navigation/native";
 import { COLOR } from "COLOR";
-import React, { useContext, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { UserContext } from "store/user-contex";
 import { Admin } from "util/admin/admin";
 
@@ -43,7 +49,6 @@ const ReservationAdminByIdScreen = () => {
   const idReservation = route?.params?.idReservation;
   const imageUri = route?.params?.imageUri;
 
-
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -71,10 +76,12 @@ const ReservationAdminByIdScreen = () => {
     }
   }, [forceRefresh]);
 
+  const onRefresh = useCallback(() => {
+    fetchData();
+  });
+
   if (loading) {
-    return (
-      <LoadingOverlay/>
-    );
+    return <LoadingOverlay />;
   }
 
   const headData = {
@@ -97,16 +104,24 @@ const ReservationAdminByIdScreen = () => {
     totalPrice: orderData?.total_price,
     token: user?.token,
     idReservation: orderData?.reservation_id,
-    setForceRefresh: setForceRefresh
+    setForceRefresh: setForceRefresh,
   };
+
   return (
     <>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
+      >
         <HeadContent {...headData} />
         <BorderLine />
         <MatchReservation {...matchData} />
         <BorderLine />
-        <PaymentContent payment_credential_url={orderData?.payment_credential_url} />
+        <PaymentContent
+          payment_credential_url={orderData?.payment_credential_url}
+        />
       </ScrollView>
       <BottomActionAdmin {...bottomActionData} />
     </>
