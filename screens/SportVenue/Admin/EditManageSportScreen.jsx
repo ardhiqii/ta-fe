@@ -24,6 +24,7 @@ import { UserContext } from "store/user-contex";
 import AlbumContent from "../AlbumContent";
 import Button from "@components/UI/Button";
 import BottomActionLayout from "@components/BottomActionLayout";
+import { COLOR } from "COLOR";
 
 const TYPEMANAGE = {
   Add: "AddNewVenue",
@@ -75,8 +76,6 @@ const EditManageSportScreen = () => {
     time_open: dataVenue?.time_open,
     time_closed: dataVenue?.time_closed,
   };
-
-  
 
   const alertConfirmation = () => {
     const alertMessage = `Are you sure want to ${
@@ -189,8 +188,16 @@ const EditManageSportScreen = () => {
         {loading && <LoadingOverlay />}
       </ScrollView>
       <BottomActionLayout>
-        <View style={{  paddingHorizontal: 25 }}>
-          <Button onPress={alertConfirmation}>{type ? type : "Save"}</Button>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            columnGap: 12,
+          }}
+        >
+          <Button customStyle={{backgroundColor:COLOR.accent1,flex:1}} onPress={() => nav.goBack()}>Cancel</Button>
+          <Button customStyle={{flex:1}}
+          onPress={alertConfirmation}>{type ? type : "Save"}</Button>
         </View>
       </BottomActionLayout>
     </>
@@ -224,6 +231,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 25,
   },
+  button:{
+
+  }
 });
 
 const BorderLine = ({ customStyle }) => {

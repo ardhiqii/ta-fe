@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     borderColor: "#eceff1",
     alignItems: "center",
     justifyContent: "center",
-    height: 216,
+    height: 300,
     paddingHorizontal: 25,
   },
   image: {

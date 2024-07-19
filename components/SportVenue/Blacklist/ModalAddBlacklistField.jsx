@@ -303,8 +303,8 @@ const styles = StyleSheet.create({
   },
   checkBox: {
     borderWidth: 1,
-    width: 15,
-    height: 15,
+    width: 20,
+    height: 20,
     padding: 2,
   },
 

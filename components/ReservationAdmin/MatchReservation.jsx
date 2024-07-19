@@ -61,8 +61,8 @@ const MatchReservation = ({
           >
             <Text
               style={{
-                fontFamily: LEXEND.Regular,
-                fontSize: 10,
+                fontFamily: LEXEND.SemiBold,
+                fontSize: 12,
                 color: COLOR.base700,
               }}
             >
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     borderColor: COLOR.base700,
     alignItems: "center",
     justifyContent: "center",
-    width: 40,
+    width: 70,
     paddingVertical: 5,
     borderRadius: 5,
   },

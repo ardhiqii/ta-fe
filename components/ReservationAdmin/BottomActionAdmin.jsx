@@ -20,11 +20,11 @@ const BottomActionAdmin = ({
   const alertConfirmation = () => {
     Alert.alert("Confirmation", `Are you sure want to Approved?`, [
       {
-        text: "Yes",
-        onPress: approvedStatusReservation,
+        text: "No",
       },
       {
-        text: "No",
+        text: "Yes",
+        onPress: approvedStatusReservation,
       },
     ]);
   };

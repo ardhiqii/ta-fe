@@ -15,11 +15,11 @@ const OtherActionModal = ({
   const alertConfirmation = (status) => {
     Alert.alert("Confirmation", `Are you sure want to ${allCapital(status)}?`, [
       {
-        text: "Yes",
-        onPress: editStatusReservation.bind(this, status),
+        text: "No",
       },
       {
-        text: "No",
+        text: "Yes",
+        onPress: editStatusReservation.bind(this, status),
       },
     ]);
   };

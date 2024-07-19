@@ -102,7 +102,9 @@ const EditInformationContent = ({
   const updateTimeHandler = (inputIdentifier, event, value) => {
     setShowOpen(false);
     setShowClose(false);
-
+    if(event.type === "dismissed"){
+      return;
+    }
     setDataTime((prev) => {
       const init = "init_" + inputIdentifier;
       return { ...prev, [inputIdentifier]: value, [init]: false };

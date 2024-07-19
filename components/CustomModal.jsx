@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+  Image,
   Modal,
   Pressable,
   StatusBar,
@@ -16,6 +17,8 @@ const CustomModal = ({
   style,
   debugOuter,
 }) => {
+  
+
   return (
     <>
       <OuterModal visible={visible} />
@@ -33,7 +36,7 @@ const CustomModal = ({
             debugOuter && { backgroundColor: "red" },
           ]}
         >
-          <Pressable style={[styles.container]}>{children}</Pressable>
+          <Pressable>{children}</Pressable>
         </Pressable>
       </Modal>
     </>
@@ -45,9 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     zIndex: 1,
   },
-  container: {
-    
-  },
+  container: {},
 });
 
 export default CustomModal;

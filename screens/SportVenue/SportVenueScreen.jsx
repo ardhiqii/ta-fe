@@ -278,17 +278,7 @@ const SportVenueScreen = () => {
         <BottomActionLayout>
           <View style={manageStyles.container}>
             <Pressable
-            onPress={NavigateToEdit}
-              style={({ pressed }) => [
-                manageStyles.button,
-                pressed && { opacity: 0.7 },
-              ]}
-            >
-              <Text style={manageStyles.buttonText}>Edit</Text>
-            </Pressable>
-
-            <Pressable
-            onPress={alertDeleteConfirmation}
+              onPress={alertDeleteConfirmation}
               style={({ pressed }) => [
                 manageStyles.button,
                 { backgroundColor: COLOR.accent1 },
@@ -296,6 +286,15 @@ const SportVenueScreen = () => {
               ]}
             >
               <Text style={manageStyles.buttonText}>Delete</Text>
+            </Pressable>
+            <Pressable
+              onPress={NavigateToEdit}
+              style={({ pressed }) => [
+                manageStyles.button,
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text style={manageStyles.buttonText}>Edit</Text>
             </Pressable>
           </View>
         </BottomActionLayout>
@@ -308,7 +307,7 @@ export default SportVenueScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 50,
+    paddingBottom: 80,
     rowGap: 12,
   },
   imageContainer: {
@@ -338,7 +337,6 @@ const BorderLine = ({ customStyle }) => {
     />
   );
 };
-
 
 const manageStyles = StyleSheet.create({
   container: {
