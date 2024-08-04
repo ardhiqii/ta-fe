@@ -17,7 +17,7 @@ const CardMatch = ({
   score_b,
   isMember,
   index,
-  fetchMatchHistores,
+  fetchMatchHistores,w
 }) => {
   const { user } = useContext(UserContext);
   const nav = useNavigation();

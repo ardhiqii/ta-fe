@@ -25,6 +25,8 @@ const BottomAction = ({
   const displayStatus = allCapital(bookingStatus);
   const cancelAble = checkCancelAble(bookingStatus, isReviewerHost);
   const joinAble = !!(!registered && !isReviewerHost && isOpenMember);
+  console.log(isOpenMember,"TESTSETSET")
+  console.log(registered,"TESTSETSET")
 
   const nav = useNavigation();
 
@@ -136,7 +138,7 @@ const BottomAction = ({
               <Button onPress={uploadImage}>Upload</Button>
             </View>
           )}
-          {bookingStatus === "approved" && (
+          {bookingStatus === "approved" && registered && (
             <View style={{ flex: 1 }}>
               <Button onPress={() => setVisible(true)}>Show QR</Button>
             </View>
@@ -151,7 +153,7 @@ const BottomAction = ({
               </Button>
             </View>
           )}
-          {!isReviewerHost && !joinAble && (
+          {!isReviewerHost && registered && (
             <View style={{ flex: 1 }}>
               <Button
                 onPress={alertLeaveReservation}

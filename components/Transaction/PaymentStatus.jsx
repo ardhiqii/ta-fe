@@ -22,7 +22,7 @@ const PaymentStatus = ({ imageUrl, roleReviewer }) => {
           <Text style={styles.text}>
             Payment status is{" "}
             <Text style={{ fontFamily: LEXEND.Bold, color: "black" }}>
-              sent
+              {imageUrl ? "sent" : "not sent yet"}
             </Text>
           </Text>
         </View>

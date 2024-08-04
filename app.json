@@ -4,7 +4,7 @@
     "slug": "fe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/custom-icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/custom-splash.png",
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/custom-adaptive.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["LOCATION"],
